@@ -38,7 +38,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint": "^9.39.1",
     "secretlint": "^11.2.5",
-    "tsdown": "^0.16.0",
+    "tsdown": "^0.17.0",
     "typescript-eslint": "^8.46.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.6"
