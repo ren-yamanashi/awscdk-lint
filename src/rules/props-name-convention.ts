@@ -1,8 +1,8 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
-import { createRule } from "../utils/createRule";
-import { getConstructor } from "../utils/getConstructor";
-import { isConstructType } from "../utils/typecheck/cdk";
+import { findConstructor } from "../core/ast-node/finder/constructor";
+import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { createRule } from "../shared/create-rule";
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes
@@ -34,7 +34,7 @@ export const propsNameConvention = createRule({
         if (!isConstructType(type)) return;
 
         // NOTE: check constructor parameter
-        const constructor = getConstructor(node);
+        const constructor = findConstructor(node);
         if (!constructor) return;
 
         const propsParam = constructor.value.params?.[2];
