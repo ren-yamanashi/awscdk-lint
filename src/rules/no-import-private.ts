@@ -11,7 +11,7 @@ export const noImportPrivate: Rule.RuleModule = {
   meta: {
     type: "problem",
     docs: {
-      url: "https://eslint-cdk-plugin.dev/rules/no-import-private",
+      url: "https://eslint-plugin-awscdk.dev/rules/no-import-private",
       description:
         "Cannot import modules from private dir at different levels of the hierarchy.",
     },
