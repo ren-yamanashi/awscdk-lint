@@ -9,11 +9,14 @@
     "source.fixAll.eslint"
   ],
   "typescript.preferences.importModuleSpecifier": "relative",
-  "cSpell.words": ["pkgroll", "TSES", "vitepress"],
+  "cSpell.words": ["awscdk", "oxlint", "pkgroll", "TSES", "vitepress"],
   "markdownlint.config": {
     "MD001": false,
+    "MD024": false,
     "MD025": false,
-    "MD033": false
+    "MD029": false,
+    "MD033": false,
+    "MD034": false
   },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
