@@ -35,7 +35,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 22.15.0
+          node-version: 24.11.0
           cache: "pnpm"
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -51,14 +51,16 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm i
-      - name: Run Tests
+      - name: Build package
+        run: pnpm run build
+      - name: Run Unit Tests
         run: pnpm run test
+      - name: Run Integration Tests
+        run: pnpm run test:integration
       - name: Type Check
         run: pnpm run check
       - name: Lint
         run: pnpm run lint
-      - name: Build package
-        run: pnpm run build
       - name: Upload package artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -128,7 +130,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 22.15.0
+          node-version: 24.11.0
           registry-url: "https://registry.npmjs.org"
 
       - name: Update npm

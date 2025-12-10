@@ -23,23 +23,20 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
         id: pnpm-install
         with:
           version: 10.10.0
           run_install: false
-
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 22.15.0
+          node-version: 24.11.0
 
       # No need to install dependencies - pnpm version works without them
       - name: Version bump
@@ -110,4 +107,3 @@ jobs:
           labels: |
             Type: Release
           assignees: ${{ github.actor }}
-          draft: true

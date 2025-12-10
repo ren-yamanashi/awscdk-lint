@@ -9,3 +9,7 @@ updates:
       timezone: "Asia/Tokyo"
     commit-message:
       prefix: "chore"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
