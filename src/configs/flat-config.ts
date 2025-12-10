@@ -4,7 +4,7 @@ import { FlatConfig } from "@typescript-eslint/utils/ts-eslint";
 import { name, version } from "../../package.json";
 import { rules } from "../rules";
 
-const awscdk = {
+const cdk = {
   meta: { name, version },
   rules,
 };
@@ -18,7 +18,7 @@ const createFlatConfig = (
 } => {
   return {
     plugins: {
-      awscdk,
+      cdk,
     },
     languageOptions: {
       parser: tsParser,
@@ -31,42 +31,39 @@ const createFlatConfig = (
 };
 
 export const recommended = createFlatConfig({
-  "awscdk/construct-constructor-property": "error",
-  "awscdk/no-construct-in-interface": "error",
-  "awscdk/no-construct-in-public-property-of-construct": "error",
-  "awscdk/no-construct-stack-suffix": "error",
-  "awscdk/no-mutable-property-of-props-interface": "warn",
-  "awscdk/no-mutable-public-property-of-construct": "warn",
-  "awscdk/no-parent-name-construct-id-match": [
+  "cdk/construct-constructor-property": "error",
+  "cdk/no-construct-in-interface": "error",
+  "cdk/no-construct-in-public-property-of-construct": "error",
+  "cdk/no-construct-stack-suffix": "error",
+  "cdk/no-mutable-property-of-props-interface": "warn",
+  "cdk/no-mutable-public-property-of-construct": "warn",
+  "cdk/no-parent-name-construct-id-match": [
     "error",
     { disallowContainingParentName: false },
   ],
-  "awscdk/no-unused-props": "error",
-  "awscdk/no-variable-construct-id": "error",
-  "awscdk/pascal-case-construct-id": "error",
-  "awscdk/require-passing-this": [
-    "error",
-    { allowNonThisAndDisallowScope: true },
-  ],
+  "cdk/no-unused-props": "error",
+  "cdk/no-variable-construct-id": "error",
+  "cdk/pascal-case-construct-id": "error",
+  "cdk/require-passing-this": ["error", { allowNonThisAndDisallowScope: true }],
 });
 
 export const strict = createFlatConfig({
-  "awscdk/construct-constructor-property": "error",
-  "awscdk/no-construct-in-interface": "error",
-  "awscdk/no-construct-in-public-property-of-construct": "error",
-  "awscdk/no-construct-stack-suffix": "error",
-  "awscdk/no-import-private": "error",
-  "awscdk/no-mutable-property-of-props-interface": "error",
-  "awscdk/no-mutable-public-property-of-construct": "error",
-  "awscdk/no-parent-name-construct-id-match": [
+  "cdk/construct-constructor-property": "error",
+  "cdk/no-construct-in-interface": "error",
+  "cdk/no-construct-in-public-property-of-construct": "error",
+  "cdk/no-construct-stack-suffix": "error",
+  "cdk/no-import-private": "error",
+  "cdk/no-mutable-property-of-props-interface": "error",
+  "cdk/no-mutable-public-property-of-construct": "error",
+  "cdk/no-parent-name-construct-id-match": [
     "error",
     { disallowContainingParentName: true },
   ],
-  "awscdk/no-unused-props": "error",
-  "awscdk/no-variable-construct-id": "error",
-  "awscdk/pascal-case-construct-id": "error",
-  "awscdk/props-name-convention": "error",
-  "awscdk/require-jsdoc": "error",
-  "awscdk/require-passing-this": "error",
-  "awscdk/require-props-default-doc": "error",
+  "cdk/no-unused-props": "error",
+  "cdk/no-variable-construct-id": "error",
+  "cdk/pascal-case-construct-id": "error",
+  "cdk/props-name-convention": "error",
+  "cdk/require-jsdoc": "error",
+  "cdk/require-passing-this": "error",
+  "cdk/require-props-default-doc": "error",
 });

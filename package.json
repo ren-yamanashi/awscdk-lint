@@ -27,14 +27,15 @@
     "check": "tsc --noEmit",
     "pack": "pnpm run build && npm pack",
     "docs": "pnpm run --filter=@eslint-cdk-plugin/docs",
-    "example:flat-config": "pnpm run --filter=@eslint-cdk-plugin/example-flat-config",
-    "prebuild": "rolldown -c"
+    "example:flat-config": "pnpm run --filter=@eslint-cdk-plugin/example-flat-config"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@secretlint/secretlint-rule-preset-recommend": "^11.2.5",
     "@types/node": "^24.10.0",
+    "@typescript-eslint/parser": "^8.48.1",
     "@typescript-eslint/rule-tester": "^8.48.1",
+    "@typescript-eslint/utils": "^8.48.1",
     "commander": "^14.0.2",
     "consola": "^3.4.2",
     "eslint": "^9.39.1",
@@ -44,10 +45,6 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1",
     "vitest": "^4.0.6"
-  },
-  "dependencies": {
-    "@typescript-eslint/parser": "^8.48.1",
-    "@typescript-eslint/utils": "^8.48.1"
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0",

@@ -25,7 +25,7 @@ export class MyConstruct extends Construct {
   // ❌ Shouldn't use a class
   public readonly buckets: Bucket[];
 
-  // ❌ Shouldn't use a cdk Resource class array (generic type)
+  // ❌ Shouldn't use a cdk Resource class array (generics type)
   public readonly _buckets: Array<Bucket>;
 
   // ❌ Shouldn't use a cdk Resource class
