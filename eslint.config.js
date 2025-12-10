@@ -1,13 +1,14 @@
 import eslint from "@eslint/js";
 import importPlugin from "eslint-plugin-import";
+import { defineConfig } from "eslint/config";
 import tsEslint from "typescript-eslint";
 
-export default tsEslint.config(
+export default defineConfig(
   eslint.configs.recommended,
   ...tsEslint.configs.strictTypeChecked,
   ...tsEslint.configs.stylisticTypeChecked,
   {
-    files: ["src/*.{mts,ts}", "src/**/*.{mts,ts}", "scripts/**/*.{mts,ts}"],
+    files: ["src/*.{mts,ts}", "src/**/*.{mts,ts}", "scripts/**/*.{mts,ts}", "*.config.ts"],
     languageOptions: {
       ecmaVersion: "latest",
       parser: tsEslint.parser,

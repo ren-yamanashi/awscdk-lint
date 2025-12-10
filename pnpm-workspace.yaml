@@ -2,6 +2,6 @@ packages:
   - .
   - docs
   - examples/*
-useNodeVersion: 22.15.0
+useNodeVersion: 24.11.0
 engineStrict: true
 minimumReleaseAge: 2880

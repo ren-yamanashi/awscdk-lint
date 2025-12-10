@@ -20,9 +20,9 @@
     "migrate-cdk-plugin": "./bin/migration.mjs"
   },
   "scripts": {
-    "build": "sh scripts/build.sh",
+    "build": "tsdown",
     "test": "vitest --run",
-    "lint": "eslint --fix --config eslint.config.js",
+    "lint": "eslint --fix",
     "check": "tsc --noEmit",
     "pack": "pnpm run build && npm pack",
     "docs": "pnpm run --filter=@eslint-cdk-plugin/docs",
