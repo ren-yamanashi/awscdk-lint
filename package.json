@@ -22,6 +22,7 @@
   "scripts": {
     "build": "tsdown",
     "test": "vitest --run",
+    "test:integration": "sh scripts/integration-test.sh",
     "lint": "eslint --fix",
     "check": "tsc --noEmit",
     "pack": "pnpm run build && npm pack",
