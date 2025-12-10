@@ -7,9 +7,9 @@ import {
 } from "@typescript-eslint/utils";
 import { Type } from "typescript";
 
-import { createRule } from "../../utils/createRule";
-import { getConstructor } from "../../utils/getConstructor";
-import { isConstructType } from "../../utils/typecheck/cdk";
+import { findConstructor } from "../../core/ast-node/finder/constructor";
+import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
+import { createRule } from "../../shared/create-rule";
 
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
@@ -45,20 +45,18 @@ export const noUnusedProps = createRule({
         const type = parserServices.getTypeAtLocation(node);
         if (!isConstructType(type)) return;
 
-        const constructor = getConstructor(node);
+        const constructor = findConstructor(node);
         if (!constructor) return;
 
         const propsParam = getPropsParam(constructor, parserServices);
         if (!propsParam) return;
-        const { node: propsNode, type: propsType } = propsParam;
+        if (isPropsUsedInSuperCall(constructor, propsParam.node.name)) return;
 
-        // NOTE: Standard props parameter (e.g. props: MyConstructProps)
-        if (isPropsUsedInSuperCall(constructor, propsNode.name)) return;
-        const tracker = new PropsUsageTracker(propsType);
+        const tracker = new PropsUsageTracker(propsParam.type);
         const analyzer = new PropsUsageAnalyzer(tracker);
 
-        analyzer.analyze(constructor, propsNode);
-        reportUnusedProperties(tracker, propsNode, context);
+        analyzer.analyze(constructor, propsParam.node);
+        reportUnusedProperties(tracker, propsParam.node, context);
       },
     };
   },
@@ -86,6 +84,17 @@ const getPropsParam = (
 
 /**
  * Checks if props are used in a super call
+ *
+ * @example
+ * ```ts
+ * constructor(scope: Construct, id: string, props: MyConstructProps) {
+ *   super(scope, id, props); // props used here
+ * }
+ * ```
+ *
+ * @param constructor - The constructor method definition node
+ * @param propsPropertyName - The name of the props parameter
+ * @returns True if props are used in super call, false otherwise
  */
 const isPropsUsedInSuperCall = (
   constructor: TSESTree.MethodDefinition,

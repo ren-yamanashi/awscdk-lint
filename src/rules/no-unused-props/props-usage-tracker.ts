@@ -1,7 +1,7 @@
 import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
 import { Type } from "typescript";
 
-import { getPropertyNames } from "../../utils/getPropertyNames";
+import { findPropertyNames } from "../../core/ast-node/finder/property-name";
 
 export interface IPropsUsageTracker {
   /**
@@ -14,6 +14,7 @@ export interface IPropsUsageTracker {
     node: TSESTree.MemberExpression,
     propsParamName: string
   ): void;
+
   /**
    * Marks a property as used when it is accessed in a member expression.
    *
@@ -125,8 +126,8 @@ export class PropsUsageTracker implements IPropsUsageTracker {
       return;
     }
 
-    const propertyNames = getPropertyNames(node.id.properties);
-    for (const name of propertyNames) {
+    const names = findPropertyNames(node.id.properties);
+    for (const name of names) {
       this.markAsUsed(name);
     }
   }
