@@ -1,17 +1,21 @@
 import {
-  AST_NODE_TYPES,
   ESLintUtils,
   ParserServicesWithTypeInformation,
   TSESLint,
   TSESTree,
 } from "@typescript-eslint/utils";
 
-import { findConstructor } from "../core/ast-node/finder/constructor";
+import { findPublicPropertiesInClass } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
 type Context = TSESLint.RuleContext<"invalidPublicPropertyOfConstruct", []>;
+
+type PublicProperty = {
+  name: string;
+  node: TSESTree.Parameter | TSESTree.ClassElement;
+};
 
 /**
  * Disallow Construct types in public property of Construct
@@ -38,88 +42,30 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
         if (!isConstructOrStackType(type)) return;
-        checkPublicPropertyInClassElement(node, context, parserServices);
-        checkParameterPropertiesInConstructor(node, context, parserServices);
+        const publicProperties = findPublicPropertiesInClass(node);
+        for (const publicProperty of publicProperties) {
+          validatePublicProperty(publicProperty, context, parserServices);
+        }
       },
     };
   },
 });
 
-const checkPublicPropertyInClassElement = (
-  node: TSESTree.ClassDeclaration,
+const validatePublicProperty = (
+  publicProperty: PublicProperty,
   context: Context,
   parserServices: ParserServicesWithTypeInformation
 ) => {
-  for (const property of node.body.body) {
-    validateProperty(property, context, parserServices);
-  }
-};
-
-const checkParameterPropertiesInConstructor = (
-  node: TSESTree.ClassDeclaration,
-  context: Context,
-  parserServices: ParserServicesWithTypeInformation
-) => {
-  const constructor = findConstructor(node);
-  if (!constructor) return;
-  for (const property of constructor.value.params) {
-    validateProperty(property, context, parserServices);
-  }
-};
-
-const validateProperty = (
-  property: TSESTree.Parameter | TSESTree.ClassElement,
-  context: Context,
-  parserServices: ParserServicesWithTypeInformation
-) => {
-  const publicProperty = getPublicProperty(property);
-  if (!publicProperty) return;
-
-  const type = parserServices.getTypeAtLocation(publicProperty.type);
+  const type = parserServices.getTypeAtLocation(publicProperty.node);
   const constructType = findTypeOfCdkConstruct(type);
   if (constructType) {
     context.report({
-      node: property,
+      node: publicProperty.node,
       messageId: "invalidPublicPropertyOfConstruct",
       data: {
         propertyName: publicProperty.name,
         typeName: constructType.symbol.name,
       },
     });
-  }
-};
-
-const getPublicProperty = <
-  T extends TSESTree.Parameter | TSESTree.ClassElement
->(
-  property: T
-): { name: string; type: T } | undefined => {
-  switch (property.type) {
-    case AST_NODE_TYPES.TSParameterProperty: {
-      if (property.parameter.type !== AST_NODE_TYPES.Identifier) {
-        return;
-      }
-      if (["private", "protected"].includes(property.accessibility ?? "")) {
-        return;
-      }
-      if (!property.parameter.typeAnnotation) return;
-      return {
-        name: property.parameter.name,
-        type: property,
-      };
-    }
-    case AST_NODE_TYPES.PropertyDefinition: {
-      if (property.key.type !== AST_NODE_TYPES.Identifier) {
-        return;
-      }
-      if (["private", "protected"].includes(property.accessibility ?? "")) {
-        return;
-      }
-      if (!property.typeAnnotation) return;
-      return {
-        name: property.key.name,
-        type: property,
-      };
-    }
   }
 };
