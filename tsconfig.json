@@ -19,6 +19,6 @@
     "module": "ESNext",
     "moduleResolution": "bundler"
   },
-  "include": ["src", "scripts"],
+  "include": ["src", "scripts", "*.config.ts"],
   "exclude": ["dist", "node_modules"]
 }

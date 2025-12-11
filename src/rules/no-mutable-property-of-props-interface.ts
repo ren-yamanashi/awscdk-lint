@@ -1,6 +1,6 @@
 import { AST_NODE_TYPES } from "@typescript-eslint/utils";
 
-import { createRule } from "../utils/createRule";
+import { createRule } from "../shared/create-rule";
 
 /**
  * Disallow mutable properties of Construct Props (interface)

@@ -1,6 +1,6 @@
 import { AST_NODE_TYPES, AST_TOKEN_TYPES } from "@typescript-eslint/utils";
 
-import { createRule } from "../utils/createRule";
+import { createRule } from "../shared/create-rule";
 
 /**
  * Requires @default JSDoc documentation for optional properties in interfaces ending with 'Props'

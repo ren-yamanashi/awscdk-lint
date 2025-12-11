@@ -4,9 +4,9 @@ import {
   TSESLint,
 } from "@typescript-eslint/utils";
 
-import { createRule } from "../utils/createRule";
-import { getConstructorPropertyNames } from "../utils/getPropertyNames";
-import { isConstructType } from "../utils/typecheck/cdk";
+import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
+import { createRule } from "../shared/create-rule";
 
 type Option = {
   allowNonThisAndDisallowScope?: boolean;
@@ -63,7 +63,7 @@ export const requirePassingThis = createRule({
         if (argument.type === AST_NODE_TYPES.ThisExpression) return;
 
         // NOTE: If the first argument is not `scope`, it's valid
-        const constructorPropertyNames = getConstructorPropertyNames(type);
+        const constructorPropertyNames = findConstructorPropertyNames(type);
         if (constructorPropertyNames[0] !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases

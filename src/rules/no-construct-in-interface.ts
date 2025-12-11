@@ -1,10 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
-import { createRule } from "../utils/createRule";
-import { getArrayElementType } from "../utils/getArrayElementType";
-import { getGenericTypeArgument } from "../utils/getGenericTypeArgument";
-import { isResourceWithReadonlyInterface } from "../utils/is-resource-with-readonly-interface";
-import { isClassType } from "../utils/typecheck/ts-type";
+import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
+import { createRule } from "../shared/create-rule";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties
@@ -38,58 +35,15 @@ export const noConstructInInterface = createRule({
           }
 
           const type = parserServices.getTypeAtLocation(property);
+          const result = findTypeOfCdkConstruct(type);
 
-          // NOTE: Check if it's a direct class type
-          if (isClassType(type) && isResourceWithReadonlyInterface(type)) {
+          if (result) {
             context.report({
               node: property,
               messageId: "invalidInterfaceProperty",
               data: {
                 propertyName: property.key.name,
-                typeName: type.symbol.name,
-              },
-            });
-            continue;
-          }
-
-          // NOTE: Check if it's an array of class types
-          const elementType = getArrayElementType(type);
-          if (
-            elementType &&
-            isClassType(elementType) &&
-            isResourceWithReadonlyInterface(elementType)
-          ) {
-            context.report({
-              node: property,
-              messageId: "invalidInterfaceProperty",
-              data: {
-                propertyName: property.key.name,
-                typeName: `${elementType.symbol.name}[]`,
-              },
-            });
-            continue;
-          }
-
-          // NOTE: Check if it's a generic type wrapping a class type
-          const genericArgument = getGenericTypeArgument(type);
-          if (
-            genericArgument &&
-            isClassType(genericArgument) &&
-            isResourceWithReadonlyInterface(genericArgument)
-          ) {
-            const wrapperName = (() => {
-              if (type.aliasSymbol) return type.aliasSymbol.name; // For type aliases like Readonly<T>, Partial<T>
-              if (type.symbol?.name) return type.symbol.name; // For other generic types like Array<T>
-              return undefined;
-            })();
-            context.report({
-              node: property,
-              messageId: "invalidInterfaceProperty",
-              data: {
-                propertyName: property.key.name,
-                typeName: wrapperName
-                  ? `${wrapperName}<${genericArgument.symbol.name}>`
-                  : genericArgument.symbol.name,
+                typeName: result.symbol.name,
               },
             });
           }

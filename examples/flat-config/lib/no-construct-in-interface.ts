@@ -21,7 +21,7 @@ export interface MyConstructProps {
   // ❌ Shouldn't use a cdk Resource array
   readonly buckets: Bucket[];
 
-  // ❌ Shouldn't use a cdk Resource array (generic type)
+  // ❌ Shouldn't use a cdk Resource array (generics type)
   readonly _buckets: Array<Bucket>;
 
   // ❌ Shouldn't use a cdk Resource

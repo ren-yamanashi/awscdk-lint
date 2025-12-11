@@ -5,10 +5,10 @@ import {
   TSESTree,
 } from "@typescript-eslint/utils";
 
-import { toPascalCase } from "../utils/convertString";
-import { createRule } from "../utils/createRule";
-import { getConstructorPropertyNames } from "../utils/getPropertyNames";
-import { isConstructOrStackType } from "../utils/typecheck/cdk";
+import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
+import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
+import { toPascalCase } from "../shared/converter/to-pascal-case";
+import { createRule } from "../shared/create-rule";
 
 const QUOTE_TYPE = {
   SINGLE: "'",
@@ -48,7 +48,7 @@ export const pascalCaseConstructId = createRule({
           return;
         }
 
-        const constructorPropertyNames = getConstructorPropertyNames(type);
+        const constructorPropertyNames = findConstructorPropertyNames(type);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructId(node, context);
