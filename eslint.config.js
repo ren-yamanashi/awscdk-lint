@@ -55,6 +55,7 @@ export default defineConfig(
     ignores: [
       "*.js",
       "dist",
+      "bin",
       "node_modules",
       ".vscode",
       "package.json",
