@@ -41,7 +41,7 @@ const uninstall = (
       case PACKAGE_MANGER.NPM:
         return `npm uninstall${devFlag} eslint-cdk-plugin`;
       case PACKAGE_MANGER.YARN:
-        return `yarn remove${devFlag} eslint-cdk-plugin`;
+        return `yarn remove eslint-cdk-plugin${devFlag}`;
       case PACKAGE_MANGER.PNPM:
         return `pnpm remove${devFlag} eslint-cdk-plugin`;
     }
