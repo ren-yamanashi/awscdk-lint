@@ -55,6 +55,7 @@
   },
   "packageManager": "pnpm@10.10.0",
   "files": [
+    "bin",
     "dist",
     "src",
     "!src/__tests__",
