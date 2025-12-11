@@ -17,7 +17,7 @@
     }
   },
   "bin": {
-    "migrate-cdk-plugin": "./bin/migration.mjs"
+    "migrate-cdk-plugin": "./bin/index.mjs"
   },
   "scripts": {
     "build": "tsdown",
