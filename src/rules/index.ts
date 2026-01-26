@@ -10,6 +10,7 @@ import { noParentNameConstructIdMatch } from "./no-parent-name-construct-id-matc
 import { noUnusedProps } from "./no-unused-props";
 import { noVariableConstructId } from "./no-variable-construct-id";
 import { pascalCaseConstructId } from "./pascal-case-construct-id";
+import { preferGrantsProperty } from "./prefer-grants-property";
 import { propsNameConvention } from "./props-name-convention";
 import { requireJSDoc } from "./require-jsdoc";
 import { requirePassingThis } from "./require-passing-this";
@@ -29,6 +30,7 @@ export const rules = {
   "no-unused-props": noUnusedProps,
   "no-variable-construct-id": noVariableConstructId,
   "pascal-case-construct-id": pascalCaseConstructId,
+  "prefer-grants-property": preferGrantsProperty,
   "props-name-convention": propsNameConvention,
   "require-jsdoc": requireJSDoc,
   "require-passing-this": requirePassingThis,
