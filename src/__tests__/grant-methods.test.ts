@@ -1,6 +1,6 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
 
-import { grantMethods } from "../rules/grant-methods";
+import { preferGrantsProperty } from "../rules/prefer-grants-property";
 
 const ruleTester = new RuleTester({
   languageOptions: {
@@ -12,12 +12,23 @@ const ruleTester = new RuleTester({
   },
 });
 
-ruleTester.run("grant-methods", grantMethods, {
+ruleTester.run("prefer-grants-property", preferGrantsProperty, {
   valid: [
+    // WHEN: class does not extend Construct
+    {
+      code: `
+      class Topic {
+        grantSubscribe() {}
+      }
+      const topic = new Topic();
+      topic.grantSubscribe();
+      `,
+    },
     // WHEN: class does not have grants property
     {
       code: `
-      class HttpRoute {
+      class Construct {}
+      class HttpRoute extends Construct {
         static grantInvoke() {}
       }
       HttpRoute.grantInvoke();
@@ -26,7 +37,8 @@ ruleTester.run("grant-methods", grantMethods, {
     // WHEN: grants property type does not end with Grants
     {
       code: `
-      class Topic {
+      class Construct {}
+      class Topic extends Construct {
         grants = {};
         grantSubscribe() {}
       }
@@ -37,10 +49,11 @@ ruleTester.run("grant-methods", grantMethods, {
     // WHEN: grants type does not have the suggested method
     {
       code: `
+      class Construct {}
       class TopicGrants {
         publish() {}
       }
-      class Topic {
+      class Topic extends Construct {
         grants: TopicGrants = new TopicGrants();
         grantSubscribe() {}
       }
@@ -51,8 +64,9 @@ ruleTester.run("grant-methods", grantMethods, {
     // WHEN: method does not start with grant
     {
       code: `
+      class Construct {}
       class TopicGrants {}
-      class Topic {
+      class Topic extends Construct {
         grants: TopicGrants = new TopicGrants();
         subscribe() {}
       }
@@ -63,10 +77,11 @@ ruleTester.run("grant-methods", grantMethods, {
     // WHEN: already using grants property
     {
       code: `
+      class Construct {}
       class TopicGrants {
         subscribe() {}
       }
-      class Topic {
+      class Topic extends Construct {
         grants: TopicGrants = new TopicGrants();
       }
       const topic = new Topic();
@@ -78,10 +93,11 @@ ruleTester.run("grant-methods", grantMethods, {
     // WHEN: class has grants property with Grants suffix and method exists
     {
       code: `
+      class Construct {}
       class TopicGrants {
         subscribe() {}
       }
-      class Topic {
+      class Topic extends Construct {
         grants: TopicGrants = new TopicGrants();
         grantSubscribe() {}
       }
@@ -93,10 +109,11 @@ ruleTester.run("grant-methods", grantMethods, {
     // WHEN: grantPublish is called and grants.publish exists
     {
       code: `
+      class Construct {}
       class TopicGrants {
         publish() {}
       }
-      class Topic {
+      class Topic extends Construct {
         grants: TopicGrants = new TopicGrants();
         grantPublish() {}
       }

@@ -4,10 +4,11 @@ import {
   TSESTree,
 } from "@typescript-eslint/utils";
 
+import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
-export const grantMethods = createRule({
-  name: "grant-methods",
+export const preferGrantsProperty = createRule({
+  name: "prefer-grants-property",
   meta: {
     type: "suggestion",
     docs: {
@@ -40,6 +41,7 @@ export const grantMethods = createRule({
         const objectNode = node.callee.object;
         const tsNode = parserServices.esTreeNodeToTSNodeMap.get(objectNode);
         const type = checker.getTypeAtLocation(tsNode);
+        if (!isConstructType(type)) return;
 
         const grantsProperty = type.getProperty("grants");
         if (!grantsProperty) return;

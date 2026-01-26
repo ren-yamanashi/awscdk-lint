@@ -45,6 +45,7 @@ export const recommended = createFlatConfig({
   "awscdk/no-unused-props": "error",
   "awscdk/no-variable-construct-id": "error",
   "awscdk/pascal-case-construct-id": "error",
+  "awscdk/prefer-grants-property": "warn",
   "awscdk/require-passing-this": [
     "error",
     { allowNonThisAndDisallowScope: true },
