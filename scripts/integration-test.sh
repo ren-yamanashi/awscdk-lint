@@ -9,7 +9,7 @@ check_eslint_output() {
   local output
   echo "RUNNING: $command"
   output=$($command 2>&1) || true
-  if ! echo "$output" | grep -q "✖ 39 problems (39 errors, 0 warnings)"; then
+  if ! echo "$output" | grep -q "✖ 40 problems (40 errors, 0 warnings)"; then
     echo "ERROR: Expected error count not found!"
     exit 1
   fi
