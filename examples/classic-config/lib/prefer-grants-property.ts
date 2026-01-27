@@ -10,10 +10,10 @@ export class MyConstruct extends Construct {
     });
     const topic = new Topic(this, "MyTopic");
 
-    // ✅ Using grants property
+    // ✅ Use grants property
     topic.grants.subscribe(role);
 
-    // ❌ Using grant* method
+    // ❌ Avoid using grant* methods when grants property is available
     topic.grantSubscribe(role);
   }
 }

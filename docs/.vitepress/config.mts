@@ -151,6 +151,10 @@ export default defineConfig({
                   link: "/rules/pascal-case-construct-id",
                 },
                 {
+                  text: "prefer-grants-property",
+                  link: "/rules/prefer-grants-property",
+                },
+                {
                   text: "props-name-convention",
                   link: "/rules/props-name-convention",
                 },
@@ -269,6 +273,10 @@ export default defineConfig({
                 {
                   text: "pascal-case-construct-id",
                   link: "/ja/rules/pascal-case-construct-id",
+                },
+                {
+                  text: "prefer-grants-property",
+                  link: "/ja/rules/prefer-grants-property",
                 },
                 {
                   text: "props-name-convention",

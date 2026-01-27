@@ -159,6 +159,13 @@ We currently support the following rules:
     :isRecommended="true"
     :isFixable="true"
   />
+<RuleItem
+    name="prefer-grants-property"
+    description="Enforces using the grants property instead of grant* methods."
+    link="/rules/prefer-grants-property"
+    :isRecommended="true"
+    :isFixable="false"
+  />
   <RuleItem
     name="props-name-convention"
     description="Enforces that Props (interface) names follow the ${ConstructName}Props format."

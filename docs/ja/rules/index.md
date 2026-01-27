@@ -159,6 +159,13 @@ import RuleItem from '../../components/RuleItem.vue'
     :isFixable="true"
   />
   <RuleItem
+    name="prefer-grants-property"
+    description="grant* メソッドではなく grants プロパティを使用することを強制します"
+    link="/ja/rules/prefer-grants-property"
+    :isRecommended="true"
+    :isFixable="false"
+  />
+  <RuleItem
     name="props-name-convention"
     description="Props (interface) 名が ${ConstructName}Props の形式に従うことを強制します"
     link="/ja/rules/props-name-convention"
