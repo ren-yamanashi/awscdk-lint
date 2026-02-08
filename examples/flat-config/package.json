@@ -8,9 +8,9 @@
     "lint:cjs": "eslint --config eslint.config.cjs"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.0.3",
-    "eslint": "^9.36.0",
+    "eslint": "^10.0.0",
     "eslint-plugin-awscdk": "workspace:*",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.46.2"
