@@ -45,7 +45,7 @@ import { Topic } from "aws-cdk-lib/aws-sns";
 export class MyConstruct extends Construct {
   // ✅ public プロパティに `readonly` 修飾子が指定されている
   public readonly bucket: IBucket;
-  // ✅ public でないプロパティには、このルールは適用ない
+  // ✅ public でないプロパティには、このルールは適用されない
   private topic: Topic; 
 }
 ```

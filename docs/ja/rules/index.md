@@ -90,14 +90,14 @@ import RuleItem from '../../components/RuleItem.vue'
   />
   <RuleItem
     name="no-construct-in-interface"
-    description="interface のプロパティに指定する型として、書き込み可能な CDK Construct 型 (例: Bucket) の代わりに読み取り専用リソースの為の interface (例: IBucket) を指定することを強制します"
+    description="interface のプロパティに指定する型として、書き込み可能な CDK Construct 型 (例: Bucket) の代わりに読み取り専用リソースのための interface (例: IBucket) を指定することを強制します"
     link="/ja/rules/no-construct-in-interface"
     :isRecommended="true"
     :isFixable="false"
   />
   <RuleItem
     name="no-construct-in-public-property-of-construct"
-    description="CDK Construct の public プロパティに指定する型として、書き込み可能な CDK Construct 型 (例: Bucket) の代わりに読み取り専用リソースの為の interface (例: IBucket) を指定することを強制します"
+    description="CDK Construct の public プロパティに指定する型として、書き込み可能な CDK Construct 型 (例: Bucket) の代わりに読み取り専用リソースのための interface (例: IBucket) を指定することを強制します"
     link="/ja/rules/no-construct-in-public-property-of-construct"
     :isRecommended="true"
     :isFixable="false"

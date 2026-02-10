@@ -12,7 +12,7 @@ import Playground from '../../components/Playground.vue'
 
 <RecommendedItem japanese />
 
-このルールは、CDK Construct の `constructor` が、以下の標準的なルールに従うことを強制します
+このルールは、CDK Construct の `constructor` が、以下の標準的なルールに従うことを強制します。
 
 #### 強制されるプロパティパターン
 

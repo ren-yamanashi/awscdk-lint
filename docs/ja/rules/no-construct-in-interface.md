@@ -12,7 +12,7 @@ import Playground from '../../components/Playground.vue'
 
 <RecommendedItem japanese />
 
-このルールは、interface のプロパティに指定する型として、書き込み可能な CDK Construct 型 (例: `Bucket`) の代わりに読み取り専用リソースの為の interface (例: `IBucket`) を指定することを強制します
+このルールは、interface のプロパティに指定する型として、書き込み可能な CDK Construct 型 (例: `Bucket`) の代わりに読み取り専用リソースのための interface (例: `IBucket`) を指定することを強制します。
 
 AWS リソースを表す Construct (例: `Bucket`) が、読み取り専用リソースのための interface (例: `IBucket`) を implements している場合、interface のプロパティには、読み取り専用リソースのための interface (例: `IBucket`) を指定することが推奨されます。  
 これにより、意図しないリソースの変更を防ぐことができます。

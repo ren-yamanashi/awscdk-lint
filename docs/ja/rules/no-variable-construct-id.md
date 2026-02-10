@@ -12,7 +12,7 @@ import Playground from '../../components/Playground.vue'
 
 <RecommendedItem japanese />
 
-このルールは、Construct ID に変数を使用することを禁止します
+このルールは、Construct ID に変数を使用することを禁止します。
 
 Construct ID に変数を使用することは、以下の問題を引き起こす可能性があるため適切ではありません  
 (for, while, forEach, map などのループ処理は対象外です)

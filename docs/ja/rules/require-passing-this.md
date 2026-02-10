@@ -14,7 +14,7 @@ import Playground from '../../components/Playground.vue'
 <RecommendedItem japanese />
 <FixableItem japanese />
 
-このルールは CDK Construct のコンストラクタの第一引数に `this` を渡すことを強制します
+このルールは CDK Construct のコンストラクタの第一引数に `this` を渡すことを強制します。
 
 AWS CDK リソースを作成するとき、Construct に `this` を渡すことは正しいリソース階層を維持するために重要です。
 

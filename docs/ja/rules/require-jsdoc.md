@@ -12,7 +12,7 @@ import Playground from '../../components/Playground.vue'
 
 <NotRecommendedItem japanese />
 
-このルールは、Construct の Props (interface) のプロパティと、 Construct の public プロパティに JSDoc の記載を強制します。
+このルールは、Props (interface) のプロパティと、CDK Construct の public プロパティに JSDoc の記載を強制します。
 
 プロパティに JSDoc コメントを追加することで、各プロパティが何を表しているのかが明確になり、コードの保守性と理解のしやすさが向上します。
 
@@ -53,7 +53,7 @@ class MyConstruct extends Construct {
   /** Constructで作成されたS3バケット */
   public readonly bucket: IBucket;
 
-  // ✅ public でないプロパティには、このルールは適用ない
+  // ✅ public でないプロパティには、このルールは適用されない
   private readonly bucketName: string;
 }
 ```

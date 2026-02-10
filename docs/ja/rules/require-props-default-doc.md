@@ -12,9 +12,9 @@ import Playground from '../../components/Playground.vue'
 
 <NotRecommendedItem japanese />
 
-このルールは、Construct の Props (interface) で定義されるオプショナルなプロパティに対して、そのデフォルトの挙動を示す `@default` JSDoc タグを含むドキュメントコメントの記述を強制します
+このルールは、Props (interface) で定義されるオプショナルなプロパティに対して、そのデフォルトの挙動を示す `@default` JSDoc タグを含むドキュメントコメントの記述を強制します。
 
-※ Class のプロパティや、Construct の Props でない interface のプロパティには、このルールは適用されません
+※ Class のプロパティや、Props でない interface のプロパティには、このルールは適用されません。
 
 ---
 
