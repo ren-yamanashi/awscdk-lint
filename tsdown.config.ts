@@ -6,6 +6,7 @@ export default defineConfig({
   clean: true,
   format: ["esm", "cjs"],
   dts: true,
+  inlineOnly: false,
   outputOptions: { exports: "named" },
   treeshake: true,
   fixedExtension: true,
