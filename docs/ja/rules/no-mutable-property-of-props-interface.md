@@ -14,10 +14,9 @@ import Playground from '../../components/Playground.vue'
 <RecommendedItem japanese />
 <FixableItem japanese />
 
-このルールは、CDK Construct または Stack の、`Props` (interface) の `public` プロパティを変更可能にすることを禁止します。  
-(`readonly` 修飾子がない Props プロパティの定義を禁止します)
+このルールは、CDK Construct または Stack の `Props` (interface) のプロパティに、`readonly` 修飾子を指定することを強制します
 
-Props で変更可能な `public` プロパティを指定すると、意図しない副作用を引き起こす可能性があるため、推奨されません。
+意図しない副作用を防ぐため、Props のプロパティには `readonly` 修飾子を指定することが推奨されます。
 
 ---
 
@@ -35,13 +34,13 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 interface MyConstructProps {
-  // ✅ readonly なプロパティは許可されます
+  // ✅ Props のプロパティに readonly 修飾子が指定されている
   readonly bucket: IBucket;
 }
 ```
@@ -49,19 +48,19 @@ interface MyConstructProps {
 ```ts
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
-// ✅ Props ではない interface には、このルールは適用されません
+// ✅ Props ではない interface に対しては、このルールは適用されない
 interface MyInterface {
   bucket: IBucket;
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 interface MyConstructProps {
-  // ❌ Props のプロパティは `readonly` にすべきです
+  // ❌ Props のプロパティに readonly 修飾子が指定されていない
   bucket: IBucket;
 }
 ```

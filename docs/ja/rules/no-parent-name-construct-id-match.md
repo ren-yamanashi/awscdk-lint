@@ -14,9 +14,7 @@ import Playground from '../../components/Playground.vue'
 
 このルールでは、Construct ID に 親クラスの名前を指定することを禁止します。
 
-Construct ID に、親クラス名と一致する(または含む)文字列を指定すると、CloudFormation リソースの階層が不明瞭になるため、推奨されません。
-
-(このルールは `Construct` または `Stack` から派生したクラスにのみ適用されます)
+Construct ID に、親クラス名と一致する (または含む) 文字列を指定すると、CloudFormation リソースの階層が不明瞭になるため推奨されません。
 
 ---
 
@@ -34,7 +32,7 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -44,16 +42,16 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ✅ 親コンストラクトと異なる名前は使用できます
+    // ✅ 親クラスと異なる名前を指定している
     const bucket = new Bucket(this, "MyBucket");
 
-    // ✅ 親クラス名を含むコンストラクト ID を使用できます
+    // ✅ 親クラス名を含むコンストラクト ID を指定しているが、完全に一致していない
     const bucket = new Bucket(this, "MyConstructBucket");
   }
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -63,7 +61,7 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ❌ 親コンストラクトと同じ名前は使用すべきではありません
+    // ❌ 親クラスと同じ名前を指定している
     const bucket = new Bucket(this, "MyConstruct");
   }
 }
@@ -88,7 +86,7 @@ const defaultOptions: Options = {
 
 `{ disallowContainingParentName: true }` とした場合
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -98,13 +96,13 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ✅ 親コンストラクトと異なる名前は使用できます
+    // ✅ 親クラスと異なる名前を指定している
     const bucket = new Bucket(this, "MyBucket");
   }
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -114,10 +112,10 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ❌ 親コンストラクトと同じ名前は使用すべきではありません
+    // ❌ 親クラスと同じ名前を指定している
     const bucket = new Bucket(this, "MyConstruct");
 
-    // ❌ 親コンストラクト名を含む名前は使用すべきではありません
+    // ❌ 親クラス名を含む名前を指定している
     const bucket = new Bucket(this, "MyConstructBucket");
   }
 }

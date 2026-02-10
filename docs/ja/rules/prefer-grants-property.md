@@ -14,7 +14,7 @@ import Playground from '../../components/Playground.vue'
 
 従来、アクセス制御を持つリソースを表す L2 Construct では `grant*` メソッド（例: `topic.grantPublish(role)`）が使用されていましたが、Grants クラスという新しいパターンが導入され、利便性の高い `grants` プロパティが追加されました。
 
-`grant*` メソッドは現在も利用可能ですが、以下の引用 ([PR#35782](https://github.com/aws/aws-cdk/pull/35782)) のように、現在は非推奨であ流ため、`grants` プロパティを使用することが推奨されています。
+`grant*` メソッドは現在も利用可能ですが、以下の引用 ([PR#35782](https://github.com/aws/aws-cdk/pull/35782)) のように、現在は非推奨であるため、`grants` プロパティを使用することが推奨されています。
 
 > The grantPublish etc methods on the L2 are now no longer recommended (though they will not be deprecated immediately to not disrupt existing code too much).
 
@@ -36,7 +36,7 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
@@ -47,12 +47,12 @@ const role = new Role(stack, "MyRole", {
 });
 const topic = new Topic(stack, "MyTopic");
 
-// ✅ grants プロパティを使用する
+// ✅ grants プロパティを使用している
 topic.grants.subscribe(role);
 topic.grants.publish(role);
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
@@ -63,7 +63,7 @@ const role = new Role(stack, "MyRole", {
 });
 const topic = new Topic(stack, "MyTopic");
 
-// ❌ grants プロパティが利用可能な場合は grant* メソッドの使用を避ける
+// ❌ grants プロパティが利用可能であるが、grant* メソッドを使用している
 topic.grantSubscribe(role);
 topic.grantPublish(role);
 ```
