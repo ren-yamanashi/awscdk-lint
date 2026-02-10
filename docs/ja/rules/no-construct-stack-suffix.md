@@ -16,8 +16,6 @@ import Playground from '../../components/Playground.vue'
 
 Construct ID に "Construct" という文字列が含まれていると、CDK の世界で止めるべき問題が CloudFormation テンプレートおよび AWS の世界に漏れてしまうため、好ましくありません。(Stack ID についても同様です)
 
-※ このルールは `Construct` または `Stack` から派生したクラスにのみ適用されます
-
 ---
 
 #### 🔧 使用方法

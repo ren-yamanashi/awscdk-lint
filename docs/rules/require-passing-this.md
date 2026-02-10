@@ -22,8 +22,6 @@ Passing other values as the scope (especially the `scope` variable received by t
 - Incorrect resource hierarchy in the generated CloudFormation template
 - Unexpected resource naming
 
-(This rule applies only to classes that extend `Construct`.)
-
 ---
 
 #### 🔧 How to use

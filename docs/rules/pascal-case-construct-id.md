@@ -18,8 +18,6 @@ This rule enforces writing Construct IDs in PascalCase.
 
 Enforcing a consistent naming convention helps developers manage logical IDs more easily, and as a result, helps reduce the risk of unintentional logical ID collisions.
 
-(This rule applies only to classes that extends from `Construct` or `Stack`.)
-
 ---
 
 #### 🔧 How to use

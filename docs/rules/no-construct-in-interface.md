@@ -14,8 +14,7 @@ import Playground from '../components/Playground.vue'
 
 This rule enforces specifying interfaces for read-only resources (e.g. `IBucket`) for properties in an `interface`.
 
-When AWS resource Constructs (e.g. `Bucket`) implements interfaces for read-only resources (e.g. `IBucket`), it is recommended to specify the read-only resource interface (e.g. `IBucket`) for interface properties.
-This helps prevent unintended resource modifications.
+When AWS resource Constructs (e.g. `Bucket`) implement interfaces for read-only resources (e.g. `IBucket`), it is recommended to specify the read-only resource interface (e.g. `IBucket`) for interface properties to help prevent unintended resource modifications.
 
 ---
 
