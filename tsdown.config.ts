@@ -9,4 +9,5 @@ export default defineConfig({
   outputOptions: { exports: "named" },
   treeshake: true,
   fixedExtension: true,
+  inlineOnly: false,
 });
