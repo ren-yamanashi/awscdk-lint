@@ -13,21 +13,7 @@ updates:
       dependencies:
         patterns:
           - "*"
-
-  # Keep ESLint v9 for classic config example
-  - package-ecosystem: "npm"
-    directory: "/examples/classic-config"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "02:00"
-      timezone: "Asia/Tokyo"
-    commit-message:
-      prefix: "chore"
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+    # Since typescript-eslint does not yet fully support ESLint v10, we will ignore the major update for ESLint for now.
     ignore:
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
