@@ -14,9 +14,9 @@ import Playground from '../components/Playground.vue'
 
 This rule enforces that all properties defined in CDK Construct props interface are actually used within the constructor.
 
-When developing CDK Constructs, it's common to define props interface with multiple properties, but developers may forget to use some of these properties in the constructor implementation. This leads to dead code.
+When developing CDK Constructs, it's common to define props interface with multiple properties, but developers may forget to use some of these properties in the Construct implementation, which leads to dead code.
 
-(This rule applies only to classes that extend `Construct`.)
+This rule helps you detect unused properties defined in the `Props` interface.
 
 ---
 

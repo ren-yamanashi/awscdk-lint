@@ -14,16 +14,14 @@ import Playground from '../../components/Playground.vue'
 <RecommendedItem japanese />
 <FixableItem japanese />
 
-このルールは `Construct` のコンストラクタに `this` を渡すことを強制します。
+このルールは CDK Construct のコンストラクタの第一引数に `this` を渡すことを強制します。
 
-AWS CDK リソースを作成するとき、`Construct` に `this` を渡すことは正しいリソース階層を維持するために重要です。
+AWS CDK リソースを作成するとき、Construct に `this` を渡すことは正しいリソース階層を維持するために重要です。
 
 Construct のコンストラクタの第一引数へ `this` 以外の値 (特に、親コンストラクタから受け取った `scope` 変数など) を渡してしまうと、次のような問題が発生する可能性があります
 
 - 生成される CloudFormation テンプレートのリソース階層が正しくない
 - 予期しないリソースの命名
-
-(このルールは `Construct` から派生したクラスにのみ適用されます)
 
 ---
 
@@ -41,7 +39,7 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -53,16 +51,16 @@ export class MyConstruct extends Construct {
 
     const sample = new SampleConstruct(this, "Sample");
 
-    // ✅ `this` は常に使用できます
+    // ✅ this を指定できる
     new Bucket(this, "SampleBucket");
 
-    // ✅ `sample` (Construct のインスタンス) をスコープとして渡すことが許可される
+    // ✅ 他の Construct インスタンス (この場合は sample) をスコープとして指定できる
     new OtherConstruct(sample, "Child");
   }
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -72,7 +70,7 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ❌ scope を使用すべきではありません
+    // ❌ scope を指定している
     new Bucket(scope, "SampleBucket");
   }
 }
@@ -92,10 +90,10 @@ const defaultOptions: Options = {
 
 ### `allowNonThisAndDisallowScope`
 
-Construct のコンストラクタの第一引数 (スコープ) として、`this` 以外の値を許可するかどうかを決定します。
+Construct のコンストラクタの第一引数 (scope) として、`this` 以外の値を許可するかどうかを決定します。
 
-- `false`: 新しい Construct をインスタンス化する際、第一引数 (スコープ) として `this` のみが許可されます
-- `true`: `this` 以外の Construct インスタンスを第一引数 (スコープ) として渡すことを許可します
+- `false`: 新しい Construct をインスタンス化する際、第一引数 (scope) として `this` のみが許可されます
+- `true`: `this` 以外の Construct インスタンスを第一引数 (scope) として渡すことを許可します
   - ただし、親コンストラクタが受け取った `scope` 変数を直接使用することは引き続き禁止されます
   - この設定は、ネストされた Construct 階層を作成する場合に便利です。
 
@@ -109,7 +107,7 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ✅ `this` は常に使用できます
+    // ✅ this を指定できる
     new Bucket(this, "SampleBucket");
   }
 }
@@ -127,10 +125,10 @@ export class MyConstruct extends Construct {
 
     const sample = new SampleConstruct(this, "Sample");
 
-    // ❌ scope を使用すべきではありません、
+    // ❌ scope を指定している
     new Bucket(scope, "SampleBucket");
 
-    // ❌ 他の Construct インスタンスをスコープとして使用すべきではありません。
+    // ❌ 他の Construct インスタンス (この場合は sample) をスコープとして指定している
     new OtherConstruct(sample, "Child");
   }
 }

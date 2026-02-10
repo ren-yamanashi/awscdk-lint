@@ -15,7 +15,6 @@ import Playground from '../components/Playground.vue'
 This rule disallows using the parent class name as the Construct ID.
 
 It is not recommended to specify a string that matches (or includes) the parent class name for the Construct ID, as it can make the CloudFormation resource hierarchy unclear.
-(This rule applies only to classes derived from `Construct` or `Stack`.)
 
 ---
 

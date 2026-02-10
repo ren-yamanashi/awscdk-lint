@@ -21,8 +21,6 @@ Using variables for Construct IDs is not appropriate because it may cause the fo
 - Resource recreation when parameters change
 - Overemphasis on ID uniqueness can lead to mixing in unnecessary strings, making IDs complex and hard to read
 
-(This rule applies only to classes that extends from `Construct`.)
-
 ---
 
 #### 🔧 How to use

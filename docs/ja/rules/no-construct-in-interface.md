@@ -12,7 +12,7 @@ import Playground from '../../components/Playground.vue'
 
 <RecommendedItem japanese />
 
-このルールは、`interface` のプロパティに、読み取り専用リソースのための interface (例: `IBucket`) を指定することを強制します。
+このルールは、interface のプロパティに指定する型として、書き込み可能な CDK Construct 型 (例: `Bucket`) の代わりに読み取り専用リソースのための interface (例: `IBucket`) を指定することを強制します。
 
 AWS リソースを表す Construct (例: `Bucket`) が、読み取り専用リソースのための interface (例: `IBucket`) を implements している場合、interface のプロパティには、読み取り専用リソースのための interface (例: `IBucket`) を指定することが推奨されます。  
 これにより、意図しないリソースの変更を防ぐことができます。
@@ -33,7 +33,7 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { IBucket } from "aws-cdk-lib/aws-s3";
@@ -41,24 +41,26 @@ import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { MetricFilter } from "aws-cdk-lib/aws-logs";
 
 interface MyConstructProps {
-  // ✅ 読み取り専用リソースのための interface (`IBucket` など) は使用できます
+  // ✅ 読み取り専用リソースのための interface (`IBucket` など) を指定している
   readonly bucket: IBucket;
 
-  // ✅ AWS リソースを表す Construct でない Construct (`DockerImageAsset` など) は使用できます
+  // ✅ AWS リソースを表す Construct でない Construct を指定している
   readonly asset: DockerImageAsset;
 
-  // ✅ 読み取り専用リソースのための interface が存在しない場合、 Construct 型 (`MetricFilter` など) は使用できます
+  // ✅ 読み取り専用リソースのための interface が存在しない場合、
+  //    AWS リソースを表す Construct 型 (`MetricFilter` など) は指定可能
   readonly metricFilter: MetricFilter;
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Bucket } from "aws-cdk-lib/aws-s3";
 
 interface MyConstructProps {
-  // ❌ 読み取り専用リソースのための interface が存在する場合、 Construct 型 (`Bucket` など) は使用すべきではありません
+  // ❌ 読み取り専用リソースのための interface が存在する場合、AWS リソースを表す Construct は指定不可
+  //    (Bucket は `IBucket` を implements しているため、`IBucket` を指定すべき)
   readonly bucket: Bucket;
 }
 ```

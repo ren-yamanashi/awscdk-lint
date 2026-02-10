@@ -14,14 +14,10 @@ import Playground from '../../components/Playground.vue'
 <RecommendedItem japanese />
 <FixableItem japanese />
 
-このルールは、CDK Construct の `public` プロパティを変更可能にすること(`readonly` 修飾子がない `public` プロパティの定義)を禁止するものです。
+このルールは、CDK Construct の `public` プロパティに `readonly` 修飾子を指定することを強制します
 
-Construct は多くの場合、状態を持つ AWS リソースを表します。  
-これらの `public` プロパティを `readonly` にすることで、Construct のインスタンス化後に意図しない変更が加えられることを防ぎ、予測可能で保守性の高いコードを実現できます。
-
-そのため、`public` プロパティには `readonly` 修飾子を指定することを推奨します。
-
-(このルールは `Construct` または `Stack` から派生したクラスにのみ適用されます)
+CDK Construct は多くの場合、状態を持つ AWS リソースを表します。  
+これらの `public` プロパティを `readonly` にすることで、Construct のインスタンス化後に意図しない変更が加えられることを防ぎます。
 
 ---
 
@@ -39,26 +35,29 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
 import { IBucket } from "aws-cdk-lib/aws-s3";
+import { Topic } from "aws-cdk-lib/aws-sns";
 
 export class MyConstruct extends Construct {
-  // ✅ `public` かつ `readonly` なプロパティは許可されます
+  // ✅ public プロパティに `readonly` 修飾子が指定されている
   public readonly bucket: IBucket;
+  // ✅ public でないプロパティには、このルールは適用されない
+  private topic: Topic; 
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 export class MyConstruct extends Construct {
-  // ❌ `public` プロパティは `readonly` にすべきです
+  // ❌ public プロパティに `readonly` 修飾子が指定されていない
   public bucket: IBucket;
 }
 ```

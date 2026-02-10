@@ -12,11 +12,9 @@ import Playground from '../../components/Playground.vue'
 
 <RecommendedItem japanese />
 
-このルールは、Construct ID および Stack ID に "Construct" または "Stack" 文字列を含めることを禁止します。
+このルールは Construct ID および Stack ID に、 "Construct" または "Stack" という文字列を含めることを禁止します。
 
 Construct ID に "Construct" という文字列が含まれていると、CDK の世界で止めるべき問題が CloudFormation テンプレートおよび AWS の世界に漏れてしまうため、好ましくありません。(Stack ID についても同様です)
-
-(このルールは `Construct` または `Stack` から派生したクラスにのみ適用されます)
 
 ---
 
@@ -34,7 +32,7 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -44,13 +42,13 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ✅ "Construct" および "Stack" suffix が追加されていない場合は許可されます
+    // ✅ "Construct" および "Stack" 文字列が含まれていない
     const bucket = new Bucket(this, "MyBucket");
   }
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -60,10 +58,10 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ❌ "Construct" suffix を使用すべきではありません
+    // ❌ "Construct" 文字列が含まれている
     const bucket = new Bucket(this, "BucketConstruct");
 
-    // ❌ "Stack" suffix を使用すべきではありません
+    // ❌ "Stack" 文字列が含まれている
     new Stack(this, "MyStack");
   }
 }
@@ -87,7 +85,7 @@ const defaultOptions: Options = {
 
 `{ disallowedSuffixes: ["Construct"] }` とした場合
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -97,13 +95,13 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ✅ "Construct" suffix が追加されていない場合は許可されます
+    // ✅ "Construct" 文字列が含まれていない
     new Stack(this, "MyStack");
   }
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -114,7 +112,7 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    // ❌ "Construct" suffix を使用すべきではありません
+    // ❌ "Construct" 文字列が含まれている
     const bucket = new Bucket(this, "BucketConstruct");
   }
 }

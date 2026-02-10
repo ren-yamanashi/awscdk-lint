@@ -18,8 +18,6 @@ All Construct constructors should follow a consistent property pattern to mainta
 
 Note: Additional parameters are allowed after the first three, as long as the initial parameters follow the prescribed pattern.
 
-(This rule applies only to classes that extends from `Construct`.)
-
 #### Enforced Property Patterns
 
 - Naming: `scope, id` or `scope, id, props`

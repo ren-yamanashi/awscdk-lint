@@ -16,9 +16,7 @@ import Playground from '../../components/Playground.vue'
 
 このルールは、Construct ID を PascalCase で記述することを強制します
 
-一貫した命名規則を強制することで、開発者が論理 ID を管理しやすくし、結果として、意図しない 論理 ID の衝突リスクを低減するのに役立ちます
-
-(このルールは `Construct` または `Stack` から派生したクラスにのみ適用されます)
+一貫した命名規則を強制することで、開発者が論理 ID を管理しやすくし、結果として意図しない論理 ID の衝突リスクを低減するのに役立ちます
 
 ---
 
@@ -36,27 +34,27 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Bucket } from "aws-cdk-lib/aws-s3";
 
-// ✅ PascalCase を使用できます
+// ✅ PascalCase
 const bucket = new Bucket(this, "MyBucket");
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Bucket } from "aws-cdk-lib/aws-s3";
 
-// ❌ camelCase は使用すべきではありません
+// ❌ camelCase
 const bucket = new Bucket(this, "myBucket");
 
-// ❌ snake_case は使用すべきではありません
+// ❌ snake_case
 const bucket = new Bucket(this, "my_bucket");
 
-// ❌ kebab-case は使用すべきではありません
+// ❌ kebab-case
 const bucket = new Bucket(this, "my-bucket");
 ```
 

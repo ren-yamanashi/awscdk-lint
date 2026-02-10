@@ -12,7 +12,7 @@ import Playground from '../../components/Playground.vue'
 
 <NotRecommendedItem japanese />
 
-このルールは、Construct の Props(interface) のプロパティと、 Construct の public プロパティに JSDoc の記載を必須とします。
+このルールは、Props (interface) のプロパティと、CDK Construct の public プロパティに JSDoc の記載を強制します。
 
 プロパティに JSDoc コメントを追加することで、各プロパティが何を表しているのかが明確になり、コードの保守性と理解のしやすさが向上します。
 
@@ -32,13 +32,13 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 interface MyConstructProps {
-  // ✅ JSDocコメントが記載されている
+  // ✅ Props のプロパティに JSDoc コメントが記載されている
   /** リソースに指定するS3バケット */
   readonly bucket: IBucket;
 }
@@ -49,22 +49,22 @@ import { Construct } from "constructs";
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 class MyConstruct extends Construct {
-  // ✅ JSDocコメントが記載されている
+  // ✅ Construct の public プロパティに JSDoc コメントが記載されている
   /** Constructで作成されたS3バケット */
   public readonly bucket: IBucket;
 
-  // ✅ publicでないプロパティには、このルールは適用されません
+  // ✅ public でないプロパティには、このルールは適用されない
   private readonly bucketName: string;
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 interface MyConstructProps {
-  // ❌ JSDocコメントを記載する必要があります
+  // ❌ Props のプロパティに JSDoc コメントが記載されていない
   readonly bucket: IBucket;
 }
 ```
@@ -74,7 +74,7 @@ import { Construct } from "constructs";
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 class MyConstruct extends Construct {
-  // ❌ JSDocコメントを記載する必要があります
+  // ❌ Construct の public プロパティに JSDoc コメントが記載されていない
   public readonly bucket: IBucket;
 }
 ```

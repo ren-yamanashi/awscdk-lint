@@ -14,10 +14,7 @@ import Playground from '../components/Playground.vue'
 
 This rule enforces specifying interfaces for read-only resources (e.g. `IBucket`) for `public` properties of a CDK Construct.
 
-When AWS resource Constructs (e.g. `Bucket`) implement interfaces for read-only resources (e.g. `IBucket`), it is recommended to specify the read-only resource interface (e.g. `IBucket`) for Construct `public` properties.
-This helps prevent unintended resource modifications.
-
-(This rule applies only to classes that extends from `Construct` or `Stack`.)
+When AWS resource Constructs (e.g. `Bucket`) implement interfaces for read-only resources (e.g. `IBucket`), it is recommended to specify the read-only resource interface (e.g. `IBucket`) for Construct `public` properties to help prevent unintended resource modifications.
 
 ---
 

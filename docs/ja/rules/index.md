@@ -90,42 +90,42 @@ import RuleItem from '../../components/RuleItem.vue'
   />
   <RuleItem
     name="no-construct-in-interface"
-    description="interface のプロパティに CDK Construct 型 (例: Bucket) を指定することを禁止します"
+    description="interface のプロパティに指定する型として、書き込み可能な CDK Construct 型 (例: Bucket) の代わりに読み取り専用リソースのための interface (例: IBucket) を指定することを強制します"
     link="/ja/rules/no-construct-in-interface"
     :isRecommended="true"
     :isFixable="false"
   />
   <RuleItem
     name="no-construct-in-public-property-of-construct"
-    description="CDK Construct の public プロパティに Construct 型 (例: Bucket) を指定することを禁止します"
+    description="CDK Construct の public プロパティに指定する型として、書き込み可能な CDK Construct 型 (例: Bucket) の代わりに読み取り専用リソースのための interface (例: IBucket) を指定することを強制します"
     link="/ja/rules/no-construct-in-public-property-of-construct"
     :isRecommended="true"
     :isFixable="false"
   />
   <RuleItem
     name="no-construct-stack-suffix"
-    description="Construct ID および Stack ID に 'Construct' または 'Stack' 文字列を含めることを禁止します"
+    description="Construct ID および Stack ID に 'Construct' または 'Stack' という文字列を含めることを禁止します"
     link="/ja/rules/no-construct-stack-suffix"
     :isRecommended="true"
     :isFixable="false"
   />
   <RuleItem
     name="no-import-private"
-    description="異なる階層レベルの private ディレクトリからのモジュールの import を禁止します"
+    description="異なる階層レベルの private ディレクトリからの import を禁止します"
     link="/ja/rules/no-import-private"
     :isRecommended="false"
     :isFixable="false"
   />
   <RuleItem
     name="no-mutable-property-of-props-interface"
-    description="Props (interface) のプロパティに readonly を指定することを強制します"
+    description="Props (interface) のプロパティに readonly 修飾子を指定することを強制します"
     link="/ja/rules/no-mutable-property-of-props-interface"
     :isRecommended="true"
     :isFixable="true"
   />
   <RuleItem
     name="no-mutable-public-property-of-construct"
-    description="Construct の public プロパティに readonly を指定することを強制します"
+    description="CDK Construct の public プロパティに readonly 修飾子を指定することを強制します"
     link="/ja/rules/no-mutable-public-property-of-construct"
     :isRecommended="true"
     :isFixable="true"
@@ -139,21 +139,21 @@ import RuleItem from '../../components/RuleItem.vue'
   />
   <RuleItem
     name="no-unused-props"
-    description="Construct の Props (interface) に定義されたすべてのプロパティがコンストラクタ内で使用されることを強制します"
+    description="CDK Construct の Props (interface) で定義された未使用のプロパティを検出します"
     link="/ja/rules/no-unused-props"
     :isRecommended="true"
     :isFixable="false"
   />
   <RuleItem
     name="no-variable-construct-id"
-    description="Construct ID に変数を使用しないように強制します"
+    description="Construct ID に変数を使用することを禁止します"
     link="/ja/rules/no-variable-construct-id"
     :isRecommended="true"
     :isFixable="false"
   />
   <RuleItem
     name="pascal-case-construct-id"
-    description="Construct ID に PascalCase を強制します"
+    description="Construct ID を PascalCase で記述することを強制します"
     link="/ja/rules/pascal-case-construct-id"
     :isRecommended="true"
     :isFixable="true"
@@ -174,14 +174,14 @@ import RuleItem from '../../components/RuleItem.vue'
   />
   <RuleItem
     name="require-jsdoc"
-    description="Props(interface) のプロパティと Construct の public プロパティに JSDoc の記載を必須とします"
+    description="Props (interface) のプロパティと CDK Construct の public プロパティに JSDoc の記載を強制します"
     link="/ja/rules/require-jsdoc"
     :isRecommended="false"
     :isFixable="false"
   />
   <RuleItem
     name="require-passing-this"
-    description="Construct のコンストラクタに this を渡すように強制します"
+    description="CDK Construct のコンストラクタの第一引数に this を渡すことを強制します"
     link="/ja/rules/require-passing-this"
     :isRecommended="true"
     :isFixable="true"

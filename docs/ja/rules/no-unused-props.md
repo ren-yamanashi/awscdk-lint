@@ -12,11 +12,11 @@ import Playground from '../../components/Playground.vue'
 
 <RecommendedItem japanese />
 
-このルールは、Construct の Props (interface) で定義されたすべてのプロパティが、Construct のコンストラクタ内で実際に使用されることを強制します。
+このルールは、CDK Construct の `Props` (interface) で定義されたすべてのプロパティが、Construct のコンストラクタ内で実際に使用されることを保証します。
 
-CDK Construct の開発では、複数のプロパティを持つ Props (interface) を定義することが一般的ですが、開発者がコンストラクタの実装でこれらのプロパティの一部を使用するのを忘れる場合があり、これはデッドコードを引き起こします
+CDK Construct の開発では、複数のプロパティを持つ `Props` (interface) を定義することが一般的ですが、開発者が Construct の実装でこれらのプロパティの一部を使用するのを忘れ、デッドコードが発生する場合があります。  
 
-(このルールは `Construct` を継承するクラスにのみ適用されます。)
+このルールを使用すると、`Props` (interface) で定義された未使用のプロパティを検出することができます。
 
 ---
 
@@ -34,7 +34,7 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -49,7 +49,7 @@ export class MyConstruct extends Construct {
   constructor(scope: Construct, id: string, props: MyConstructProps) {
     super(scope, id);
 
-    // ✅ すべてのpropsプロパティが使用されています
+    // ✅ すべてのプロパティが使用されている
     new Bucket(this, "MyBucket", {
       bucketName: props.bucketName,
       versioned: props.enableVersioning,
@@ -58,7 +58,7 @@ export class MyConstruct extends Construct {
 }
 ```
 
-#### ❌ 不正な例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -67,7 +67,7 @@ import { Bucket } from "aws-cdk-lib/aws-s3";
 interface MyConstructProps {
   readonly bucketName: string;
   readonly enableVersioning: boolean;
-  readonly unusedProp: string; // ❌ このプロパティは使用されていません
+  readonly unusedProp: string; // ❌ このプロパティは使用されていない
 }
 
 export class MyConstruct extends Construct {

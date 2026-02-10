@@ -12,13 +12,7 @@ import Playground from '../../components/Playground.vue'
 
 <RecommendedItem japanese />
 
-このルールは、CDK Construct の `constructor` が標準的なプロパティパターンを持つことを強制します。
-
-すべての Construct の constructor は、コードベース全体で一貫性を維持するために統一されたプロパティパターンを持つべきです。
-
-※最初の 3 つのプロパティがパターンに従っていれば、それ以降の追加プロパティは許可されます
-
-(このルールは `Construct` から派生したクラスにのみ適用されます)
+このルールは、CDK Construct の `constructor` が、以下の標準的なルールに従うことを強制します。
 
 #### 強制されるプロパティパターン
 
@@ -43,7 +37,7 @@ export default defineConfig([
 ]);
 ```
 
-#### ✅ 正しい例
+#### ✅ 適切な例
 
 ```ts
 import { Construct } from "constructs";
@@ -106,7 +100,7 @@ export class MyConstruct extends Construct {
 }
 ```
 
-#### ❌ 誤った例
+#### ❌ 不適切な例
 
 ```ts
 import { Construct } from "constructs";
