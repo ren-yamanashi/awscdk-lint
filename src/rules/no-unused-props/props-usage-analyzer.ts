@@ -178,7 +178,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
       // NOTE: Get the actual parameter names from the method definition
       for (const argIndex of propsArgIndices) {
         const param = methodDef.value.params[argIndex];
-        if (param && param.type === AST_NODE_TYPES.Identifier) {
+        if (param?.type === AST_NODE_TYPES.Identifier) {
           const visitor = new DirectPropsUsageVisitor(this.tracker, param.name);
           traverseNodes(methodDef.value.body, visitor);
         }

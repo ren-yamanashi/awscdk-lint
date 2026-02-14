@@ -15,7 +15,7 @@ import Playground from '../components/Playground.vue'
 This rule enforces that variables are not used in Construct IDs.
 
 Using variables for Construct IDs is not appropriate because it may cause the following problems.
-(This rule does not apply to loop processing such as for, while, forEach, map, etc.)
+(This rule does not apply to loop processing such as for, while, forEach, map, etc., or resources defined in arrow functions or class methods.)
 
 - Unnecessary duplication
 - Resource recreation when parameters change

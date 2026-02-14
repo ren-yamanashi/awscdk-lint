@@ -53,7 +53,7 @@ const validateConstructId = (
   node: TSESTree.NewExpression,
   context: Context
 ) => {
-  if (node.arguments.length < 2 || isInsideLoop(node)) return;
+  if (node.arguments.length < 2 || shouldSkipIdValidation(node)) return;
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
@@ -81,11 +81,13 @@ const validateConstructId = (
 };
 
 /**
- * Check if the node is inside a loop statement
+ * Check if construct ID validation should be skipped for a node.
+ * Skip if it is inside a loop statement, non-constructor method, or arrow function.
  */
-const isInsideLoop = (node: TSESTree.Node): boolean => {
+const shouldSkipIdValidation = (node: TSESTree.Node): boolean => {
   let current = node.parent;
   while (current) {
+    // Constructs defined in loops require variable IDs
     if (
       current.type === AST_NODE_TYPES.ForStatement ||
       current.type === AST_NODE_TYPES.ForInStatement ||
@@ -96,21 +98,18 @@ const isInsideLoop = (node: TSESTree.Node): boolean => {
       return true;
     }
 
-    // NOTE: Check for array methods like forEach, map, etc.
+    // Constructs defined in class methods are intended to be called multiple times,
+    // which requires variable IDs
     if (
-      current.type === AST_NODE_TYPES.CallExpression &&
-      current.callee.type === AST_NODE_TYPES.MemberExpression &&
-      current.callee.property.type === AST_NODE_TYPES.Identifier &&
-      [
-        "forEach",
-        "map",
-        "filter",
-        "reduce",
-        "flatMap",
-        "some",
-        "every",
-      ].includes(current.callee.property.name)
+      current.type === AST_NODE_TYPES.MethodDefinition &&
+      current.kind !== "constructor"
     ) {
+      return true;
+    }
+
+    // Constructs in arrow functions are also intended to be called multiple times.
+    // This includes usages of array methods like forEach, map, etc.
+    if (current.type === AST_NODE_TYPES.ArrowFunctionExpression) {
       return true;
     }
 

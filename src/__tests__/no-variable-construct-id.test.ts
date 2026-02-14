@@ -129,6 +129,72 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
       }
     `,
     },
+    // WHEN: id is variable in a non-constructor method
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          this.myMethod('id', 1);
+          this.myMethod('id', 2);
+          ['a', 'b', 'c'].map(item => this.myMethod(item, 3));
+        }
+        myMethod(id: string, num: number) {
+          return new TargetConstruct(this, id + num);
+        }
+      }
+    `,
+    },
+    // WHEN: id is variable in an arrow function in constructor
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const myArrowFunction = (id: string, num: number) => {
+            return new TargetConstruct(this, id + num);
+          };
+          myArrowFunction('id', 1);
+          myArrowFunction('id', 2);
+          ['a', 'b', 'c'].map(item => myArrowFunction(item, 3));
+        }
+      }
+    `,
+    },
+    // WHEN: id is variable in an arrow function as class member
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class SampleConstruct extends Construct {
+        myArrowFunction = (id: string, num: number) => {
+          return new TargetConstruct(this, id + num);
+        };
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          this.myArrowFunction('id', 1);
+          this.myArrowFunction('id', 2);
+          ['a', 'b', 'c'].map(item => this.myArrowFunction(item, 3));
+        }
+      }
+    `,
+    },
     // WHEN: property name is not `id`
     {
       code: `
