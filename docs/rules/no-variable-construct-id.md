@@ -58,6 +58,14 @@ class MyConstruct extends Construct {
     for (const [key, value] of Object.entries(props.environments)) {
       new Bucket(this, `${key}Bucket`);
     }
+
+    // ✅ Variables can be used for Construct IDs within arrow functions
+    const myArrowFunction = (id: string) => new Bucket(this, id);
+  }
+
+  // ✅ Variables can be used for Construct IDs within class methods
+  myClassMethod(id: string) {
+    return new Bucket(this, id);
   }
 }
 ```

@@ -58,6 +58,14 @@ class MyConstruct extends Construct {
     for (const [key, value] of Object.entries(props.environments)) {
       new Bucket(this, `${key}Bucket`);
     }
+
+    // ✅ Arrow function の内では Construct ID に変数を指定可能
+    const myArrowFunction = (id: string) => new Bucket(this, id);
+  }
+
+  // ✅ Class method の内では Construct ID に変数を指定可能
+  myClassMethod(id: string) {
+    return new Bucket(this, id);
   }
 }
 ```
