@@ -28,7 +28,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: 110.29.3
+          version: 10.29.3
           run_install: false
       - name: Install Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
