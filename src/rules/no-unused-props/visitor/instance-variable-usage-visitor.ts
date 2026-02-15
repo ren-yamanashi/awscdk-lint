@@ -33,7 +33,7 @@ import { INodeVisitor } from "./interface/node-visitor";
 export class InstanceVariableUsageVisitor implements INodeVisitor {
   constructor(
     private readonly tracker: IPropsUsageTracker,
-    private readonly instanceVarName: string
+    private readonly instanceVarName: string,
   ) {}
 
   visitMemberExpression(node: TSESTree.MemberExpression): void {
@@ -92,18 +92,12 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
 
       // NOTE: Exclusion A - Skip if this is part of a property access (this.myProps.xxx)
       // The parent MemberExpression's object being this node means we're accessing a property
-      if (
-        parent?.type === AST_NODE_TYPES.MemberExpression &&
-        parent.object === node
-      ) {
+      if (parent?.type === AST_NODE_TYPES.MemberExpression && parent.object === node) {
         return;
       }
 
       // NOTE: Exclusion B - Skip if this is the left side of an assignment (this.myProps = ...)
-      if (
-        parent?.type === AST_NODE_TYPES.AssignmentExpression &&
-        parent.left === node
-      ) {
+      if (parent?.type === AST_NODE_TYPES.AssignmentExpression && parent.left === node) {
         return;
       }
 

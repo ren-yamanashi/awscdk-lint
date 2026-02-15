@@ -55,8 +55,8 @@ export default defineConfig([
     extends: [cdkPlugin.configs.recommended], // or cdkPlugin.configs.strict
     rules: {
       // ✅ Add rules (use custom rules)
-      "awscdk/require-jsdoc": "warn"
-    }
+      "awscdk/require-jsdoc": "warn",
+    },
   },
 ]);
 ```
@@ -83,13 +83,13 @@ module.exports = {
   rules: {
     // ✅ Add rules (use custom rules)
     "awscdk/require-jsdoc": "warn",
-  }
+  },
 };
 ```
 
 ## eslint-cdk-plugin からの移行
 
- 本パッケージは以前 `eslint-cdk-plugin` として提供しておりましたが、v4.0.0 以降、ESLint の公式命名規則に従うため `eslint-plugin-awscdk` に名称変更いたしました。
+本パッケージは以前 `eslint-cdk-plugin` として提供しておりましたが、v4.0.0 以降、ESLint の公式命名規則に従うため `eslint-plugin-awscdk` に名称変更いたしました。
 
 ### 移行手順
 

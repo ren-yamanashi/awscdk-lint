@@ -6,11 +6,10 @@ import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
  * @returns The constructor method definition or undefined if not found
  */
 export const findConstructor = (
-  node: TSESTree.ClassDeclaration
+  node: TSESTree.ClassDeclaration,
 ): TSESTree.MethodDefinition | undefined => {
   return node.body.body.find(
     (member): member is TSESTree.MethodDefinition =>
-      member.type === AST_NODE_TYPES.MethodDefinition &&
-      member.kind === "constructor"
+      member.type === AST_NODE_TYPES.MethodDefinition && member.kind === "constructor",
   );
 };

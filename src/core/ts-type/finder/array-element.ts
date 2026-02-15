@@ -2,7 +2,6 @@ import { Type } from "typescript";
 
 import { isArrayType } from "../checker/is-array";
 
-
 /**
  * Find the element type of an array type (e.g. for s3.Bucket[], returns s3.Bucket)
  * @param type - The type to check

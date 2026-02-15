@@ -59,6 +59,8 @@ jobs:
         run: pnpm run check
       - name: Lint
         run: pnpm run lint
+      - name: Format
+        run: pnpm run fmt:check
       - name: Upload package artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

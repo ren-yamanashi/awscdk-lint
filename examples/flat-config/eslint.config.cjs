@@ -14,18 +14,10 @@ module.exports = defineConfig([
         "error",
         // { allowNonThisAndDisallowScope: true },
       ],
-      "awscdk/no-parent-name-construct-id-match": [
-        "error",
-        { disallowContainingParentName: true },
-      ],
+      "awscdk/no-parent-name-construct-id-match": ["error", { disallowContainingParentName: true }],
     },
   },
   {
-    ignores: [
-      "eslint.config.mjs",
-      "eslint.config.cjs",
-      "*.d.ts",
-      "node_modules",
-    ],
+    ignores: ["eslint.config.mjs", "eslint.config.cjs", "*.d.ts", "node_modules"],
   },
 ]);

@@ -51,14 +51,6 @@ export default defineConfig(
     },
   },
   {
-    ignores: [
-      "*.js",
-      "dist",
-      "node_modules",
-      ".vscode",
-      "package.json",
-      "docs",
-      "examples",
-    ],
-  }
+    ignores: ["*.js", "dist", "node_modules", ".vscode", "package.json", "docs", "examples"],
+  },
 );

@@ -839,5 +839,5 @@ ruleTester.run(
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
     ],
-  }
+  },
 );

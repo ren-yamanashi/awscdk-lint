@@ -12,8 +12,7 @@ export const noImportPrivate: Rule.RuleModule = {
     type: "problem",
     docs: {
       url: "https://eslint-plugin-awscdk.dev/rules/no-import-private",
-      description:
-        "Cannot import modules from private dir at different levels of the hierarchy.",
+      description: "Cannot import modules from private dir at different levels of the hierarchy.",
     },
     messages: {
       invalidImportPath:
@@ -39,9 +38,7 @@ export const noImportPrivate: Rule.RuleModule = {
         const importDirSegments = getDirSegments(importDirBeforePrivate);
         if (
           currentDirSegments.length !== importDirSegments.length ||
-          currentDirSegments.some(
-            (segment, index) => segment !== importDirSegments[index]
-          )
+          currentDirSegments.some((segment, index) => segment !== importDirSegments[index])
         ) {
           context.report({ node, messageId: "invalidImportPath" });
         }

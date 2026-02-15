@@ -10,19 +10,13 @@ import {
 } from "./visitor";
 
 export interface IPropsUsageAnalyzer {
-  analyze(
-    constructor: TSESTree.MethodDefinition,
-    propsParam: TSESTree.Identifier
-  ): void;
+  analyze(constructor: TSESTree.MethodDefinition, propsParam: TSESTree.Identifier): void;
 }
 
 export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   constructor(private readonly tracker: IPropsUsageTracker) {}
 
-  analyze(
-    constructor: TSESTree.MethodDefinition,
-    propsParam: TSESTree.Identifier
-  ): void {
+  analyze(constructor: TSESTree.MethodDefinition, propsParam: TSESTree.Identifier): void {
     const constructorBody = constructor.value.body;
     const classNode = constructor.parent;
     const propsParamName = propsParam.name;
@@ -34,7 +28,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     this.checkUsageForPrivateMethodsCalledFromConstructor(
       constructorBody,
       classNode,
-      propsParamName
+      propsParamName,
     );
   }
 
@@ -54,12 +48,9 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    */
   private checkUsageForDirectAccess(
     constructorBody: TSESTree.BlockStatement,
-    propsParamName: string
+    propsParamName: string,
   ): void {
-    const directVisitor = new DirectPropsUsageVisitor(
-      this.tracker,
-      propsParamName
-    );
+    const directVisitor = new DirectPropsUsageVisitor(this.tracker, propsParamName);
     traverseNodes(constructorBody, directVisitor);
   }
 
@@ -83,7 +74,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    */
   private checkUsageForAliasAccess(
     constructorBody: TSESTree.BlockStatement,
-    propsParamName: string
+    propsParamName: string,
   ): void {
     const aliasVisitor = new PropsAliasVisitor(this.tracker, propsParamName);
     traverseNodes(constructorBody, aliasVisitor);
@@ -118,19 +109,13 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   private checkUsageForInstanceVariable(
     classBody: TSESTree.ClassBody,
     constructor: TSESTree.MethodDefinition,
-    propsParamName: string
+    propsParamName: string,
   ) {
     if (!constructor.value.body) return;
-    const instanceVarName = this.findPropsInstanceVariable(
-      constructor.value.body,
-      propsParamName
-    );
+    const instanceVarName = this.findPropsInstanceVariable(constructor.value.body, propsParamName);
     if (!instanceVarName) return;
 
-    const instanceVisitor = new InstanceVariableUsageVisitor(
-      this.tracker,
-      instanceVarName
-    );
+    const instanceVisitor = new InstanceVariableUsageVisitor(this.tracker, instanceVarName);
     traverseNodes(classBody, instanceVisitor);
   }
 
@@ -162,13 +147,10 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   private checkUsageForPrivateMethodsCalledFromConstructor(
     constructorBody: TSESTree.BlockStatement,
     classBody: TSESTree.ClassBody,
-    propsParamName: string
+    propsParamName: string,
   ): void {
     // NOTE: Collect method calls in constructor
-    const methodCallsWithProps = this.collectMethodCallsWithProps(
-      constructorBody,
-      propsParamName
-    );
+    const methodCallsWithProps = this.collectMethodCallsWithProps(constructorBody, propsParamName);
 
     // NOTE: For each method call, find the method definition and analyze it
     for (const { methodName, propsArgIndices } of methodCallsWithProps) {
@@ -207,7 +189,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    */
   private collectMethodCallsWithProps(
     body: TSESTree.BlockStatement,
-    propsParamName: string
+    propsParamName: string,
   ): { methodName: string; propsArgIndices: number[] }[] {
     const visitor = new MethodCallCollectorVisitor(propsParamName);
     traverseNodes(body, visitor);
@@ -246,15 +228,14 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    */
   private findPropsInstanceVariable(
     body: TSESTree.BlockStatement,
-    propsParamName: string
+    propsParamName: string,
   ): string | null {
     for (const statement of body.body) {
       if (
         statement.type === AST_NODE_TYPES.ExpressionStatement &&
         statement.expression.type === AST_NODE_TYPES.AssignmentExpression &&
         statement.expression.left.type === AST_NODE_TYPES.MemberExpression &&
-        statement.expression.left.object.type ===
-          AST_NODE_TYPES.ThisExpression &&
+        statement.expression.left.object.type === AST_NODE_TYPES.ThisExpression &&
         statement.expression.left.property.type === AST_NODE_TYPES.Identifier &&
         statement.expression.right.type === AST_NODE_TYPES.Identifier &&
         statement.expression.right.name === propsParamName
@@ -298,7 +279,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    */
   private findMethodDefinition(
     classBody: TSESTree.ClassBody,
-    methodName: string
+    methodName: string,
   ): TSESTree.MethodDefinition | null {
     for (const member of classBody.body) {
       if (

@@ -93,12 +93,7 @@ export interface MyConstructProps {
 
 // ✅ Constructor with additional parameters after "scope, id, props"
 export class MyConstruct extends Construct {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: MyConstructProps,
-    resourceName: string
-  ) {
+  constructor(scope: Construct, id: string, props: MyConstructProps, resourceName: string) {
     super(scope, id);
   }
 }

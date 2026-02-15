@@ -4,10 +4,7 @@ import { findChildNodes } from "../../../core/ast-node/finder/child-nodes";
 
 import { INodeVisitor } from "./interface/node-visitor";
 
-export const traverseNodes = (
-  node: TSESTree.Node,
-  visitor: INodeVisitor
-): void => {
+export const traverseNodes = (node: TSESTree.Node, visitor: INodeVisitor): void => {
   switch (node.type) {
     case AST_NODE_TYPES.MemberExpression: {
       visitor.visitMemberExpression?.(node);

@@ -7,6 +7,10 @@
     "lint:esm": "eslint --config eslint.config.mjs",
     "lint:cjs": "eslint --config eslint.config.cjs"
   },
+  "dependencies": {
+    "aws-cdk-lib": "latest",
+    "constructs": "latest"
+  },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@types/node": "^25.0.3",
@@ -14,9 +18,5 @@
     "eslint-plugin-awscdk": "workspace:*",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.46.2"
-  },
-  "dependencies": {
-    "aws-cdk-lib": "latest",
-    "constructs": "latest"
   }
 }

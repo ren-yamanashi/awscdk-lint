@@ -6,12 +6,10 @@ export const migrateDisableComments = createRule({
     type: "problem",
     fixable: "code",
     docs: {
-      description:
-        "Migrate deprecated 'cdk/' ESLint disable comments to 'awscdk/'",
+      description: "Migrate deprecated 'cdk/' ESLint disable comments to 'awscdk/'",
     },
     messages: {
-      migrateDisableComment:
-        "Replace 'cdk/' with 'awscdk/' in ESLint disable comments.",
+      migrateDisableComment: "Replace 'cdk/' with 'awscdk/' in ESLint disable comments.",
     },
     schema: [],
   },
@@ -27,10 +25,7 @@ export const migrateDisableComments = createRule({
               messageId: "migrateDisableComment",
               fix: (fixer) => {
                 const text = context.sourceCode.getText(comment);
-                return fixer.replaceText(
-                  comment,
-                  text.replace("cdk/", "awscdk/")
-                );
+                return fixer.replaceText(comment, text.replace("cdk/", "awscdk/"));
               },
             });
             continue;
@@ -41,10 +36,7 @@ export const migrateDisableComments = createRule({
               messageId: "migrateDisableComment",
               fix: (fixer) => {
                 const text = context.sourceCode.getText(comment);
-                return fixer.replaceText(
-                  comment,
-                  text.replace("cdk/", "awscdk/")
-                );
+                return fixer.replaceText(comment, text.replace("cdk/", "awscdk/"));
               },
             });
           }

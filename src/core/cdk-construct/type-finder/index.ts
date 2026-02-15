@@ -23,9 +23,7 @@ export const findTypeOfCdkConstruct = (type: Type): Type | undefined => {
 /**
  * Find Construct type from an array type (e.g. s3.Bucket[])
  */
-const findFromArray = (
-  type: Type
-): Type | undefined => {
+const findFromArray = (type: Type): Type | undefined => {
   const arrElementType = findArrayElementType(type);
   if (!arrElementType) return undefined;
 
@@ -35,9 +33,7 @@ const findFromArray = (
 /**
  * Find Construct type from a generics type (e.g. Array<s3.Bucket>, Promise<s3.Bucket[]>)
  */
-const findFromGenerics = (
-  type: Type
-): Type | undefined => {
+const findFromGenerics = (type: Type): Type | undefined => {
   const genericsArgument = findGenericsTypeArgument(type);
   if (!genericsArgument) return undefined;
 
@@ -47,9 +43,7 @@ const findFromGenerics = (
 /**
  * Find Construct type from a union type (e.g. s3.Bucket | string)
  */
-const findFromUnion = (
-  type: Type
-): Type | undefined => {
+const findFromUnion = (type: Type): Type | undefined => {
   if (!type.isUnion()) return undefined;
 
   for (const unionType of type.types) {
@@ -61,9 +55,7 @@ const findFromUnion = (
 /**
  * Find Construct type from an intersection type (e.g. s3.Bucket & { customProp: string })
  */
-const findFromIntersection = (
-  type: Type
-): Type | undefined => {
+const findFromIntersection = (type: Type): Type | undefined => {
   if (!type.isIntersection()) return undefined;
 
   for (const intersectionType of type.types) {

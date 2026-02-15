@@ -89,12 +89,7 @@ export interface MyConstructProps {
 
 // ✅ "scope, id, props" の後に追加プロパティを持つ constructor
 export class MyConstruct extends Construct {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: MyConstructProps,
-    resourceName: string
-  ) {
+  constructor(scope: Construct, id: string, props: MyConstructProps, resourceName: string) {
     super(scope, id);
   }
 }

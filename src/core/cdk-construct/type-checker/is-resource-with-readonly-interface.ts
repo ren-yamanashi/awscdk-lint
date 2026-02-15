@@ -65,16 +65,14 @@ const hasMatchingInterfaceInHierarchy = (type: Type): boolean => {
     // NOTE: Check if any interface matches this class name
     if (
       directInterfaces.some((interfaceName) =>
-        checkInterfaceMatchClassName(interfaceName, currentClassName)
+        checkInterfaceMatchClassName(interfaceName, currentClassName),
       )
     ) {
       return true;
     }
 
     const baseTypes = currentType.getBaseTypes?.() ?? [];
-    return baseTypes.some(
-      (baseType) => isClassType(baseType) && checkTypeAndBases(baseType)
-    );
+    return baseTypes.some((baseType) => isClassType(baseType) && checkTypeAndBases(baseType));
   };
 
   return checkTypeAndBases(type);
@@ -92,12 +90,9 @@ const hasMatchingInterfaceInHierarchy = (type: Type): boolean => {
  * @param classname - The name of the class to compare against
  * @returns boolean - true if the interface name matches the class name patterns, false otherwise
  */
-const checkInterfaceMatchClassName = (
-  interfaceName: string,
-  classname: string
-) => {
+const checkInterfaceMatchClassName = (interfaceName: string, classname: string) => {
   const simpleInterfaceName = interfaceName.includes(".")
-    ? interfaceName.split(".").pop() ?? interfaceName
+    ? (interfaceName.split(".").pop() ?? interfaceName)
     : interfaceName;
 
   // Pattern 1: Class name with I prefix
@@ -105,10 +100,7 @@ const checkInterfaceMatchClassName = (
 
   // Pattern 2: Class name without Base suffix/prefix with I prefix
   const classNameWithoutBase = classname.replace(/^Base|Base$/g, "");
-  if (
-    classNameWithoutBase &&
-    simpleInterfaceName === `I${classNameWithoutBase}`
-  ) {
+  if (classNameWithoutBase && simpleInterfaceName === `I${classNameWithoutBase}`) {
     return true;
   }
 
@@ -129,9 +121,7 @@ const getDirectImplementedInterfaceNames = (type: Type): string[] => {
   const symbol = type.getSymbol?.() ?? type.symbol;
   if (!symbol?.name) return [];
 
-  const declarations = symbol.getDeclarations
-    ? symbol.getDeclarations()
-    : symbol.declarations;
+  const declarations = symbol.getDeclarations ? symbol.getDeclarations() : symbol.declarations;
   if (!declarations?.length) return [];
 
   return declarations.reduce<string[]>((acc, decl) => {

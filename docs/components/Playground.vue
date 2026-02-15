@@ -23,18 +23,8 @@ const props = defineProps({
         fill="none"
         viewBox="0 0 24 24"
       >
-        <path
-          d="M14 3h7v7"
-          stroke="currentColor"
-          stroke-width="2"
-          fill="none"
-        />
-        <path
-          d="M21 3l-12 12"
-          stroke="currentColor"
-          stroke-width="2"
-          fill="none"
-        />
+        <path d="M14 3h7v7" stroke="currentColor" stroke-width="2" fill="none" />
+        <path d="M21 3l-12 12" stroke="currentColor" stroke-width="2" fill="none" />
         <rect
           x="5"
           y="5"

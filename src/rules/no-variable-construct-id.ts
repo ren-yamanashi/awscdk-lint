@@ -1,9 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
@@ -49,28 +44,19 @@ export const noVariableConstructId = createRule({
 /**
  * Check if the construct ID is a literal string
  */
-const validateConstructId = (
-  node: TSESTree.NewExpression,
-  context: Context
-) => {
+const validateConstructId = (node: TSESTree.NewExpression, context: Context) => {
   if (node.arguments.length < 2 || shouldSkipIdValidation(node)) return;
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
 
   // NOTE: When id is string literal, it's OK
-  if (
-    secondArg.type === AST_NODE_TYPES.Literal &&
-    typeof secondArg.value === "string"
-  ) {
+  if (secondArg.type === AST_NODE_TYPES.Literal && typeof secondArg.value === "string") {
     return;
   }
 
   // NOTE: When id is template literal, only those without expressions are OK
-  if (
-    secondArg.type === AST_NODE_TYPES.TemplateLiteral &&
-    !secondArg.expressions.length
-  ) {
+  if (secondArg.type === AST_NODE_TYPES.TemplateLiteral && !secondArg.expressions.length) {
     return;
   }
 
@@ -100,10 +86,7 @@ const shouldSkipIdValidation = (node: TSESTree.Node): boolean => {
 
     // Constructs defined in class methods are intended to be called multiple times,
     // which requires variable IDs
-    if (
-      current.type === AST_NODE_TYPES.MethodDefinition &&
-      current.kind !== "constructor"
-    ) {
+    if (current.type === AST_NODE_TYPES.MethodDefinition && current.kind !== "constructor") {
       return true;
     }
 

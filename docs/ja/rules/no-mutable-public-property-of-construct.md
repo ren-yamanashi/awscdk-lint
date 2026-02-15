@@ -46,7 +46,7 @@ export class MyConstruct extends Construct {
   // ✅ public プロパティに `readonly` 修飾子が指定されている
   public readonly bucket: IBucket;
   // ✅ public でないプロパティには、このルールは適用されない
-  private topic: Topic; 
+  private topic: Topic;
 }
 ```
 

@@ -42,11 +42,10 @@ export class MethodCallCollectorVisitor implements INodeVisitor {
     const methodName = node.callee.property.name;
     const propsArgIndices = node.arguments.reduce<number[]>(
       (acc, arg, index) =>
-        arg.type === AST_NODE_TYPES.Identifier &&
-        arg.name === this.propsParamName
+        arg.type === AST_NODE_TYPES.Identifier && arg.name === this.propsParamName
           ? [...acc, index]
           : acc,
-      []
+      [],
     );
 
     if (propsArgIndices.length) {

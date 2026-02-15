@@ -25,7 +25,7 @@ export class PropsAliasVisitor implements INodeVisitor {
 
   constructor(
     private readonly tracker: IPropsUsageTracker,
-    private readonly propsParamName: string
+    private readonly propsParamName: string,
   ) {}
 
   visitMemberExpression(node: TSESTree.MemberExpression): void {

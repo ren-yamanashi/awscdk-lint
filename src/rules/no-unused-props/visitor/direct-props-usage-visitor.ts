@@ -27,7 +27,7 @@ import { INodeVisitor } from "./interface/node-visitor";
 export class DirectPropsUsageVisitor implements INodeVisitor {
   constructor(
     private readonly tracker: IPropsUsageTracker,
-    private readonly propsParamName: string
+    private readonly propsParamName: string,
   ) {}
 
   visitMemberExpression(node: TSESTree.MemberExpression): void {

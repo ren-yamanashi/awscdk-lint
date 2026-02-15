@@ -1,8 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
@@ -12,8 +8,7 @@ export const preferGrantsProperty = createRule({
   meta: {
     type: "suggestion",
     docs: {
-      description:
-        "Prefer using the grants property over grant* methods when available.",
+      description: "Prefer using the grants property over grant* methods when available.",
     },
     messages: {
       useGrantsProperty:
@@ -46,10 +41,7 @@ export const preferGrantsProperty = createRule({
         const grantsProperty = type.getProperty("grants");
         if (!grantsProperty) return;
 
-        const grantsType = checker.getTypeOfSymbolAtLocation(
-          grantsProperty,
-          tsNode
-        );
+        const grantsType = checker.getTypeOfSymbolAtLocation(grantsProperty, tsNode);
         const grantsTypeName = grantsType.symbol?.name;
         if (!grantsTypeName?.endsWith("Grants")) return;
 
@@ -61,9 +53,7 @@ export const preferGrantsProperty = createRule({
         if (!suggestedMethod) return;
 
         const objectName =
-          objectNode.type === AST_NODE_TYPES.Identifier
-            ? objectNode.name
-            : "object";
+          objectNode.type === AST_NODE_TYPES.Identifier ? objectNode.name : "object";
 
         context.report({
           node: node.callee.property,

@@ -2,9 +2,33 @@
   "name": "eslint-plugin-awscdk",
   "version": "4.2.0",
   "description": "eslint plugin for AWS CDK projects",
+  "keywords": [
+    "aws",
+    "aws-cdk",
+    "eslint",
+    "eslint-plugin",
+    "eslint-plugin-awscdk",
+    "typescript"
+  ],
+  "homepage": "https://eslint-plugin-awscdk.dev/",
+  "license": "MIT",
+  "author": {
+    "name": "ren-yamanashi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ren-yamanashi/eslint-plugin-awscdk.git"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/__tests__",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
-  "type": "module",
   "exports": {
     "types": "./dist/index.d.mts",
     "require": {
@@ -16,11 +40,16 @@
       "default": "./dist/index.mjs"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown",
     "test": "vitest --run",
     "test:integration": "sh scripts/integration-test.sh",
     "lint": "eslint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "check": "tsgo --noEmit",
     "pack": "pnpm run build && npm pack",
     "docs": "pnpm run --filter=@eslint-plugin-awscdk/docs",
@@ -38,6 +67,7 @@
     "@typescript/native-preview": "^7.0.0-dev.20250601",
     "eslint": "^9.39.1",
     "eslint-plugin-import": "^2.32.0",
+    "oxfmt": "^0.32.0",
     "secretlint": "^11.2.5",
     "tsdown": "^0.20.3",
     "typescript": "^5.9.3",
@@ -51,38 +81,5 @@
   "engines": {
     "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
   },
-  "packageManager": "pnpm@10.10.0",
-  "files": [
-    "dist",
-    "src",
-    "!src/__tests__",
-    "README.md",
-    "LICENSE"
-  ],
-  "keywords": [
-    "eslint",
-    "eslint plugin",
-    "eslint-plugin",
-    "eslint plugin cdk",
-    "eslint-plugin-cdk",
-    "eslint plugin awscdk",
-    "eslint-plugin-awscdk",
-    "typescript",
-    "aws",
-    "cdk",
-    "aws cdk",
-    "aws-cdk"
-  ],
-  "homepage": "https://eslint-plugin-awscdk.dev/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ren-yamanashi/eslint-plugin-awscdk.git"
-  },
-  "author": {
-    "name": "ren-yamanashi"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "MIT"
+  "packageManager": "pnpm@10.29.3"
 }

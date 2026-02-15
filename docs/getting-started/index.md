@@ -54,8 +54,8 @@ export default defineConfig([
     extends: [cdkPlugin.configs.recommended], // or cdkPlugin.configs.strict
     rules: {
       // ✅ Add rules (use custom rules)
-      "awscdk/require-jsdoc": "warn"
-    }
+      "awscdk/require-jsdoc": "warn",
+    },
   },
 ]);
 ```
@@ -82,7 +82,7 @@ module.exports = {
   rules: {
     // ✅ Add rules (use custom rules)
     "awscdk/require-jsdoc": "warn",
-  }
+  },
 };
 ```
 

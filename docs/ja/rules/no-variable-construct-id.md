@@ -84,7 +84,7 @@ class MyConstruct extends Construct {
   constructor(scope: Construct, id: string, props: MyConstructProps) {
     super(scope, id);
 
-    // ❌ Construct ID に constructor の id プロパティを直接指定している 
+    // ❌ Construct ID に constructor の id プロパティを直接指定している
     //    (Construct ID に変数を直接指定している)
     new Bucket(this, id);
 

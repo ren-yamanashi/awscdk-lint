@@ -14,7 +14,7 @@ import Playground from '../../components/Playground.vue'
 
 このルールは、CDK Construct の `Props` (interface) で定義されたすべてのプロパティが、Construct のコンストラクタ内で実際に使用されることを保証します。
 
-CDK Construct の開発では、複数のプロパティを持つ `Props` (interface) を定義することが一般的ですが、開発者が Construct の実装でこれらのプロパティの一部を使用するのを忘れ、デッドコードが発生する場合があります。  
+CDK Construct の開発では、複数のプロパティを持つ `Props` (interface) を定義することが一般的ですが、開発者が Construct の実装でこれらのプロパティの一部を使用するのを忘れ、デッドコードが発生する場合があります。
 
 このルールを使用すると、`Props` (interface) で定義された未使用のプロパティを検出することができます。
 

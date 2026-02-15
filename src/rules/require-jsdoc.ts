@@ -1,8 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  AST_TOKEN_TYPES,
-  ESLintUtils,
-} from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, AST_TOKEN_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
@@ -21,8 +17,7 @@ export const requireJSDoc = createRule({
         "Require JSDoc comments for interface properties and public properties in Construct classes",
     },
     messages: {
-      missingJSDoc:
-        "Property '{{ propertyName }}' should have a JSDoc comment.",
+      missingJSDoc: "Property '{{ propertyName }}' should have a JSDoc comment.",
     },
     schema: [],
   },
@@ -44,8 +39,7 @@ export const requireJSDoc = createRule({
         const sourceCode = context.sourceCode;
         const comments = sourceCode.getCommentsBefore(node);
         const hasJSDoc = comments.some(
-          ({ type, value }) =>
-            type === AST_TOKEN_TYPES.Block && value.startsWith("*")
+          ({ type, value }) => type === AST_TOKEN_TYPES.Block && value.startsWith("*"),
         );
 
         if (!hasJSDoc) {
@@ -85,8 +79,7 @@ export const requireJSDoc = createRule({
         const sourceCode = context.sourceCode;
         const comments = sourceCode.getCommentsBefore(node);
         const hasJSDoc = comments.some(
-          ({ type, value }) =>
-            type === AST_TOKEN_TYPES.Block && value.startsWith("*")
+          ({ type, value }) => type === AST_TOKEN_TYPES.Block && value.startsWith("*"),
         );
 
         if (!hasJSDoc) {

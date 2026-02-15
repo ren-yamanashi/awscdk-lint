@@ -10,5 +10,5 @@ module.exports = {
     sourceType: "module",
     project: "./tsconfig.json",
   },
-  plugins: ["@typescript-eslint", "awscdk"]
+  plugins: ["@typescript-eslint", "awscdk"],
 };
