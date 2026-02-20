@@ -33,7 +33,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 24.11.0
+          node-version: 24.13.1
           cache: "pnpm"
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -130,7 +130,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 24.11.0
+          node-version: 24.13.1
           registry-url: "https://registry.npmjs.org"
 
       - name: Update npm

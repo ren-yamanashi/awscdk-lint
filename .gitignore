@@ -1,5 +1,8 @@
 node_modules/
 dist/
+
+# IDE
+.vscode/
+.claude/
 .DS_Store
 *.tgz
-.claude/

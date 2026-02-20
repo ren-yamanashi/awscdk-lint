@@ -1,6 +1,7 @@
-import { ClassicConfig, FlatConfig } from "@typescript-eslint/utils/ts-eslint";
+import { ClassicConfig } from "@typescript-eslint/utils/ts-eslint";
 
 import { configs } from "./configs";
+import { CompatibleConfig } from "./configs/flat-config";
 import { rules } from "./rules";
 
 export { configs, rules };
@@ -16,8 +17,8 @@ export interface EslintCdkPlugin {
       plugins: ["awscdk"];
       rules: ClassicConfig.RulesRecord;
     };
-    recommended: FlatConfig.Config;
-    strict: FlatConfig.Config;
+    recommended: CompatibleConfig;
+    strict: CompatibleConfig;
   }>;
 }
 

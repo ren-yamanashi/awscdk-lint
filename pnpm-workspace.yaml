@@ -6,4 +6,4 @@ engineStrict: true
 minimumReleaseAge: 2880
 onlyBuiltDependencies:
   - esbuild
-useNodeVersion: 24.11.0
+useNodeVersion: 24.13.1

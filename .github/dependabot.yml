@@ -13,7 +13,6 @@ updates:
       dependencies:
         patterns:
           - "*"
-    # Since typescript-eslint does not yet fully support ESLint v10, we will ignore the major update for ESLint for now.
     ignore:
-      - dependency-name: "eslint"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]

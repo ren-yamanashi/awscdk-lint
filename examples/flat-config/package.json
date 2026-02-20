@@ -4,19 +4,19 @@
   "private": true,
   "scripts": {
     "lint": "pnpm run lint:esm & pnpm run lint:cjs",
-    "lint:esm": "eslint --config eslint.config.mjs",
-    "lint:cjs": "eslint --config eslint.config.cjs"
+    "lint:esm": "eslint --config eslint.config.ts",
+    "lint:cjs": "eslint --config eslint.config.cts"
   },
   "dependencies": {
     "aws-cdk-lib": "latest",
     "constructs": "latest"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.0.3",
-    "eslint": "^9.36.0",
+    "eslint": "^10.0.0",
     "eslint-plugin-awscdk": "workspace:*",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.46.2"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.0"
   }
 }
