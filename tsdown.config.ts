@@ -10,6 +10,7 @@ export default defineConfig([
     outputOptions: { exports: "named" },
     treeshake: true,
     fixedExtension: true,
+    inlineOnly: false,
   },
   {
     entry: ["scripts/migration/index.ts"],
@@ -20,5 +21,6 @@ export default defineConfig([
     platform: "node",
     treeshake: true,
     fixedExtension: true,
+    inlineOnly: false,
   },
 ]);
