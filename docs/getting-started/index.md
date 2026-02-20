@@ -46,12 +46,14 @@ import tseslint from "typescript-eslint";
 import cdkPlugin from "eslint-plugin-awscdk";
 
 export default defineConfig([
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     files: ["lib/**/*.ts", "bin/*.ts"],
-    // ✅ Add plugins
-    extends: [cdkPlugin.configs.recommended], // or cdkPlugin.configs.strict
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      // ✅ Add plugins
+      cdkPlugin.configs.recommended, // or cdkPlugin.configs.strict
+    ],
     rules: {
       // ✅ Add rules (use custom rules)
       "awscdk/require-jsdoc": "warn",
