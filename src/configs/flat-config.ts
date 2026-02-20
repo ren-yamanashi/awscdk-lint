@@ -4,7 +4,7 @@ import { FlatConfig } from "@typescript-eslint/utils/ts-eslint";
 import { name, version } from "../../package.json";
 import { rules } from "../rules";
 
-export type CompatibleConfig = Record<string, unknown> & {
+export type Config = Record<string, unknown> & {
   plugins?: Record<string, Record<string, unknown>>;
   languageOptions?: Record<string, unknown>;
   rules?: FlatConfig.Rules;
@@ -15,7 +15,7 @@ const awscdk = {
   rules,
 };
 
-const createFlatConfig = (rules: FlatConfig.Rules): CompatibleConfig => {
+const createFlatConfig = (rules: FlatConfig.Rules): Config => {
   return {
     plugins: {
       awscdk,
