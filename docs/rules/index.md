@@ -215,7 +215,7 @@ export default defineConfig([
       eslint.configs.recommended,
       ...tseslint.configs.recommended,
       // ✅ Add plugins
-      cdkPlugin.configs.recommended
+      cdkPlugin.configs.recommended,
     ],
     // ... some configs
   },
@@ -241,7 +241,7 @@ export default defineConfig([
       eslint.configs.recommended,
       ...tseslint.configs.recommended,
       // ✅ Add plugins
-      cdkPlugin.configs.strict
+      cdkPlugin.configs.strict,
     ],
     // ... some configs
   },

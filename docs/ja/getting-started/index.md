@@ -53,7 +53,7 @@ export default defineConfig([
       eslint.configs.recommended,
       ...tseslint.configs.recommended,
       // ✅ Add plugins
-      cdkPlugin.configs.recommended // or cdkPlugin.configs.strict
+      cdkPlugin.configs.recommended, // or cdkPlugin.configs.strict
     ],
     rules: {
       // ✅ Add rules (use custom rules)
