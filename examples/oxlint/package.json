@@ -10,7 +10,7 @@
     "constructs": "latest"
   },
   "devDependencies": {
-    "@types/node": "^25.0.3",
+    "@types/node": "^24.10.13",
     "eslint": "^9.36.0",
     "eslint-plugin-awscdk": "workspace:*",
     "oxlint": "^1.26.0",
