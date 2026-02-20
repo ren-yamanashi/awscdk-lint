@@ -26,9 +26,17 @@ updates:
       timezone: "Asia/Tokyo"
     commit-message:
       prefix: "chore"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   - package-ecosystem: "npm"
     directory: "/"
