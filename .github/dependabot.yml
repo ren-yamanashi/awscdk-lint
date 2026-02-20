@@ -29,3 +29,21 @@ updates:
     ignore:
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "eslint-cdk-plugin"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "02:00"
+      timezone: "Asia/Tokyo"
+    commit-message:
+      prefix: "chore"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
