@@ -208,12 +208,14 @@ import tseslint from "typescript-eslint";
 import cdkPlugin from "eslint-plugin-awscdk";
 
 export default defineConfig([
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     files: ["lib/**/*.ts", "bin/*.ts"],
-    // ✅ Add plugins
-    extends: [cdkPlugin.configs.recommended],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      // ✅ Add plugins
+      cdkPlugin.configs.recommended,
+    ],
     // ... some configs
   },
 ]);
@@ -232,12 +234,14 @@ import tseslint from "typescript-eslint";
 import cdkPlugin from "eslint-plugin-awscdk";
 
 export default defineConfig([
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     files: ["lib/**/*.ts", "bin/*.ts"],
-    // ✅ Add plugins
-    extends: [cdkPlugin.configs.strict],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      // ✅ Add plugins
+      cdkPlugin.configs.strict,
+    ],
     // ... some configs
   },
 ]);
