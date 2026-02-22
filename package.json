@@ -67,7 +67,7 @@
     "@typescript/native-preview": "^7.0.0-dev.20250601",
     "eslint": "^10.0.0",
     "eslint-plugin-import": "^2.32.0",
-    "oxfmt": "^0.32.0",
+    "oxfmt": "^0.34.0",
     "secretlint": "^11.2.5",
     "tsdown": "^0.20.3",
     "typescript": "^5.9.3",
