@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.13",
-    "eslint": "^9.36.0",
+    "eslint": "^10.0.2",
     "eslint-plugin-awscdk": "workspace:*",
     "oxlint": "^1.26.0",
     "typescript": "^5.8.3"
