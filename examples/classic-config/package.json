@@ -10,7 +10,7 @@
     "constructs": "latest"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^24.10.13",
     "eslint": "^9.36.0",
     "eslint-plugin-awscdk": "workspace:*",
