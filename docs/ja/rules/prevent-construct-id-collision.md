@@ -3,7 +3,13 @@ title: eslint-plugin-awscdk - prevent-construct-id-collision
 titleTemplate: ":title"
 ---
 
+<script setup>
+import NextRecommendedItem from '../../components/NextRecommendedItem.vue'
+</script>
+
 # prevent-construct-id-collision
+
+<NextRecommendedItem version="v5.0.0" japanese />
 
 このルールは、ループ処理内でインスタンス化する Construct の ID に静的な文字列 (リテラル文字列) を使用することを禁止します。これにより、Construct ID の衝突を防止します。
 

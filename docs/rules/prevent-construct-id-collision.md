@@ -3,7 +3,13 @@ title: eslint-plugin-awscdk - prevent-construct-id-collision
 titleTemplate: ":title"
 ---
 
+<script setup>
+import NextRecommendedItem from '../components/NextRecommendedItem.vue'
+</script>
+
 # prevent-construct-id-collision
+
+<NextRecommendedItem version="v5.0.0" />
 
 This rule prohibits the use of static strings (string literals) for the IDs of Constructs instantiated within loop processing. This prevents Construct ID collisions.
 
