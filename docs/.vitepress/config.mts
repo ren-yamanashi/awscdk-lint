@@ -155,6 +155,10 @@ export default defineConfig({
                   link: "/rules/prefer-grants-property",
                 },
                 {
+                  text: "prevent-construct-id-collision",
+                  link: "/rules/prevent-construct-id-collision",
+                },
+                {
                   text: "props-name-convention",
                   link: "/rules/props-name-convention",
                 },
@@ -277,6 +281,10 @@ export default defineConfig({
                 {
                   text: "prefer-grants-property",
                   link: "/ja/rules/prefer-grants-property",
+                },
+                {
+                  text: "prevent-construct-id-collision",
+                  link: "/ja/rules/prevent-construct-id-collision",
                 },
                 {
                   text: "props-name-convention",
