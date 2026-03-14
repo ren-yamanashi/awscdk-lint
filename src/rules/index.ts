@@ -11,6 +11,7 @@ import { noUnusedProps } from "./no-unused-props";
 import { noVariableConstructId } from "./no-variable-construct-id";
 import { pascalCaseConstructId } from "./pascal-case-construct-id";
 import { preferGrantsProperty } from "./prefer-grants-property";
+import { preventConstructIdCollision } from "./prevent-construct-id-collision";
 import { propsNameConvention } from "./props-name-convention";
 import { requireJSDoc } from "./require-jsdoc";
 import { requirePassingThis } from "./require-passing-this";
@@ -30,6 +31,7 @@ export const rules = {
   "no-variable-construct-id": noVariableConstructId,
   "pascal-case-construct-id": pascalCaseConstructId,
   "prefer-grants-property": preferGrantsProperty,
+  "prevent-construct-id-collision": preventConstructIdCollision,
   "props-name-convention": propsNameConvention,
   "require-jsdoc": requireJSDoc,
   "require-passing-this": requirePassingThis,

@@ -60,6 +60,7 @@ export const strict = createFlatConfig({
   "awscdk/no-variable-construct-id": "error",
   "awscdk/pascal-case-construct-id": "error",
   "awscdk/prefer-grants-property": "error",
+  "awscdk/prevent-construct-id-collision": "error",
   "awscdk/props-name-convention": "error",
   "awscdk/require-jsdoc": "error",
   "awscdk/require-passing-this": "error",
