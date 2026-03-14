@@ -5,10 +5,6 @@ titleTemplate: ":title"
 
 # prevent-construct-id-collision
 
-This rule disallows using literal Construct IDs inside loops, which may cause ID collisions at deployment time.
-
-When a Construct is instantiated inside a loop (e.g. `for`, `forEach`, `map`) with a static literal ID, all iterations will attempt to create a Construct with the same ID. This causes a runtime error because Construct IDs must be unique within a given scope.
-
 This rule prohibits the use of static strings (string literals) for the IDs of Constructs instantiated within loop processing. This prevents Construct ID collisions.
 
 If you specify a literal string for the IDs of a Construct instantiated within a loop (e.g. `for`, `forEach`, `map`), an attempt will be made to create Constructs with the same ID in every iteration. Since Construct IDs must be unique within a specific scope, this causes deployment errors.

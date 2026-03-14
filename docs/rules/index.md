@@ -168,7 +168,7 @@ We currently support the following rules:
   />
   <RuleItem
     name="prevent-construct-id-collision"
-    description="Disallows using literal Construct IDs inside loops, which may cause ID collisions."
+    description="To prevent Construct ID collisions, disallows using literal strings for Construct IDs within loops."
     link="/rules/prevent-construct-id-collision"
     :isRecommended="false"
     :isFixable="false"

@@ -167,7 +167,7 @@ import RuleItem from '../../components/RuleItem.vue'
   />
   <RuleItem
     name="prevent-construct-id-collision"
-    description="ループ内で Construct ID にリテラルを使用することを禁止します（ID 衝突の防止）"
+    description="Construct ID 衝突の防止のため、ループ内で Construct ID にリテラル文字列を使用することを禁止します"
     link="/ja/rules/prevent-construct-id-collision"
     :isRecommended="false"
     :isFixable="false"
