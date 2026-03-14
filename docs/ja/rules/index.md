@@ -166,6 +166,13 @@ import RuleItem from '../../components/RuleItem.vue'
     :isFixable="false"
   />
   <RuleItem
+    name="prevent-construct-id-collision"
+    description="ループ内で Construct ID にリテラルを使用することを禁止します（ID 衝突の防止）"
+    link="/ja/rules/prevent-construct-id-collision"
+    :isRecommended="false"
+    :isFixable="false"
+  />
+  <RuleItem
     name="props-name-convention"
     description="Props (interface) 名が ${ConstructName}Props の形式に従うことを強制します"
     link="/ja/rules/props-name-convention"
