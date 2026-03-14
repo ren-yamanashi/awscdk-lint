@@ -93,14 +93,11 @@ const isInsideLoop = (node: TSESTree.Node): boolean => {
 
     // NOTE: Detect iteration method callbacks (ArrowFunction/FunctionExpression)
     if (
-      current.type === AST_NODE_TYPES.ArrowFunctionExpression ||
-      current.type === AST_NODE_TYPES.FunctionExpression
+      (current.type === AST_NODE_TYPES.ArrowFunctionExpression ||
+        current.type === AST_NODE_TYPES.FunctionExpression) &&
+      isIterationMethodCallback(current)
     ) {
-      if (isIterationMethodCallback(current)) {
-        return true;
-      }
-      // NOTE: Not an iteration callback (e.g. arrow function assigned to a variable)
-      return false;
+      return true;
     }
 
     // NOTE: Stop at non-constructor method definitions
