@@ -13,7 +13,8 @@ export const preventConstructIdCollision = createRule({
   meta: {
     type: "problem",
     docs: {
-      description: `Disallow using literal Construct IDs inside loops, which may cause ID collisions.`,
+      description:
+        "Disallow using literal Construct IDs inside loops, which may cause ID collisions.",
     },
     messages: {
       preventConstructIdCollision:

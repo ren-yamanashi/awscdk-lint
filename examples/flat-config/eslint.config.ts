@@ -11,12 +11,23 @@ export default defineConfig([
       ...tseslint.configs.recommended,
       cdkPlugin.configs.strict,
     ],
+    languageOptions: {
+      ecmaVersion: "latest",
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
     rules: {
       "awscdk/require-passing-this": [
         "error",
         // { allowNonThisAndDisallowScope: true },
       ],
-      "awscdk/no-parent-name-construct-id-match": ["error", { disallowContainingParentName: true }],
+      "awscdk/no-parent-name-construct-id-match": [
+        "error",
+        { disallowContainingParentName: true },
+      ],
     },
   },
 ]);
