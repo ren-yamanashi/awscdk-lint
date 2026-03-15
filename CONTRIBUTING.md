@@ -33,6 +33,24 @@ vp check # lint, format, type-check
 vp pack # build
 ```
 
+### Project Structure
+
+```text
+src/
+├── rules/           # Rule implementations (one file per rule)
+├── __tests__/       # Unit tests for each rule
+├── configs/         # Preset configurations (recommended, strict)
+├── core/            # Core logic shared across rules
+│   ├── cdk-construct/   # Core logic related to CDK constructs
+│   ├── ts-type/         # TypeScript type utilities (class check, base type traversal, etc.)
+│   └── ast-node/        # ESTree AST node utilities (find constructor, public properties, etc.)
+├── shared/          # Shared utilities
+└── index.ts         # Plugin entry point (exports rules and configs)
+
+docs/                # VitePress documentation site (EN and JA)
+examples/            # Integration test examples (flat-config and classic-config)
+```
+
 ### Creating a New Rule
 
 When adding a new rule, the following files need to be created or updated.
