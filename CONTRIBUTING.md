@@ -72,10 +72,10 @@ When adding a new rule, the following files need to be created or updated.
 >
 > This plugin supports two ESLint configuration formats. Both config files must define the same rule entries with the same severity and options.
 >
-> | | Flat config | Classic config |
-> |---|---|---|
+> |             | Flat config                      | Classic config                        |
+> | ----------- | -------------------------------- | ------------------------------------- |
 > | Config file | `eslint.config.mjs` (ESLint v9+) | `.eslintrc.*` (ESLint v8 and earlier) |
-> | Source | `src/configs/flat-config.ts` | `src/configs/classic-config.ts` |
+> | Source      | `src/configs/flat-config.ts`     | `src/configs/classic-config.ts`       |
 
 #### 3. Documentation (optional)
 
