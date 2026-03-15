@@ -43,6 +43,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "pack": "vp pack",
+    "check": "vp check",
+    "test": "vp test --run",
+    "docs": "vp run -F @eslint-plugin-awscdk/docs"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@secretlint/secretlint-rule-preset-recommend": "^11.2.5",

@@ -1,6 +1,6 @@
 ---
 name: "📕 Documentation Issue"
-description: Report an issue in the API Reference documentation or Developer Guide
+description: Report an issue in the rule documentation or Developer Guide
 title: "(short issue description)"
 labels: [documentation]
 assignees: []
@@ -18,6 +18,6 @@ body:
     attributes:
       label: Links
       description: |
-        Include links to affected documentation page(s).
+        Provide links to any documents that you think need correction or modification.
     validations:
       required: false

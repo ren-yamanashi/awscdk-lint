@@ -37,7 +37,7 @@ body:
       description: Provide examples of code that should be flagged as incorrect
       placeholder: |
         ```typescript
-        // This should fail
+        // ❌ This should fail
         export class MyConstruct extends Construct {
           // ...
         }
@@ -52,23 +52,11 @@ body:
       description: Provide examples of code that should pass the rule
       placeholder: |
         ```typescript
-        // This should pass
+        // ✅ This should pass
         export class MyConstruct extends Construct {
           // ...
         }
         ```
-    validations:
-      required: true
-
-  - type: dropdown
-    id: rule-type
-    attributes:
-      label: Rule Type
-      description: What type of rule is this?
-      options:
-        - problem (possible errors)
-        - suggestion (improve code)
-        - layout (formatting)
     validations:
       required: true
 
@@ -78,8 +66,6 @@ body:
       label: Implementation Details
       description: Please confirm the following
       options:
-        - label: This rule is related to AWS CDK best practices
-          required: false
         - label: I'm willing to submit a PR for this feature
           required: false
 

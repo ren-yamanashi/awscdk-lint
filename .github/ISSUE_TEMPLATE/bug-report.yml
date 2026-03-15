@@ -44,22 +44,12 @@ body:
       required: true
 
   - type: input
-    id: node-version
+    id: eslint-version
     attributes:
-      label: Node.js Version
+      label: ESLint Version
+      description: E.g. 10.0.0
     validations:
-      required: true
-
-  - type: dropdown
-    id: language
-    attributes:
-      label: Language
-      multiple: true
-      options:
-        - TypeScript
-        - JavaScript
-    validations:
-      required: true
+      required: false
 
   - type: input
     id: language-version
@@ -81,15 +71,3 @@ body:
     validations:
       required: false
 
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Checklist
-      description: Before submitting the issue, please confirm the following
-      options:
-        - label: I have searched for similar issues before creating this one
-          required: false
-        - label: I have provided all the necessary information to reproduce the issue
-          required: false
-        - label: I have verified this issue is related to eslint-plugin-awscdk and not another dependency
-          required: false
