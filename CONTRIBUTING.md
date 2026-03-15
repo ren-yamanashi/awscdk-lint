@@ -85,11 +85,11 @@ Documentation is handled by the maintainers, so it is not required in your PR. I
 - `docs/rules/index.md` — Add a `<RuleItem>` entry (keep alphabetical order)
 - `docs/.vitepress/config.mts` — Add sidebar entries for both EN and JA (keep alphabetical order)
 
-**Note:** Japanese documentation (`docs/ja/`) and Playground links are not required. The maintainers will handle them.
+**_Note:_** Japanese documentation (`docs/ja/`) and Playground links are not required. The maintainers will handle them.
 
 #### 4. Example files (optional)
 
-**Note:** Example files under `examples/` are not required. The maintainers will add them.
+**_Note:_** Example files under `examples/` are not required. The maintainers will add them.
 
 ## Questions?
 
