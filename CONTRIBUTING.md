@@ -22,15 +22,15 @@ https://github.com/ren-yamanashi/eslint-plugin-awscdk.git
 
 # When using pnpm
 pnpm install --frozen-lockfile # Install dependencies
-pnpm test # tests
-pnpm check # lint, format, type-check
-pnpm pack # build
+pnpm test                      # tests
+pnpm check                     # lint, format, type-check
+pnpm pack                      # build
 
 # When using vite+
-vp install -- frozen-lockfile # Install dependencies
-vp test --run # tests
-vp check # lint, format, type-check
-vp pack # build
+vp install -- frozen-lockfile  # Install dependencies
+vp test --run                  # tests
+vp check                       # lint, format, type-check
+vp pack                        # build
 ```
 
 ### Project Structure
@@ -68,14 +68,14 @@ When adding a new rule, the following files need to be created or updated.
 - `src/configs/classic-config.ts` — Add the rule to the classic config preset
   - keep the rules in alphabetical order for readability
 
-> **flat-config and classic-config**
->
-> This plugin supports two ESLint configuration formats. Both config files must define the same rule entries with the same severity and options.
->
-> |             | Flat config                      | Classic config                        |
-> | ----------- | -------------------------------- | ------------------------------------- |
-> | Config file | `eslint.config.mjs` (ESLint v9+) | `.eslintrc.*` (ESLint v8 and earlier) |
-> | Source      | `src/configs/flat-config.ts`     | `src/configs/classic-config.ts`       |
+**_flat-config and classic-config_**
+
+This plugin supports two ESLint configuration formats. Both config files must define the same rule entries with the same severity and options.
+
+|             | Flat config                      | Classic config                        |
+| ----------- | -------------------------------- | ------------------------------------- |
+| Config file | `eslint.config.mjs` (ESLint v9+) | `.eslintrc.*` (ESLint v8 and earlier) |
+| Source      | `src/configs/flat-config.ts`     | `src/configs/classic-config.ts`       |
 
 #### 3. Documentation (optional)
 
@@ -85,11 +85,11 @@ Documentation is handled by the maintainers, so it is not required in your PR. I
 - `docs/rules/index.md` — Add a `<RuleItem>` entry (keep alphabetical order)
 - `docs/.vitepress/config.mts` — Add sidebar entries for both EN and JA (keep alphabetical order)
 
-**Note:** Japanese documentation (`docs/ja/`) and Playground links are not required. The maintainers will handle them.
+**_Note:_** Japanese documentation (`docs/ja/`) and Playground links are not required. The maintainers will handle them.
 
 #### 4. Example files (optional)
 
-**Note:** Example files under `examples/` are not required. The maintainers will add them.
+**_Note:_** Example files under `examples/` are not required. The maintainers will add them.
 
 ## Questions?
 
