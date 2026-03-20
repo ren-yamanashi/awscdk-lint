@@ -11,6 +11,8 @@ check_eslint_output() {
   output=$($command 2>&1) || true
   if ! echo "$output" | grep -q "✖ 43 problems (43 errors, 0 warnings)"; then
     echo "ERROR: Expected error count not found!"
+    echo "ACTUAL OUTPUT:"
+    echo "$output"
     exit 1
   fi
   echo "SUCCESS: Expected error count found!"
@@ -23,6 +25,8 @@ check_oxlint_output() {
   output=$($command 2>&1) || true
   if ! echo "$output" | grep -q "Found 0 warnings and 1 error."; then
     echo "ERROR: Expected error count not found!"
+    echo "ACTUAL OUTPUT:"
+    echo "$output"
     exit 1
   fi
   echo "SUCCESS: Expected error count found!"
