@@ -58,7 +58,7 @@ importers:
         specifier: ^1.1.4
         version: 1.11.0
 
-  examples/flat-config:
+  examples/eslint:
     dependencies:
       aws-cdk-lib:
         specifier: latest
