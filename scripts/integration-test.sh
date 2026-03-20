@@ -18,10 +18,8 @@ check_eslint_output() {
 
 check_oxlint_output() {
   local command="$1"
-  local output
   echo "RUNNING: $command"
-  output=$($command 2>&1) || true
-  if ! echo "$output" | grep -q "Found 0 warnings and 1 error."; then
+  if ! $command 2>&1 | grep -q "Found 0 warnings and 1 error."; then
     echo "ERROR: Expected error count not found!"
     exit 1
   fi
