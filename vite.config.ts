@@ -22,14 +22,7 @@ export default defineConfig({
     env: {
       builtin: true,
     },
-    ignorePatterns: [
-      "*.js",
-      "dist",
-      "node_modules",
-      "package.json",
-      "docs",
-      "examples",
-    ],
+    ignorePatterns: ["*.js", "dist", "node_modules", "package.json", "docs", "examples"],
     options: {
       typeAware: true,
       typeCheck: true,
