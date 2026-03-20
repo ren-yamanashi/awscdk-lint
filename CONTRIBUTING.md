@@ -48,7 +48,7 @@ src/
 └── index.ts         # Plugin entry point (exports rules and configs)
 
 docs/                # VitePress documentation site (EN and JA)
-examples/            # Integration test examples (flat-config and classic-config)
+examples/            # examples
 ```
 
 ### Creating a New Rule

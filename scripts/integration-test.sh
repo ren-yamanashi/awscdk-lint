@@ -28,7 +28,6 @@ check_oxlint_output() {
   echo "SUCCESS: Expected error count found!"
 }
 
-check_eslint_output "vp run -F @eslint-plugin-awscdk/example-flat-config lint:esm"
-check_eslint_output "vp run -F @eslint-plugin-awscdk/example-flat-config lint:cjs"
-check_eslint_output "vp run -F @eslint-plugin-awscdk/example-classic-config lint"
+check_eslint_output "vp run -F @eslint-plugin-awscdk/example-eslint lint:esm"
+check_eslint_output "vp run -F @eslint-plugin-awscdk/example-eslint lint:cjs"
 check_oxlint_output "vp run -F @eslint-plugin-awscdk/example-oxlint lint"
