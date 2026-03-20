@@ -34,4 +34,4 @@ check_oxlint_output() {
 
 check_eslint_output "vp run -F @eslint-plugin-awscdk/example-eslint lint:esm"
 check_eslint_output "vp run -F @eslint-plugin-awscdk/example-eslint lint:cjs"
-check_oxlint_output "vp run -F @eslint-plugin-awscdk/example-oxlint lint"
+check_oxlint_output "pnpm --filter @eslint-plugin-awscdk/example-oxlint exec oxlint"
