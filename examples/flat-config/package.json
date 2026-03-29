@@ -12,7 +12,7 @@
     "@types/node": "latest",
     "eslint": "latest",
     "eslint-cdk-plugin": "workspace:*",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "typescript-eslint": "latest"
   },
   "dependencies": {
