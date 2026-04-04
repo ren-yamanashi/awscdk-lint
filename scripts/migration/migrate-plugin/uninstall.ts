@@ -4,7 +4,6 @@ import * as path from "path";
 
 import { getErrorMessage } from "../error";
 import { Result, RESULT_TYPE } from "../result";
-
 import { PACKAGE_MANGER, PackageManager } from "./select-package-manager";
 
 interface PackageJson {
@@ -14,7 +13,7 @@ interface PackageJson {
 
 export const uninstallPlugin = (
   packageManager: PackageManager,
-  projectRoot: string
+  projectRoot: string,
 ): Result<void> => {
   const packageJson = readPackageJson(projectRoot);
   if (packageJson.type === RESULT_TYPE.ERROR) return packageJson;
@@ -31,10 +30,7 @@ export const uninstallPlugin = (
   return { type: RESULT_TYPE.SUCCESS };
 };
 
-const uninstall = (
-  isDev: boolean,
-  packageManager: PackageManager
-): Result<void> => {
+const uninstall = (isDev: boolean, packageManager: PackageManager): Result<void> => {
   const command = (() => {
     const devFlag = isDev ? " -D" : "";
     switch (packageManager) {
@@ -91,7 +87,7 @@ ${getErrorMessage(error)}`,
 };
 
 const checkPluginInstallation = (
-  packageJson: PackageJson
+  packageJson: PackageJson,
 ): Result<("devDependencies" | "dependencies")[]> => {
   const inDependencies = packageJson.dependencies?.["eslint-cdk-plugin"];
   const inDevDependencies = packageJson.devDependencies?.["eslint-cdk-plugin"];

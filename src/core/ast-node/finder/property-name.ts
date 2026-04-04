@@ -7,14 +7,13 @@ import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
  * @returns An array of property names.
  */
 export const findPropertyNames = (
-  properties: (TSESTree.Property | TSESTree.RestElement)[]
+  properties: (TSESTree.Property | TSESTree.RestElement)[],
 ): string[] => {
   return properties.reduce<string[]>(
     (acc, prop) =>
-      prop.type === AST_NODE_TYPES.Property &&
-      prop.key.type === AST_NODE_TYPES.Identifier
+      prop.type === AST_NODE_TYPES.Property && prop.key.type === AST_NODE_TYPES.Identifier
         ? [...acc, prop.key.name]
         : acc,
-    []
+    [],
   );
 };

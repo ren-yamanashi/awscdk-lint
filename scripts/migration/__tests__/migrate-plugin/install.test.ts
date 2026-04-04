@@ -1,12 +1,8 @@
 import { execSync } from "node:child_process";
-
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { installPlugin } from "../../migrate-plugin/install";
-import {
-  PACKAGE_MANGER,
-  PACKAGE_MANGER_VALUES,
-} from "../../migrate-plugin/select-package-manager";
+import { PACKAGE_MANGER, PACKAGE_MANGER_VALUES } from "../../migrate-plugin/select-package-manager";
 import { ErrorResult, RESULT_TYPE, SuccessResult } from "../../result";
 
 vi.mock("node:child_process");

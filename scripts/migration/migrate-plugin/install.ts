@@ -2,7 +2,6 @@ import { execSync } from "child_process";
 
 import { getErrorMessage } from "../error";
 import { Result, RESULT_TYPE } from "../result";
-
 import { PACKAGE_MANGER, PackageManager } from "./select-package-manager";
 
 export const installPlugin = (packageManager: PackageManager): Result<void> => {

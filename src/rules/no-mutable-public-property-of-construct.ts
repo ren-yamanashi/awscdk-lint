@@ -1,7 +1,4 @@
-import {
-  ESLintUtils,
-  TSESLint
-} from "@typescript-eslint/utils";
+import { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 
 import {
   findPublicPropertiesInClass,
@@ -72,12 +69,10 @@ const validatePublicProperty = (args: {
       const accessibility = publicProperty.node.accessibility ? "public " : "";
       const paramText = sourceCode.getText(publicProperty.node);
       const [key, value] = paramText.split(":");
-      const replacedKey = key.startsWith("public ")
-        ? key.replace("public ", "")
-        : key;
+      const replacedKey = key.startsWith("public ") ? key.replace("public ", "") : key;
       return fixer.replaceText(
         publicProperty.node,
-        `${accessibility}readonly ${replacedKey}:${value}`
+        `${accessibility}readonly ${replacedKey}:${value}`,
       );
     },
   });

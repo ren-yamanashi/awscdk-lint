@@ -10,7 +10,7 @@ import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-
  */
 export const isResourceType = (
   type: Type,
-  ignoredClasses: readonly string[] = [] // App, Stage, CfnOutput, Stack are not extended Resource, so no need to ignore them
+  ignoredClasses: readonly string[] = [], // App, Stage, CfnOutput, Stack are not extended Resource, so no need to ignore them
 ): boolean => {
   if (ignoredClasses.includes(type.symbol?.name ?? "")) return false;
   return isExtendsFromTargetSuperClass(type, ["Resource"], isResourceType);

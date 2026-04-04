@@ -9,7 +9,7 @@ import { Type } from "typescript";
 export const isExtendsFromTargetSuperClass = (
   type: Type,
   targetSuperClasses: string[],
-  typeCheckFunction: (type: Type) => boolean
+  typeCheckFunction: (type: Type) => boolean,
 ): boolean => {
   if (!type.symbol) return false;
 

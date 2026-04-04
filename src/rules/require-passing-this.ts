@@ -1,8 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  TSESLint,
-} from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
@@ -79,10 +75,7 @@ export const requirePassingThis = createRule({
         }
         // NOTE: If `allowNonThisAndDisallowScope` is true, allow non-`this` values except `scope` variable
         // Check if the argument is the `scope` variable
-        if (
-          argument.type === AST_NODE_TYPES.Identifier &&
-          argument.name === "scope"
-        ) {
+        if (argument.type === AST_NODE_TYPES.Identifier && argument.name === "scope") {
           context.report({
             node: argument,
             messageId: "missingPassingThis",

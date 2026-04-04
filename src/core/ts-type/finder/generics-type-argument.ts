@@ -18,11 +18,7 @@ export const findGenericsTypeArgument = (type: Type): Type | undefined => {
 
   // NOTE: Check if type has typeArguments (generics types like Array<T>, etc.)
   //       This works for TypeReference types
-  if (
-    "typeArguments" in type &&
-    Array.isArray(type.typeArguments) &&
-    type.typeArguments?.length
-  ) {
+  if ("typeArguments" in type && Array.isArray(type.typeArguments) && type.typeArguments?.length) {
     return type.typeArguments[0] as Type;
   }
 

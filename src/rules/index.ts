@@ -17,8 +17,7 @@ import { requirePropsDefaultDoc } from "./require-props-default-doc";
 export const rules = {
   "construct-constructor-property": constructConstructorProperty,
   "no-construct-in-interface": noConstructInInterface,
-  "no-construct-in-public-property-of-construct":
-    noConstructInPublicPropertyOfConstruct,
+  "no-construct-in-public-property-of-construct": noConstructInPublicPropertyOfConstruct,
   "no-construct-stack-suffix": noConstructStackSuffix,
   "no-import-private": noImportPrivate,
   "no-mutable-property-of-props-interface": noMutablePropertyOfPropsInterface,

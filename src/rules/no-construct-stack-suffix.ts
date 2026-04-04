@@ -1,9 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
@@ -37,12 +32,10 @@ export const noConstructStackSuffix = createRule({
   meta: {
     type: "problem",
     docs: {
-      description:
-        "Effort to avoid using 'Construct' and 'Stack' suffix in construct id.",
+      description: "Effort to avoid using 'Construct' and 'Stack' suffix in construct id.",
     },
     messages: {
-      invalidConstructId:
-        "{{ classType }} ID '{{ id }}' should not include {{ suffix }} suffix.",
+      invalidConstructId: "{{ classType }} ID '{{ id }}' should not include {{ suffix }} suffix.",
     },
     schema: [
       {
@@ -84,18 +77,12 @@ export const noConstructStackSuffix = createRule({
 /**
  * Validate that construct ID does not end with "Construct" or "Stack"
  */
-const validateConstructId = (
-  node: TSESTree.NewExpression,
-  context: Context
-): void => {
+const validateConstructId = (node: TSESTree.NewExpression, context: Context): void => {
   const options = context.options[0] ?? defaultOption;
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
-  if (
-    secondArg.type !== AST_NODE_TYPES.Literal ||
-    typeof secondArg.value !== "string"
-  ) {
+  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
     return;
   }
 

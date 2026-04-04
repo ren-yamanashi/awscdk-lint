@@ -1,11 +1,15 @@
 {
-  "name": "@eslint-cdk-plugin/example-flat-config",
+  "name": "@eslint-cdk-plugin/example-eslint",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "lint": "pnpm run lint:esm & pnpm run lint:cjs",
     "lint:esm": "eslint --config eslint.config.mjs",
     "lint:cjs": "eslint --config eslint.config.cjs"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "latest",
+    "constructs": "latest"
   },
   "devDependencies": {
     "@eslint/js": "latest",
@@ -14,9 +18,5 @@
     "eslint-cdk-plugin": "workspace:*",
     "typescript": "5.9.3",
     "typescript-eslint": "latest"
-  },
-  "dependencies": {
-    "aws-cdk-lib": "latest",
-    "constructs": "latest"
   }
 }

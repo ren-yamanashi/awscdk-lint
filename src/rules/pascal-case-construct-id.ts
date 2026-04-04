@@ -1,9 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
@@ -69,24 +64,16 @@ const isPascalCase = (str: string) => {
 /**
  * Check the construct ID is PascalCase
  */
-const validateConstructId = (
-  node: TSESTree.NewExpression,
-  context: Context
-) => {
+const validateConstructId = (node: TSESTree.NewExpression, context: Context) => {
   if (node.arguments.length < 2) return;
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
-  if (
-    secondArg.type !== AST_NODE_TYPES.Literal ||
-    typeof secondArg.value !== "string"
-  ) {
+  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
     return;
   }
 
-  const quote: QuoteType = secondArg.raw?.startsWith('"')
-    ? QUOTE_TYPE.DOUBLE
-    : QUOTE_TYPE.SINGLE;
+  const quote: QuoteType = secondArg.raw?.startsWith('"') ? QUOTE_TYPE.DOUBLE : QUOTE_TYPE.SINGLE;
 
   if (isPascalCase(secondArg.value)) return;
 

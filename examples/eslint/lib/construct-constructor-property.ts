@@ -14,12 +14,7 @@ export interface _MyConstructProps {
 
 // ✅ Constructor with "scope, id, props" property names
 export class _MyConstruct extends Construct {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: _MyConstructProps,
-    resourceName: string
-  ) {
+  constructor(scope: Construct, id: string, props: _MyConstructProps, resourceName: string) {
     super(scope, id);
     console.log(props.bucketName);
     console.log(resourceName);

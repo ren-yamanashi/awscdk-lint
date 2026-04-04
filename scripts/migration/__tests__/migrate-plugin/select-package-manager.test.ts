@@ -44,8 +44,8 @@ describe("selectPackageManager", () => {
       expect(result.type).toEqual(RESULT_TYPE.ERROR);
       expect(result.message).toEqual(
         `Invalid package manager: ${invalidPackageManager}. Must be one of: ${PACKAGE_MANGER_VALUES.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
     });
   });
@@ -57,24 +57,19 @@ describe("selectPackageManager", () => {
         vi.mocked(consola.prompt).mockResolvedValue(packageManager);
 
         // WHEN
-        const result = (await selectPackageManager(
-          {}
-        )) as SuccessResult<PackageManager>;
+        const result = (await selectPackageManager({})) as SuccessResult<PackageManager>;
 
         // THEN
         expect(result.type).toEqual(RESULT_TYPE.SUCCESS);
         expect(result.value).toEqual(packageManager);
-        expect(consola.prompt).toHaveBeenCalledWith(
-          "Which package manager are you using?",
-          {
-            type: "select",
-            options: [
-              { label: PACKAGE_MANGER.NPM, value: PACKAGE_MANGER.NPM },
-              { label: PACKAGE_MANGER.YARN, value: PACKAGE_MANGER.YARN },
-              { label: PACKAGE_MANGER.PNPM, value: PACKAGE_MANGER.PNPM },
-            ],
-          }
-        );
+        expect(consola.prompt).toHaveBeenCalledWith("Which package manager are you using?", {
+          type: "select",
+          options: [
+            { label: PACKAGE_MANGER.NPM, value: PACKAGE_MANGER.NPM },
+            { label: PACKAGE_MANGER.YARN, value: PACKAGE_MANGER.YARN },
+            { label: PACKAGE_MANGER.PNPM, value: PACKAGE_MANGER.PNPM },
+          ],
+        });
       });
     });
   });

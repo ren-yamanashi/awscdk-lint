@@ -3,93 +3,93 @@
 Thank you for your interest in contributing to eslint-cdk-plugin!  
 This document provides guidelines and steps for contributing.
 
-## Code of Conduct
+## Issues
 
-By participating in this project, you are expected to uphold our Code of Conduct.  
-Please report unacceptable behavior to `@ren-yamanashi`.
+See each issue templates
 
-## How to Contribute
+- [Bug Report](./.github/ISSUE_TEMPLATE/bug-report.yml)
+- [Feature Request](./.github/ISSUE_TEMPLATE/feature-request.yml)
+- [Documentation](./.github/ISSUE_TEMPLATE/documentation.yml)
 
-### Create Bugs Issue
+## Pull Requests
 
-Before creating issue, please check the existing issues to avoid duplicates.  
-When you create a bug issue, include as following content:
-
-- A clear and descriptive title
-- Expected behavior
-- Actual behavior
-- Code samples if applicable
-- Version information (Node.js, ESLint, eslint-cdk-plugin)
-
-### Create Feature Request Issue
-
-We welcome suggestions for new rules!
-When proposing a new rule:
-
-1. First, check existing rules and issues to avoid duplicates
-2. Create an issue with the following information:
-   - Rule name
-   - Description of the problem the rule solves
-   - Examples of code that should pass/fail
-   - References to AWS CDK best practices if applicable
-
-### Pull Requests
-
-1. Fork the repo and create your branch from `main`
-2. Implement the rules
-3. Implement the test for the rule and make sure it passes. (Tests are run in CI)
-4. Update the documentation
-5. Create a pull request
-
-#### Development Setup
+### Development Setup
 
 ```bash
 # Clone your fork
-https://github.com/ren-yamanashi/eslint-cdk-plugin.git
+https://github.com/ren-yamanashi/eslint-plugin-awscdk.git
 
-# Install dependencies
-pnpm install
 
-# Run tests
-pnpm test
+# When using pnpm
+pnpm install --frozen-lockfile # Install dependencies
+pnpm test                      # tests
+pnpm check                     # lint, format, type-check
+pnpm pack                      # build
 
-# Run linter
-pnpm lint
+# When using vite+
+vp install -- frozen-lockfile  # Install dependencies
+vp test --run                  # tests
+vp check                       # lint, format, type-check
+vp pack                        # build
 ```
 
-#### Creating a New Rule
+### Project Structure
 
-1. Create a new file in `src/rules/`(file name should same rule name)
-2. Create corresponding test file in `src/__tests__/`
-3. Add rule to `src/index.ts`
-4. Add documentation in `docs`
+```text
+src/
+├── rules/           # Rule implementations (one file per rule)
+├── __tests__/       # Unit tests for each rule
+├── configs/         # Preset configurations (recommended, strict)
+├── core/            # Core logic shared across rules
+│   ├── cdk-construct/   # Core logic related to CDK constructs
+│   ├── ts-type/         # TypeScript type utilities (class check, base type traversal, etc.)
+│   └── ast-node/        # ESTree AST node utilities (find constructor, public properties, etc.)
+├── shared/          # Shared utilities
+└── index.ts         # Plugin entry point (exports rules and configs)
 
-Note: Writing the document is optional (because it is written using Vitepress and is not yet ready to accept contributions)
-
-Example rule structure:
-
-```typescript
-import { ESLintUtils } from "@typescript-eslint/utils";
-import { createRule } from "../utils/createRule";
-
-export const newRule = createRule({
-  name: "sample-new-rule",
-  meta: {
-    type: "problem",
-    docs: {
-      description: "Rule description",
-    },
-    messages: {
-      ruleError: "Error message with {{ placeholder }}",
-    },
-    schema: [],
-  },
-  defaultOptions: [],
-  create(context) {
-    // Rule implementation
-  },
-});
+docs/                # VitePress documentation site (EN and JA)
+examples/            # examples
 ```
+
+### Creating a New Rule
+
+When adding a new rule, the following files need to be created or updated.
+
+#### 1. Implement the rule and tests
+
+- `src/rules/<rule-name>.ts` — Rule implementation (file name must match the rule name)
+- `src/__tests__/<rule-name>.test.ts` — Unit tests
+
+#### 2. Register the rule
+
+- `src/rules/index.ts` — Import and add the rule to the `rules` record
+- `src/configs/flat-config.ts` — Add the rule to the flat config preset (`recommended` and/or `strict`)
+  - keep the rules in alphabetical order for readability
+- `src/configs/classic-config.ts` — Add the rule to the classic config preset
+  - keep the rules in alphabetical order for readability
+
+**_flat-config and classic-config_**
+
+This plugin supports two ESLint configuration formats. Both config files must define the same rule entries with the same severity and options.
+
+|             | Flat config                      | Classic config                        |
+| ----------- | -------------------------------- | ------------------------------------- |
+| Config file | `eslint.config.mjs` (ESLint v9+) | `.eslintrc.*` (ESLint v8 and earlier) |
+| Source      | `src/configs/flat-config.ts`     | `src/configs/classic-config.ts`       |
+
+#### 3. Documentation (optional)
+
+Documentation is handled by the maintainers, so it is not required in your PR. If you do add documentation, the following files are involved:
+
+- `docs/rules/<rule-name>.md` — English rule documentation
+- `docs/rules/index.md` — Add a `<RuleItem>` entry (keep alphabetical order)
+- `docs/.vitepress/config.mts` — Add sidebar entries for both EN and JA (keep alphabetical order)
+
+**_Note:_** Japanese documentation (`docs/ja/`) and Playground links are not required. The maintainers will handle them.
+
+#### 4. Example files (optional)
+
+**_Note:_** Example files under `examples/` are not required. The maintainers will add them.
 
 ## Questions?
 

@@ -22,7 +22,7 @@ program
   .version("1.0.0")
   .option(
     "-p, --package-manager <manager>",
-    `Specify package manager (${PACKAGE_MANGER_VALUES.join(", ")})`
+    `Specify package manager (${PACKAGE_MANGER_VALUES.join(", ")})`,
   )
   .parse(process.argv);
 
@@ -34,8 +34,8 @@ const main = async () => {
   consola.box(
     `Starting migration from ${colorize(
       "black",
-      "eslint-cdk-plugin"
-    )} to ${colorize("green", "eslint-plugin-awscdk")}`
+      "eslint-cdk-plugin",
+    )} to ${colorize("green", "eslint-plugin-awscdk")}`,
   );
   const projectRoot = process.cwd();
 

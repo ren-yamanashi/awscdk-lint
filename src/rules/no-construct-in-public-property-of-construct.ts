@@ -54,7 +54,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
 const validatePublicProperty = (
   publicProperty: PublicProperty,
   context: Context,
-  parserServices: ParserServicesWithTypeInformation
+  parserServices: ParserServicesWithTypeInformation,
 ) => {
   const type = parserServices.getTypeAtLocation(publicProperty.node);
   const constructType = findTypeOfCdkConstruct(type);
