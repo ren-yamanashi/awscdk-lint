@@ -12,11 +12,12 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
+    "types": ["vite-plus/test/globals"],
     "rootDir": ".",
     "outDir": "./dist",
     "module": "ESNext",
     "moduleResolution": "bundler"
   },
-  "include": ["src", "*.config.ts"],
+  "include": ["src", "scripts", "*.config.ts"],
   "exclude": ["dist", "node_modules"]
 }

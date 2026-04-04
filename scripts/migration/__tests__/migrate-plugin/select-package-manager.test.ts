@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { consola } from "consola";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   PACKAGE_MANGER,

@@ -1,7 +1,6 @@
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PACKAGE_MANGER, PACKAGE_MANGER_VALUES } from "../../migrate-plugin/select-package-manager";
 import { uninstallPlugin } from "../../migrate-plugin/uninstall";
