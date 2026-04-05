@@ -19,4 +19,4 @@ minimumReleaseAgeExclude:
   - "@voidzero-dev/vite-plus-win32-x64-msvc"
 onlyBuiltDependencies:
   - esbuild
-useNodeVersion: 24.14.0
+useNodeVersion: 24.14.1

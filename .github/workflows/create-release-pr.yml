@@ -27,11 +27,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Setup Node.js
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@b5d848f5a62488f3d3d920f8aa6ac318a60c5f07 # v1
         with:
-          node-version: 24.14.0
-          corepack: true
+          node-version: "24.14.1"
 
       # No dependency install is required for a version-only update.
       - name: Version bump
