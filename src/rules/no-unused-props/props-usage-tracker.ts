@@ -10,10 +10,7 @@ export interface IPropsUsageTracker {
    * @param node The member expression node.
    * @param propsParamName The name of the property being tracked.
    */
-  markAsUsedForMemberExpression(
-    node: TSESTree.MemberExpression,
-    propsParamName: string
-  ): void;
+  markAsUsedForMemberExpression(node: TSESTree.MemberExpression, propsParamName: string): void;
 
   /**
    * Marks a property as used when it is accessed in a member expression.
@@ -21,10 +18,7 @@ export interface IPropsUsageTracker {
    * @param node The member expression node.
    * @param propsParamName The name of the property being tracked.
    */
-  markAsUsedForVariableDeclarator(
-    node: TSESTree.VariableDeclarator,
-    propsParamName: string
-  ): void;
+  markAsUsedForVariableDeclarator(node: TSESTree.VariableDeclarator, propsParamName: string): void;
 
   /**
    * Marks a property as used when it is assigned in an expression.
@@ -34,7 +28,7 @@ export interface IPropsUsageTracker {
    */
   markAsUsedForAssignmentExpression(
     node: TSESTree.AssignmentExpression,
-    propsParamName: string
+    propsParamName: string,
   ): void;
 
   /**
@@ -63,14 +57,14 @@ export class PropsUsageTracker implements IPropsUsageTracker {
 
   constructor(propType: Type) {
     this.propUsageMap = new Map<string, boolean>(
-      this.getPropsPropertyNames(propType).map((name) => [name, false])
+      this.getPropsPropertyNames(propType).map((name) => [name, false]),
     );
   }
 
   public getUnusedProperties(): string[] {
     return Array.from(this.propUsageMap.entries()).reduce<string[]>(
       (acc, [name, used]) => (!used ? [...acc, name] : acc),
-      []
+      [],
     );
   }
 
@@ -88,7 +82,7 @@ export class PropsUsageTracker implements IPropsUsageTracker {
 
   public markAsUsedForMemberExpression(
     node: TSESTree.MemberExpression,
-    propsParamName: string
+    propsParamName: string,
   ): void {
     // NOTE: Check for props.propertyName or props?.propertyName pattern
     if (
@@ -115,7 +109,7 @@ export class PropsUsageTracker implements IPropsUsageTracker {
 
   public markAsUsedForVariableDeclarator(
     node: TSESTree.VariableDeclarator,
-    propsParamName: string
+    propsParamName: string,
   ): void {
     // NOTE: Check for destructuring assignment: const { prop1, prop2 } = props
     if (
@@ -134,7 +128,7 @@ export class PropsUsageTracker implements IPropsUsageTracker {
 
   public markAsUsedForAssignmentExpression(
     node: TSESTree.AssignmentExpression,
-    propsParamName: string
+    propsParamName: string,
   ): void {
     // NOTE: Check for this.property = props.property pattern
     if (
@@ -164,9 +158,8 @@ export class PropsUsageTracker implements IPropsUsageTracker {
     const typeProperties = propsType.getProperties();
     if (typeProperties.length) {
       return typeProperties.reduce<string[]>(
-        (acc, prop) =>
-          !isInternalProperty(prop.name) ? [...acc, prop.name] : acc,
-        []
+        (acc, prop) => (!isInternalProperty(prop.name) ? [...acc, prop.name] : acc),
+        [],
       );
     }
 

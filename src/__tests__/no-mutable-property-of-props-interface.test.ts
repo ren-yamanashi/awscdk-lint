@@ -12,94 +12,90 @@ const ruleTester = new RuleTester({
   },
 });
 
-ruleTester.run(
-  "no-mutable-property-of-props-interface",
-  noMutablePropertyOfPropsInterface,
-  {
-    valid: [
-      // WHEN: All properties are readonly
-      {
-        code: `
+ruleTester.run("no-mutable-property-of-props-interface", noMutablePropertyOfPropsInterface, {
+  valid: [
+    // WHEN: All properties are readonly
+    {
+      code: `
         interface TestProps {
           readonly name: string;
           readonly age: number;
         }
       `,
-      },
-      // WHEN: Interface name does not end with "Props"
-      {
-        code: `
+    },
+    // WHEN: Interface name does not end with "Props"
+    {
+      code: `
         interface Test {
           name: string;
           age: number;
         }
       `,
-      },
-      // WHEN: Optional properties are readonly
-      {
-        code: `
+    },
+    // WHEN: Optional properties are readonly
+    {
+      code: `
         interface UserProps {
           readonly name?: string;
           readonly age?: number;
         }
       `,
-      },
-    ],
-    invalid: [
-      // WHEN: readonly is not set
-      {
-        code: `
+    },
+  ],
+  invalid: [
+    // WHEN: readonly is not set
+    {
+      code: `
         interface TestProps {
           name: string;
           age: number;
         }
       `,
-        output: `
+      output: `
         interface TestProps {
           readonly name: string;
           readonly age: number;
         }
       `,
-        errors: [
-          { messageId: "invalidPropertyOfPropsInterface" },
-          { messageId: "invalidPropertyOfPropsInterface" },
-        ],
-      },
-      // WHEN: Some properties do not have readonly
-      {
-        code: `
+      errors: [
+        { messageId: "invalidPropertyOfPropsInterface" },
+        { messageId: "invalidPropertyOfPropsInterface" },
+      ],
+    },
+    // WHEN: Some properties do not have readonly
+    {
+      code: `
         interface UserProps {
           readonly name: string;
           age: number;
         }
       `,
-        output: `
+      output: `
         interface UserProps {
           readonly name: string;
           readonly age: number;
         }
       `,
-        errors: [{ messageId: "invalidPropertyOfPropsInterface" }],
-      },
-      // WHEN: Optional properties do not have readonly
-      {
-        code: `
+      errors: [{ messageId: "invalidPropertyOfPropsInterface" }],
+    },
+    // WHEN: Optional properties do not have readonly
+    {
+      code: `
         interface ConfigProps {
           name?: string;
           age?: number;
         }
       `,
-        output: `
+      output: `
         interface ConfigProps {
           readonly name?: string;
           readonly age?: number;
         }
       `,
-        errors: [
-          { messageId: "invalidPropertyOfPropsInterface" },
-          { messageId: "invalidPropertyOfPropsInterface" },
-        ],
-      },
-    ],
-  }
-);
+      errors: [
+        { messageId: "invalidPropertyOfPropsInterface" },
+        { messageId: "invalidPropertyOfPropsInterface" },
+      ],
+    },
+  ],
+});

@@ -10,12 +10,7 @@ import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-
  */
 export const isConstructType = (
   type: Type,
-  ignoredClasses: readonly string[] = [
-    "App",
-    "Stage",
-    "CfnOutput",
-    "Stack",
-  ] as const
+  ignoredClasses: readonly string[] = ["App", "Stage", "CfnOutput", "Stack"] as const,
 ): boolean => {
   if (ignoredClasses.includes(type.symbol?.name ?? "")) return false;
   return isExtendsFromTargetSuperClass(type, ["Construct"], isConstructType);

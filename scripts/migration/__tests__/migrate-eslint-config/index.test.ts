@@ -1,8 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import { migrateEslintConfig } from "../../migrate-eslint-config";
 import { ErrorResult, RESULT_TYPE, SuccessResult } from "../../result";
 

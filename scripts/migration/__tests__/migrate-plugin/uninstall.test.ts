@@ -2,12 +2,7 @@ import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-import {
-  PACKAGE_MANGER,
-  PACKAGE_MANGER_VALUES,
-} from "../../migrate-plugin/select-package-manager";
+import { PACKAGE_MANGER, PACKAGE_MANGER_VALUES } from "../../migrate-plugin/select-package-manager";
 import { uninstallPlugin } from "../../migrate-plugin/uninstall";
 import { ErrorResult, RESULT_TYPE, SuccessResult } from "../../result";
 
@@ -49,10 +44,7 @@ describe("uninstallPlugin", () => {
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJsonContent));
 
       // WHEN
-      const result = uninstallPlugin(
-        packageManager,
-        testDir
-      ) as SuccessResult<void>;
+      const result = uninstallPlugin(packageManager, testDir) as SuccessResult<void>;
 
       // THEN
       expect(result.type).toEqual(RESULT_TYPE.SUCCESS);
@@ -66,10 +58,7 @@ describe("uninstallPlugin", () => {
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJsonContent));
 
       // WHEN
-      const result = uninstallPlugin(
-        packageManager,
-        testDir
-      ) as SuccessResult<void>;
+      const result = uninstallPlugin(packageManager, testDir) as SuccessResult<void>;
 
       // THEN
       expect(result.type).toEqual(RESULT_TYPE.SUCCESS);
@@ -105,10 +94,7 @@ describe("uninstallPlugin", () => {
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJsonContent));
 
     // WHEN
-    const result = uninstallPlugin(
-      PACKAGE_MANGER.NPM,
-      testDir
-    ) as SuccessResult<void>;
+    const result = uninstallPlugin(PACKAGE_MANGER.NPM, testDir) as SuccessResult<void>;
 
     // THEN
     expect(result.type).toEqual(RESULT_TYPE.SUCCESS);

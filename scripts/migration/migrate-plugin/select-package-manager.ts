@@ -10,8 +10,7 @@ export const PACKAGE_MANGER = {
 
 export const PACKAGE_MANGER_VALUES = Object.values(PACKAGE_MANGER);
 
-export type PackageManager =
-  (typeof PACKAGE_MANGER)[keyof typeof PACKAGE_MANGER];
+export type PackageManager = (typeof PACKAGE_MANGER)[keyof typeof PACKAGE_MANGER];
 
 /**
  * Select the package manager to use
@@ -38,9 +37,7 @@ export const selectPackageManager = async (options: {
   }
 
   // NOTE: When options.packageManager is provided, validate it
-  if (
-    !PACKAGE_MANGER_VALUES.includes(options.packageManager as PackageManager)
-  ) {
+  if (!PACKAGE_MANGER_VALUES.includes(options.packageManager as PackageManager)) {
     return {
       type: RESULT_TYPE.ERROR,
       message: `Invalid package manager: ${

@@ -1,7 +1,6 @@
 import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
 
 import { IPropsUsageTracker } from "../props-usage-tracker";
-
 import { INodeVisitor } from "./interface/node-visitor";
 
 /**
@@ -27,7 +26,7 @@ import { INodeVisitor } from "./interface/node-visitor";
 export class DirectPropsUsageVisitor implements INodeVisitor {
   constructor(
     private readonly tracker: IPropsUsageTracker,
-    private readonly propsParamName: string
+    private readonly propsParamName: string,
   ) {}
 
   visitMemberExpression(node: TSESTree.MemberExpression): void {

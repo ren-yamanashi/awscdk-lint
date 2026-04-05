@@ -2,9 +2,36 @@
   "name": "eslint-cdk-plugin",
   "version": "3.4.7",
   "description": "eslint plugin for AWS CDK projects",
+  "keywords": [
+    "aws",
+    "cdk",
+    "eslint",
+    "eslint-plugin",
+    "eslintplugin"
+  ],
+  "homepage": "https://eslint-cdk-plugin.dev/",
+  "license": "MIT",
+  "author": {
+    "name": "ren-yamanashi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ren-yamanashi/eslint-cdk-plugin.git"
+  },
+  "bin": {
+    "migrate-cdk-plugin": "./bin/index.mjs"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "src",
+    "!src/__tests__",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "type": "module",
   "exports": {
     "types": "./dist/index.d.ts",
     "require": {
@@ -16,18 +43,14 @@
       "default": "./dist/index.mjs"
     }
   },
-  "bin": {
-    "migrate-cdk-plugin": "./bin/index.mjs"
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
-    "test": "vitest --run",
-    "test:integration": "sh scripts/integration-test.sh",
-    "lint": "eslint --fix",
-    "check": "tsc --noEmit",
-    "pack": "pnpm run build && npm pack",
-    "docs": "pnpm run --filter=@eslint-cdk-plugin/docs",
-    "example:flat-config": "pnpm run --filter=@eslint-cdk-plugin/example-flat-config"
+    "pack": "vp pack",
+    "check": "vp check",
+    "test": "vp test --run",
+    "docs": "vp run -F @eslint-plugin-awscdk/docs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -36,49 +59,21 @@
     "@typescript-eslint/parser": "^8.48.1",
     "@typescript-eslint/rule-tester": "^8.48.1",
     "@typescript-eslint/utils": "^8.48.1",
+    "@voidzero-dev/vite-plus-core": "^0.1.11",
     "commander": "^14.0.2",
     "consola": "^3.4.2",
     "eslint": "^10.0.0",
-    "eslint-plugin-import": "^2.32.0",
     "secretlint": "^11.2.5",
-    "tsdown": "^0.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1",
-    "vitest": "^4.0.6"
+    "vite-plus": "^0.1.11"
   },
   "peerDependencies": {
-    "eslint": "^8.57.0 || ^9.0.0",
+    "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
     "typescript": ">=4.8.4 <6.0.0"
   },
   "engines": {
     "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
   },
-  "packageManager": "pnpm@10.10.0",
-  "files": [
-    "bin",
-    "dist",
-    "src",
-    "!src/__tests__",
-    "README.md",
-    "LICENSE"
-  ],
-  "keywords": [
-    "eslint",
-    "eslintplugin",
-    "eslint-plugin",
-    "aws",
-    "cdk"
-  ],
-  "homepage": "https://eslint-cdk-plugin.dev/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ren-yamanashi/eslint-cdk-plugin.git"
-  },
-  "author": {
-    "name": "ren-yamanashi"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "MIT"
+  "packageManager": "pnpm@10.29.3"
 }

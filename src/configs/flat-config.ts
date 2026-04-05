@@ -10,7 +10,7 @@ const cdk = {
 };
 
 const createFlatConfig = (
-  rules: FlatConfig.Rules
+  rules: FlatConfig.Rules,
 ): {
   languageOptions: FlatConfig.LanguageOptions;
   plugins: FlatConfig.Plugins;
@@ -37,10 +37,7 @@ export const recommended = createFlatConfig({
   "cdk/no-construct-stack-suffix": "error",
   "cdk/no-mutable-property-of-props-interface": "warn",
   "cdk/no-mutable-public-property-of-construct": "warn",
-  "cdk/no-parent-name-construct-id-match": [
-    "error",
-    { disallowContainingParentName: false },
-  ],
+  "cdk/no-parent-name-construct-id-match": ["error", { disallowContainingParentName: false }],
   "cdk/no-unused-props": "error",
   "cdk/no-variable-construct-id": "error",
   "cdk/pascal-case-construct-id": "error",
@@ -55,10 +52,7 @@ export const strict = createFlatConfig({
   "cdk/no-import-private": "error",
   "cdk/no-mutable-property-of-props-interface": "error",
   "cdk/no-mutable-public-property-of-construct": "error",
-  "cdk/no-parent-name-construct-id-match": [
-    "error",
-    { disallowContainingParentName: true },
-  ],
+  "cdk/no-parent-name-construct-id-match": ["error", { disallowContainingParentName: true }],
   "cdk/no-unused-props": "error",
   "cdk/no-variable-construct-id": "error",
   "cdk/pascal-case-construct-id": "error",

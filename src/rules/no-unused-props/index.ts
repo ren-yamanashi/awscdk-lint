@@ -10,7 +10,6 @@ import { Type } from "typescript";
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../../shared/create-rule";
-
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
 
@@ -64,7 +63,7 @@ export const noUnusedProps = createRule({
 
 const getPropsParam = (
   constructor: TSESTree.MethodDefinition,
-  parserServices: ParserServicesWithTypeInformation
+  parserServices: ParserServicesWithTypeInformation,
 ): { node: TSESTree.Identifier; type: Type } | null => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
@@ -98,7 +97,7 @@ const getPropsParam = (
  */
 const isPropsUsedInSuperCall = (
   constructor: TSESTree.MethodDefinition,
-  propsPropertyName: string
+  propsPropertyName: string,
 ): boolean => {
   if (constructor.kind !== "constructor") return false;
   const body = constructor.value.body;
@@ -114,8 +113,7 @@ const isPropsUsedInSuperCall = (
     }
 
     const visitNode = (node: TSESTree.Node, propsName: string): boolean => {
-      const nodeValue =
-        node.type === AST_NODE_TYPES.Property ? node.value : node;
+      const nodeValue = node.type === AST_NODE_TYPES.Property ? node.value : node;
       switch (nodeValue.type) {
         case AST_NODE_TYPES.Identifier: {
           return nodeValue.name === propsName;
@@ -147,7 +145,7 @@ const isPropsUsedInSuperCall = (
 const reportUnusedProperties = (
   tracker: IPropsUsageTracker,
   propsParam: TSESTree.Parameter,
-  context: Context
+  context: Context,
 ): void => {
   for (const propName of tracker.getUnusedProperties()) {
     context.report({

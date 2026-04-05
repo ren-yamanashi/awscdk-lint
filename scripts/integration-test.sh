@@ -16,5 +16,5 @@ check_eslint_output() {
   echo "SUCCESS: Expected error count found!"
 }
 
-check_eslint_output "pnpm run example:flat-config lint:esm"
-check_eslint_output "pnpm run example:flat-config lint:cjs"
+check_eslint_output "vp run -F @eslint-cdk-plugin/example-eslint lint:esm"
+check_eslint_output "vp run -F @eslint-cdk-plugin/example-eslint lint:cjs"

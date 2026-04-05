@@ -38,7 +38,7 @@ const findEslintConfigFiles = (projectRoot: string): string[] => {
 };
 
 const updateConfig = (
-  content: string
+  content: string,
 ): {
   content: string;
   modified: boolean;
@@ -48,29 +48,19 @@ const updateConfig = (
 
   // Replace import statements
   if (modifiedContent.includes('"eslint-cdk-plugin"')) {
-    modifiedContent = modifiedContent.replace(
-      /"eslint-cdk-plugin"/g,
-      '"eslint-plugin-awscdk"'
-    );
+    modifiedContent = modifiedContent.replace(/"eslint-cdk-plugin"/g, '"eslint-plugin-awscdk"');
     modified = true;
   }
   if (modifiedContent.includes("'eslint-cdk-plugin'")) {
-    modifiedContent = modifiedContent.replace(
-      /'eslint-cdk-plugin'/g,
-      "'eslint-plugin-awscdk'"
-    );
+    modifiedContent = modifiedContent.replace(/'eslint-cdk-plugin'/g, "'eslint-plugin-awscdk'");
     modified = true;
   }
 
   // NOTE: Replace plugins property: cdk: -> awscdk:
   // Match pattern like "cdk: cdkPlugin" within plugins object
-  const pluginsPropertyRegex =
-    /(\bplugins\s*:\s*\{[\s\S]*?\b)(cdk)(\s*:\s*[a-zA-Z_$])/g;
+  const pluginsPropertyRegex = /(\bplugins\s*:\s*\{[\s\S]*?\b)(cdk)(\s*:\s*[a-zA-Z_$])/g;
   if (modifiedContent.match(pluginsPropertyRegex)) {
-    modifiedContent = modifiedContent.replace(
-      pluginsPropertyRegex,
-      "$1awscdk$3"
-    );
+    modifiedContent = modifiedContent.replace(pluginsPropertyRegex, "$1awscdk$3");
     modified = true;
   }
 

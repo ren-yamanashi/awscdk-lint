@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2023"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "target": "ESNext",
+    "lib": ["ESNext"],
     "incremental": false,
     "declaration": true,
     "sourceMap": true,
@@ -14,6 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
+    "types": ["vite-plus/test/globals"],
     "rootDir": ".",
     "outDir": "./dist",
     "module": "ESNext",

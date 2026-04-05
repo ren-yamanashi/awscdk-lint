@@ -1,6 +1,9 @@
 node_modules/
 dist/
+bin/
+
+# IDE
+.vscode/
+.claude/
 .DS_Store
 *.tgz
-.claude/
-bin/

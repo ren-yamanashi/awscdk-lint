@@ -2,6 +2,21 @@ packages:
   - .
   - docs
   - examples/*
-useNodeVersion: 24.13.1
+overrides:
+  vite: npm:@voidzero-dev/vite-plus-core@^0.1.11
+  vitest: npm:@voidzero-dev/vite-plus-test@^0.1.11
 engineStrict: true
 minimumReleaseAge: 2880
+minimumReleaseAgeExclude:
+  - vite-plus
+  - "@voidzero-dev/vite-plus-core"
+  - "@voidzero-dev/vite-plus-darwin-arm64"
+  - "@voidzero-dev/vite-plus-darwin-x64"
+  - "@voidzero-dev/vite-plus-linux-arm64-gnu"
+  - "@voidzero-dev/vite-plus-linux-x64-gnu"
+  - "@voidzero-dev/vite-plus-test"
+  - "@voidzero-dev/vite-plus-win32-arm64-msvc"
+  - "@voidzero-dev/vite-plus-win32-x64-msvc"
+onlyBuiltDependencies:
+  - esbuild
+useNodeVersion: 24.14.1

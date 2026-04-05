@@ -16,32 +16,24 @@ export type PublicProperty = {
     | TSESTree.TSParameterProperty;
 };
 
-export const findPublicPropertiesInClass = (
-  node: TSESTree.ClassDeclaration
-): PublicProperty[] => {
+export const findPublicPropertiesInClass = (node: TSESTree.ClassDeclaration): PublicProperty[] => {
   const constructorProperties = findPropertiesInConstructor(node);
   const classElementProperties = findPropertiesInClassElement(node);
   return [...constructorProperties, ...classElementProperties];
-}
+};
 
-const findPropertiesInConstructor = (
-  node: TSESTree.ClassDeclaration
-) => {
+const findPropertiesInConstructor = (node: TSESTree.ClassDeclaration) => {
   const constructor = findConstructor(node);
   if (!constructor) return [];
-  return constructor.value.params.flatMap(
-    (property) => findPublicProperty(property) ?? []
-  );
-}
+  return constructor.value.params.flatMap((property) => findPublicProperty(property) ?? []);
+};
 
 const findPropertiesInClassElement = (node: TSESTree.ClassDeclaration): PublicProperty[] => {
-  return node.body.body.flatMap(
-    (property) => findPublicProperty(property) ?? []
-  );
+  return node.body.body.flatMap((property) => findPublicProperty(property) ?? []);
 };
 
 const findPublicProperty = (
-  property: TSESTree.Parameter | TSESTree.ClassElement
+  property: TSESTree.Parameter | TSESTree.ClassElement,
 ): PublicProperty | undefined => {
   switch (property.type) {
     // NOTE: get from constructor

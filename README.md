@@ -16,7 +16,8 @@ Please refer to the [website](https://eslint-cdk-plugin.dev/).
 
 ## ⚠️ Package Name Migration Notice
 
-_**Important**: This package was previously published as `eslint-cdk-plugin`. Starting from v4.0.0, it has been renamed to `eslint-plugin-awscdk` to follow ESLint's official naming convention._
+> [!WARNING]
+> This package was previously published as `eslint-cdk-plugin`. Starting from v4.0.0, it has been renamed to `eslint-plugin-awscdk` to follow ESLint's official naming convention.
 
 ### Migration Steps
 
