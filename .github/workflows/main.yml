@@ -72,14 +72,15 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Node.js
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@b5d848f5a62488f3d3d920f8aa6ac318a60c5f07 # v1
+        with:
+          node-version: "24.14.1"
+
+      - name: Setup npm registry
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 24.14.1
           registry-url: "https://registry.npmjs.org"
-
-      - name: Update npm
-        run: npm install -g npm@latest
 
       - name: Get package info
         id: package
