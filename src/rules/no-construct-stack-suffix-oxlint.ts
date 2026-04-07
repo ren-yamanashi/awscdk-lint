@@ -1,9 +1,9 @@
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructOrStackTypeOxlint } from "../core/cdk-construct/type-checker/is-construct-or-stack";
-import { safeCall } from "../shared/safe-call";
-import { createRuleOxlint } from "../shared/create-rule";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
+import { createRuleOxlint } from "../shared/create-rule";
+import { safeCall } from "../shared/safe-call";
 
 const SUFFIX_TYPE = {
   CONSTRUCT: "Construct",

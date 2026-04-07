@@ -1,8 +1,8 @@
 import { getParserServices } from "corsa-oxlint";
 
 import { findTypeOfCdkConstructOxlint } from "../core/cdk-construct/type-finder";
-import { safeCall } from "../shared/safe-call";
 import { createRuleOxlint } from "../shared/create-rule";
+import { safeCall } from "../shared/safe-call";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties
@@ -32,10 +32,7 @@ export const noConstructInInterfaceOxlint = createRuleOxlint({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TSInterfaceDeclaration(node: any) {
         for (const property of node.body.body) {
-          if (
-            property.type !== "TSPropertySignature" ||
-            property.key.type !== "Identifier"
-          ) {
+          if (property.type !== "TSPropertySignature" || property.key.type !== "Identifier") {
             continue;
           }
 

@@ -1,4 +1,5 @@
 import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+
 import { Type } from "typescript";
 
 import {
