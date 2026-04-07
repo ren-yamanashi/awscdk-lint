@@ -1,6 +1,18 @@
 {
   "jsPlugins": ["eslint-plugin-awscdk"],
+  "settings": {
+    "typescriptOxlint": {
+      "parserOptions": {
+        "projectService": true,
+        "tsgo": {
+          "executable": "./node_modules/.bin/tsgo"
+        }
+      }
+    }
+  },
   "rules": {
-    "awscdk/no-import-private": "error"
+    "awscdk/no-import-private": "error",
+    "awscdk/no-construct-in-interface-oxlint": "error",
+    "awscdk/no-construct-stack-suffix-oxlint": "error"
   }
 }

@@ -4,8 +4,10 @@ import type { Rule } from "eslint";
 import { constructConstructorProperty } from "./construct-constructor-property";
 import { migrateDisableComments } from "./migrate-disable-comments";
 import { noConstructInInterface } from "./no-construct-in-interface";
+import { noConstructInInterfaceOxlint } from "./no-construct-in-interface-oxlint";
 import { noConstructInPublicPropertyOfConstruct } from "./no-construct-in-public-property-of-construct";
 import { noConstructStackSuffix } from "./no-construct-stack-suffix";
+import { noConstructStackSuffixOxlint } from "./no-construct-stack-suffix-oxlint";
 import { noImportPrivate } from "./no-import-private";
 import { noMutablePropertyOfPropsInterface } from "./no-mutable-property-of-props-interface";
 import { noMutablePublicPropertyOfConstruct } from "./no-mutable-public-property-of-construct";
@@ -26,8 +28,10 @@ export const rules: Record<string, RuleModule> = {
   "construct-constructor-property": constructConstructorProperty,
   "migrate-disable-comments": migrateDisableComments,
   "no-construct-in-interface": noConstructInInterface,
+  "no-construct-in-interface-oxlint": noConstructInInterfaceOxlint,
   "no-construct-in-public-property-of-construct": noConstructInPublicPropertyOfConstruct,
   "no-construct-stack-suffix": noConstructStackSuffix,
+  "no-construct-stack-suffix-oxlint": noConstructStackSuffixOxlint,
   "no-import-private": noImportPrivate,
   "no-mutable-property-of-props-interface": noMutablePropertyOfPropsInterface,
   "no-mutable-public-property-of-construct": noMutablePublicPropertyOfConstruct,

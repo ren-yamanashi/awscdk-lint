@@ -1,0 +1,60 @@
+import { getParserServices } from "corsa-oxlint";
+
+import { findTypeOfCdkConstructOxlint } from "../core/cdk-construct/type-finder";
+import { safeCall } from "../shared/safe-call";
+import { createRuleOxlint } from "../shared/create-rule";
+
+/**
+ * Enforces the use of interface types instead of CDK Construct types in interface properties
+ * @param context - The rule context provided by the linter
+ * @returns An object containing the AST visitor functions
+ */
+export const noConstructInInterfaceOxlint = createRuleOxlint({
+  name: "no-construct-in-interface-oxlint",
+  meta: {
+    type: "problem",
+    docs: {
+      description: "Disallow CDK Construct types in interface properties",
+    },
+    messages: {
+      invalidInterfaceProperty:
+        "Interface property '{{ propertyName }}' should not use CDK Construct type '{{ typeName }}'. Consider using an interface or type alias instead.",
+    },
+    schema: [],
+  },
+  defaultOptions: [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  create(context: any) {
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
+
+    return {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      TSInterfaceDeclaration(node: any) {
+        for (const property of node.body.body) {
+          if (
+            property.type !== "TSPropertySignature" ||
+            property.key.type !== "Identifier"
+          ) {
+            continue;
+          }
+
+          // NOTE: tsgo resolves types at the key position, not the property position
+          const type = safeCall(() => checker.getTypeAtLocation(property.key), undefined);
+          const result = type ? findTypeOfCdkConstructOxlint(type, checker) : undefined;
+
+          if (result) {
+            context.report({
+              node: property,
+              messageId: "invalidInterfaceProperty",
+              data: {
+                propertyName: property.key.name,
+                typeName: safeCall(() => checker.typeToString(result), "unknown"),
+              },
+            });
+          }
+        }
+      },
+    };
+  },
+});

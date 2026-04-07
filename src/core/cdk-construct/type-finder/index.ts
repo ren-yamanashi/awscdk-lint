@@ -1,8 +1,11 @@
+import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
 import { Type } from "typescript";
 
-import { findArrayElementType } from "../../../core/ts-type/finder/array-element";
-import { findGenericsTypeArgument } from "../../../core/ts-type/finder/generics-type-argument";
+import { safeCall } from "../../../shared/safe-call";
 import { isClassType } from "../../ts-type/checker/is-class";
+import { findArrayElementType } from "../../ts-type/finder/array-element";
+import { findGenericsTypeArgument } from "../../ts-type/finder/generics-type-argument";
+import { isConstructTypeOxlint } from "../type-checker/is-construct";
 import { isResourceWithReadonlyInterface } from "../type-checker/is-resource-with-readonly-interface";
 
 /**
@@ -18,6 +21,26 @@ export const findTypeOfCdkConstruct = (type: Type): Type | undefined => {
     findFromUnion(type) ??
     findFromIntersection(type)
   );
+};
+
+/**
+ * Recursively find the TsgoType to obtain type of CDK Construct class (oxlint version)
+ * Handles direct types and type arguments (Array<T>, Promise<T>, etc.)
+ */
+export const findTypeOfCdkConstructOxlint = (
+  type: TsgoType,
+  checker: TsgoTypeCheckerShape,
+): TsgoType | undefined => {
+  if (isConstructTypeOxlint(type, checker)) return type;
+
+  // NOTE: Check type arguments (for Array<T>, Promise<T>, etc.)
+  const typeArgs = safeCall(() => checker.getTypeArguments(type), []);
+  for (const arg of typeArgs) {
+    const found = findTypeOfCdkConstructOxlint(arg, checker);
+    if (found) return found;
+  }
+
+  return undefined;
 };
 
 /**
