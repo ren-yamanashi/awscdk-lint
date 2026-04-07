@@ -31,13 +31,11 @@ export const pascalCaseConstructIdOxlint = createRuleOxlint({
     fixable: "code",
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
@@ -64,7 +62,6 @@ const isPascalCase = (str: string) => {
 /**
  * Check the construct ID is PascalCase
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateConstructId = (node: any, context: any) => {
   if (node.arguments.length < 2) return;
 
@@ -81,7 +78,6 @@ const validateConstructId = (node: any, context: any) => {
   context.report({
     node: secondArg,
     messageId: "invalidConstructId",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fix: (fixer: any) => {
       const pascalCaseValue = toPascalCase(secondArg.value);
       return fixer.replaceText(secondArg, `${quote}${pascalCaseValue}${quote}`);

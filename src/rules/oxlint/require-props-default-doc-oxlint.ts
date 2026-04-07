@@ -20,10 +20,8 @@ export const requirePropsDefaultDocOxlint = createRuleOxlint({
     },
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TSPropertySignature(node: any) {
         if (node.key.type !== "Identifier") return;
 
@@ -40,9 +38,7 @@ export const requirePropsDefaultDocOxlint = createRuleOxlint({
         // NOTE: Get JSDoc comments
         const sourceCode = context.sourceCode;
         const comments = sourceCode.getCommentsBefore(node);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const hasDefaultDoc = comments.some(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (comment: any) =>
             comment.type === "Block" &&
             comment.value.includes("*") &&

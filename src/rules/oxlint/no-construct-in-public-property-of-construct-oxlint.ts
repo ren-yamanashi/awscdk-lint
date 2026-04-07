@@ -25,13 +25,11 @@ export const noConstructInPublicPropertyOfConstructOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ClassDeclaration(node: any) {
         const type = safeCall(() => checker.getTypeAtLocation(node), undefined);
         if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
@@ -48,7 +46,6 @@ export const noConstructInPublicPropertyOfConstructOxlint = createRuleOxlint({
 /**
  * Validates that a public property does not use a CDK Construct type
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validatePublicProperty = (publicProperty: any, context: any, checker: any): void => {
   // NOTE: tsgo resolves types at the key position for property definitions
   const propertyNode = publicProperty.node;

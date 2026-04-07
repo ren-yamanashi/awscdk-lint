@@ -42,14 +42,12 @@ export const requirePassingThisOxlint = createRuleOxlint({
     fixable: "code",
   },
   defaultOptions: [defaultOption],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const options: Option = context.options[0] || defaultOption;
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
@@ -67,7 +65,6 @@ export const requirePassingThisOxlint = createRuleOxlint({
           context.report({
             node: argument,
             messageId: "missingPassingThis",
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             fix: (fixer: any) => {
               return fixer.replaceText(argument, "this");
             },
@@ -79,7 +76,6 @@ export const requirePassingThisOxlint = createRuleOxlint({
           context.report({
             node: argument,
             messageId: "missingPassingThis",
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             fix: (fixer: any) => {
               return fixer.replaceText(argument, "this");
             },

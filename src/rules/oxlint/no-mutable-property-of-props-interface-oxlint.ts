@@ -20,10 +20,8 @@ export const noMutablePropertyOfPropsInterfaceOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TSInterfaceDeclaration(node: any) {
         const sourceCode = context.sourceCode;
 
@@ -45,7 +43,6 @@ export const noMutablePropertyOfPropsInterfaceOxlint = createRuleOxlint({
             data: {
               propertyName: property.key.name,
             },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             fix: (fixer: any) => {
               const propertyText = sourceCode.getText(property);
               return fixer.replaceText(property, `readonly ${propertyText}`);

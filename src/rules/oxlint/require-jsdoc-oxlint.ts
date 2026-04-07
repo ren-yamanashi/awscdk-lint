@@ -23,13 +23,11 @@ export const requireJSDocOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TSPropertySignature(node: any) {
         if (node.key.type !== "Identifier") return;
 
@@ -44,7 +42,6 @@ export const requireJSDocOxlint = createRuleOxlint({
         const sourceCode = context.sourceCode;
         const comments = sourceCode.getCommentsBefore(node);
         const hasJSDoc = comments.some(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ({ type, value }: any) => type === "Block" && value.startsWith("*"),
         );
 
@@ -58,7 +55,6 @@ export const requireJSDocOxlint = createRuleOxlint({
           });
         }
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       PropertyDefinition(node: any) {
         if (node.key.type !== "Identifier" || node.parent.type !== "ClassBody") {
           return;
@@ -84,7 +80,6 @@ export const requireJSDocOxlint = createRuleOxlint({
         const sourceCode = context.sourceCode;
         const comments = sourceCode.getCommentsBefore(node);
         const hasJSDoc = comments.some(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ({ type, value }: any) => type === "Block" && value.startsWith("*"),
         );
 

@@ -24,13 +24,11 @@ export const propsNameConventionOxlint = createRuleOxlint({
     },
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ClassDeclaration(node: any) {
         if (!node.id || !node.superClass) return;
 

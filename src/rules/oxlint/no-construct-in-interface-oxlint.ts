@@ -23,13 +23,11 @@ export const noConstructInInterfaceOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TSInterfaceDeclaration(node: any) {
         for (const property of node.body.body) {
           if (property.type !== "TSPropertySignature" || property.key.type !== "Identifier") {

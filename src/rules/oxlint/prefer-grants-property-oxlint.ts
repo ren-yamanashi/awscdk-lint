@@ -18,13 +18,11 @@ export const preferGrantsPropertyOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       CallExpression(node: any) {
         if (node.callee.type !== "MemberExpression" || node.callee.property.type !== "Identifier") {
           return;
@@ -34,13 +32,14 @@ export const preferGrantsPropertyOxlint = createRuleOxlint({
         if (!methodName.startsWith("grant")) return;
 
         const objectNode = node.callee.object;
-        // NOTE: In oxlint version, use checker.getTypeAtLocation directly on the ESTree node
         const type = safeCall(() => checker.getTypeAtLocation(objectNode), undefined);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const typeAny = type as any;
-        const grantsProperty = safeCall(() => typeAny.getProperty("grants"), undefined);
+        const grantsProperty = safeCall(
+          () =>
+            checker.getPropertiesOfType(type).find((s: { name: string }) => s.name === "grants"),
+          undefined,
+        );
         if (!grantsProperty) return;
 
         const grantsType = safeCall(
@@ -49,8 +48,7 @@ export const preferGrantsPropertyOxlint = createRuleOxlint({
         );
         if (!grantsType) return;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const grantsTypeName = (grantsType as any).symbol?.name;
+        const grantsTypeName = safeCall(() => checker.typeToString(grantsType), "");
         if (!grantsTypeName?.endsWith("Grants")) return;
 
         const convertedMethodName = methodName
@@ -58,8 +56,10 @@ export const preferGrantsPropertyOxlint = createRuleOxlint({
           .replace(/^./, (c: string) => c.toLowerCase());
 
         const suggestedMethod = safeCall(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          () => (grantsType as any).getProperty(convertedMethodName),
+          () =>
+            checker
+              .getPropertiesOfType(grantsType)
+              .find((s: { name: string }) => s.name === convertedMethodName),
           undefined,
         );
         if (!suggestedMethod) return;

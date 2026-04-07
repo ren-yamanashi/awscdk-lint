@@ -53,19 +53,19 @@ export const noConstructStackSuffixOxlint = createRuleOxlint({
     ],
   },
   defaultOptions: [defaultOption],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
         if (!type || !isConstructOrStackTypeOxlint(type, checker) || node.arguments.length < 2) {
           return;
         }
+
+        // NOTE: CDK constructs always have 2nd param as "id", skip findConstructorPropertyNames
 
         validateConstructId(node, context);
       },
@@ -76,7 +76,6 @@ export const noConstructStackSuffixOxlint = createRuleOxlint({
 /**
  * Validate that construct ID does not end with "Construct" or "Stack"
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateConstructId = (node: any, context: any): void => {
   const options: Option = context.options[0] ?? defaultOption;
 

@@ -1,0 +1,203 @@
+import { IPropsUsageTracker } from "./props-usage-tracker";
+import {
+  DirectPropsUsageVisitor,
+  InstanceVariableUsageVisitor,
+  MethodCallCollectorVisitor,
+  PropsAliasVisitor,
+  traverseNodes,
+} from "./visitor";
+
+export interface IPropsUsageAnalyzer {
+  analyze(constructor: any, propsParam: any): void;
+}
+
+export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
+  private readonly tracker: IPropsUsageTracker;
+
+  constructor(tracker: IPropsUsageTracker) {
+    this.tracker = tracker;
+  }
+
+  analyze(constructor: any, propsParam: any): void {
+    const constructorBody = constructor.value.body;
+    const classNode = constructor.parent;
+    const propsParamName = propsParam.name;
+    if (!constructorBody) return;
+
+    this.checkUsageForDirectAccess(constructorBody, propsParamName);
+    this.checkUsageForAliasAccess(constructorBody, propsParamName);
+    this.checkUsageForInstanceVariable(classNode, constructor, propsParamName);
+    this.checkUsageForPrivateMethodsCalledFromConstructor(
+      constructorBody,
+      classNode,
+      propsParamName,
+    );
+  }
+
+  /**
+   * Analyzes direct access to props within the constructor body.
+   *
+   * @example
+   * ```typescript
+   * constructor(scope: Construct, id: string, props: MyConstructProps) {
+   *   super(scope, id);
+   *   console.log(props.bucketName);  // <- Direct access tracked here
+   * }
+   * ```
+   *
+   * @param constructorBody - The constructor's BlockStatement to analyze
+   * @param propsParamName - The name of the props parameter (e.g., "props")
+   */
+  private checkUsageForDirectAccess(constructorBody: any, propsParamName: string): void {
+    const directVisitor = new DirectPropsUsageVisitor(this.tracker, propsParamName);
+    traverseNodes(constructorBody, directVisitor);
+  }
+
+  /**
+   * Analyzes props usage via aliases within the constructor body.
+   *
+   * When props is assigned to another variable (alias), this method tracks
+   * usage of that alias throughout the constructor.
+   *
+   * @example
+   * ```typescript
+   * constructor(scope: Construct, id: string, props: MyConstructProps) {
+   *   super(scope, id);
+   *   const p = props;  // <- Alias assignment detected
+   *   console.log(p.bucketName);  // <- Usage tracked here
+   * }
+   * ```
+   *
+   * @param constructorBody - The constructor's BlockStatement to analyze
+   * @param propsParamName - The name of the props parameter (e.g., "props")
+   */
+  private checkUsageForAliasAccess(constructorBody: any, propsParamName: string): void {
+    const aliasVisitor = new PropsAliasVisitor(this.tracker, propsParamName);
+    traverseNodes(constructorBody, aliasVisitor);
+  }
+
+  /**
+   * Analyzes the class body for props usage via instance variables.
+   *
+   * @example
+   * ```typescript
+   * class MyConstruct extends Construct {
+   *   private myProps: MyConstructProps;
+   *
+   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
+   *     super(scope, id);
+   *     this.myProps = props;  // <- Instance variable assignment detected
+   *   }
+   *
+   *   someMethod() {
+   *     console.log(this.myProps.bucketName);  // <- Usage tracked here
+   *   }
+   * }
+   * ```
+   *
+   * @param classBody - The ClassBody node to analyze
+   * @param constructor - The constructor MethodDefinition node
+   * @param propsParamName - The name of the props parameter (e.g., "props")
+   */
+  private checkUsageForInstanceVariable(classBody: any, constructor: any, propsParamName: string) {
+    if (!constructor.value.body) return;
+    const instanceVarName = this.findPropsInstanceVariable(constructor.value.body, propsParamName);
+    if (!instanceVarName) return;
+
+    const instanceVisitor = new InstanceVariableUsageVisitor(this.tracker, instanceVarName);
+    traverseNodes(classBody, instanceVisitor);
+  }
+
+  /**
+   * Analyzes private methods that are called from the constructor with props as an argument.
+   *
+   * @example
+   * ```typescript
+   * class MyConstruct extends Construct {
+   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
+   *     super(scope, id);
+   *     this.setupBucket(props);  // <- Method call with props detected
+   *   }
+   *
+   *   private setupBucket(p: MyConstructProps) {
+   *     new Bucket(this, 'Bucket', { bucketName: p.bucketName });
+   *   }
+   * }
+   * ```
+   *
+   * @param constructorBody - The constructor's BlockStatement to search for method calls
+   * @param classBody - The ClassBody containing method definitions
+   * @param propsParamName - The name of the props parameter (e.g., "props")
+   */
+  private checkUsageForPrivateMethodsCalledFromConstructor(
+    constructorBody: any,
+    classBody: any,
+    propsParamName: string,
+  ): void {
+    // NOTE: Collect method calls in constructor
+    const methodCallsWithProps = this.collectMethodCallsWithProps(constructorBody, propsParamName);
+
+    // NOTE: For each method call, find the method definition and analyze it
+    for (const { methodName, propsArgIndices } of methodCallsWithProps) {
+      const methodDef = this.findMethodDefinition(classBody, methodName);
+      if (!methodDef?.value.body) continue;
+
+      // NOTE: Get the actual parameter names from the method definition
+      for (const argIndex of propsArgIndices) {
+        const param = methodDef.value.params[argIndex];
+        if (param?.type === "Identifier") {
+          const visitor = new DirectPropsUsageVisitor(this.tracker, param.name);
+          traverseNodes(methodDef.value.body, visitor);
+        }
+      }
+    }
+  }
+
+  /**
+   * Collects method calls in the constructor body where props is passed as an argument.
+   */
+  private collectMethodCallsWithProps(
+    body: any,
+    propsParamName: string,
+  ): { methodName: string; propsArgIndices: number[] }[] {
+    const visitor = new MethodCallCollectorVisitor(propsParamName);
+    traverseNodes(body, visitor);
+    return visitor.result;
+  }
+
+  /**
+   * Finds the instance variable name where props is assigned in the constructor.
+   */
+  private findPropsInstanceVariable(body: any, propsParamName: string): string | null {
+    for (const statement of body.body) {
+      if (
+        statement.type === "ExpressionStatement" &&
+        statement.expression.type === "AssignmentExpression" &&
+        statement.expression.left.type === "MemberExpression" &&
+        statement.expression.left.object.type === "ThisExpression" &&
+        statement.expression.left.property.type === "Identifier" &&
+        statement.expression.right.type === "Identifier" &&
+        statement.expression.right.name === propsParamName
+      ) {
+        return statement.expression.left.property.name;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds a method definition in the class body by its name.
+   */
+  private findMethodDefinition(classBody: any, methodName: string): any | null {
+    for (const member of classBody.body) {
+      if (
+        member.type === "MethodDefinition" &&
+        member.key.type === "Identifier" &&
+        member.key.name === methodName
+      ) {
+        return member;
+      }
+    }
+    return null;
+  }
+}

@@ -23,13 +23,11 @@ export const preventConstructIdCollisionOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
@@ -45,7 +43,6 @@ export const preventConstructIdCollisionOxlint = createRuleOxlint({
 /**
  * Validate whether a Construct ID is a literal inside a loop
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateConstructIdInLoop = (node: any, context: any) => {
   if (!isInsideLoop(node)) return;
 
@@ -62,9 +59,7 @@ const validateConstructIdInLoop = (node: any, context: any) => {
   }
 
   // NOTE: Template literals without expressions are also static values
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (secondArg.type === "TemplateLiteral" && !secondArg.expressions.length) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const constructId = secondArg.quasis.map((q: any) => q.value.raw).join("");
     context.report({
       node: secondArg,
@@ -80,7 +75,6 @@ const validateConstructIdInLoop = (node: any, context: any) => {
  * Detects for, for...in, for...of, while, do...while statements,
  * and callbacks of iteration methods (forEach, map, etc.)
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isInsideLoop = (node: any): boolean => {
   let current = node.parent;
   while (current) {
@@ -131,7 +125,6 @@ const ITERATION_METHODS = new Set([
 /**
  * Check whether an arrow function or function expression is a callback of an iteration method
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isIterationMethodCallback = (node: any): boolean => {
   const parent = node.parent;
   if (parent?.type !== "CallExpression") return false;

@@ -22,13 +22,11 @@ export const noVariableConstructIdOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
@@ -44,7 +42,6 @@ export const noVariableConstructIdOxlint = createRuleOxlint({
 /**
  * Check if the construct ID is a literal string
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateConstructId = (node: any, context: any) => {
   if (node.arguments.length < 2 || shouldSkipIdValidation(node)) return;
 
@@ -71,11 +68,10 @@ const validateConstructId = (node: any, context: any) => {
  * Check if construct ID validation should be skipped for a node.
  * Skip if it is inside a loop statement, non-constructor method, or arrow function.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const shouldSkipIdValidation = (node: any): boolean => {
   let current = node.parent;
   while (current) {
-    // NOTE: Constructs defined in loops require variable IDs
+    // Constructs defined in loops require variable IDs
     if (
       current.type === "ForStatement" ||
       current.type === "ForInStatement" ||
@@ -86,12 +82,14 @@ const shouldSkipIdValidation = (node: any): boolean => {
       return true;
     }
 
-    // NOTE: Constructs defined in class methods are intended to be called multiple times
+    // Constructs defined in class methods are intended to be called multiple times,
+    // which requires variable IDs
     if (current.type === "MethodDefinition" && current.kind !== "constructor") {
       return true;
     }
 
-    // NOTE: Constructs in arrow functions are also intended to be called multiple times
+    // Constructs in arrow functions are also intended to be called multiple times.
+    // This includes usages of array methods like forEach, map, etc.
     if (current.type === "ArrowFunctionExpression") {
       return true;
     }

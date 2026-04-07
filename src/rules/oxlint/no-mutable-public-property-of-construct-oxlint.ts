@@ -25,13 +25,11 @@ export const noMutablePublicPropertyOfConstructOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ClassDeclaration(node: any) {
         const sourceCode = context.sourceCode;
         const type = safeCall(() => checker.getTypeAtLocation(node), undefined);
@@ -39,18 +37,19 @@ export const noMutablePublicPropertyOfConstructOxlint = createRuleOxlint({
 
         const publicProperties = findPublicPropertiesInClass(node);
         for (const property of publicProperties) {
-          validatePublicProperty(property, context, sourceCode);
+          validatePublicProperty({
+            publicProperty: property,
+            context,
+            sourceCode,
+          });
         }
       },
     };
   },
 });
 
-/**
- * Validates that a public property has the readonly modifier
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const validatePublicProperty = (publicProperty: any, context: any, sourceCode: any): void => {
+const validatePublicProperty = (args: { publicProperty: any; context: any; sourceCode: any }) => {
+  const { publicProperty, context, sourceCode } = args;
   if (publicProperty.node.readonly) return;
 
   context.report({
@@ -59,7 +58,6 @@ const validatePublicProperty = (publicProperty: any, context: any, sourceCode: a
     data: {
       propertyName: publicProperty.name,
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fix: (fixer: any) => {
       const accessibility = publicProperty.node.accessibility ? "public " : "";
       const paramText = sourceCode.getText(publicProperty.node);

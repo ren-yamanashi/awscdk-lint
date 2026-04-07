@@ -14,7 +14,6 @@ export const migrateDisableCommentsOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     return {
       Program() {
@@ -24,7 +23,6 @@ export const migrateDisableCommentsOxlint = createRuleOxlint({
             context.report({
               loc: comment.loc,
               messageId: "migrateDisableComment",
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               fix: (fixer: any) => {
                 const text = context.sourceCode.getText(comment);
                 return fixer.replaceText(comment, text.replace("cdk/", "awscdk/"));
@@ -36,7 +34,6 @@ export const migrateDisableCommentsOxlint = createRuleOxlint({
             context.report({
               loc: comment.loc,
               messageId: "migrateDisableComment",
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               fix: (fixer: any) => {
                 const text = context.sourceCode.getText(comment);
                 return fixer.replaceText(comment, text.replace("cdk/", "awscdk/"));
