@@ -1,8 +1,8 @@
 import { getParserServices } from "corsa-oxlint";
 
-import { findTypeOfCdkConstructOxlint } from "../core/cdk-construct/type-finder";
-import { createRuleOxlint } from "../shared/create-rule";
-import { safeCall } from "../shared/safe-call";
+import { findTypeOfCdkConstructOxlint } from "../../core/cdk-construct/type-finder";
+import { createRuleOxlint } from "../../shared/create-rule";
+import { safeCall } from "../../shared/safe-call";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties

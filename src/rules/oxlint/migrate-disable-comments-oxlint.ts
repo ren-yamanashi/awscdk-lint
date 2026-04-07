@@ -1,0 +1,50 @@
+import { createRuleOxlint } from "../../shared/create-rule";
+
+export const migrateDisableCommentsOxlint = createRuleOxlint({
+  name: "migrate-disable-comments-oxlint",
+  meta: {
+    type: "problem",
+    fixable: "code",
+    docs: {
+      description: "Migrate deprecated 'cdk/' ESLint disable comments to 'awscdk/'",
+    },
+    messages: {
+      migrateDisableComment: "Replace 'cdk/' with 'awscdk/' in ESLint disable comments.",
+    },
+    schema: [],
+  },
+  defaultOptions: [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  create(context: any) {
+    return {
+      Program() {
+        const comments = context.sourceCode.getAllComments();
+        for (const comment of comments) {
+          if (comment.value.includes("eslint-disable cdk/")) {
+            context.report({
+              loc: comment.loc,
+              messageId: "migrateDisableComment",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fix: (fixer: any) => {
+                const text = context.sourceCode.getText(comment);
+                return fixer.replaceText(comment, text.replace("cdk/", "awscdk/"));
+              },
+            });
+            continue;
+          }
+          if (comment.value.includes("eslint-disable-next-line cdk/")) {
+            context.report({
+              loc: comment.loc,
+              messageId: "migrateDisableComment",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fix: (fixer: any) => {
+                const text = context.sourceCode.getText(comment);
+                return fixer.replaceText(comment, text.replace("cdk/", "awscdk/"));
+              },
+            });
+          }
+        }
+      },
+    };
+  },
+});

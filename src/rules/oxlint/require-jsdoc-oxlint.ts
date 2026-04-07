@@ -1,0 +1,103 @@
+import { getParserServices } from "corsa-oxlint";
+
+import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
+import { createRuleOxlint } from "../../shared/create-rule";
+import { safeCall } from "../../shared/safe-call";
+
+/**
+ * Require JSDoc comments for interface properties and public properties in Construct classes
+ * @param context - The rule context provided by the linter
+ * @returns An object containing the AST visitor functions
+ */
+export const requireJSDocOxlint = createRuleOxlint({
+  name: "require-jsdoc-oxlint",
+  meta: {
+    type: "problem",
+    docs: {
+      description:
+        "Require JSDoc comments for interface properties and public properties in Construct classes",
+    },
+    messages: {
+      missingJSDoc: "Property '{{ propertyName }}' should have a JSDoc comment.",
+    },
+    schema: [],
+  },
+  defaultOptions: [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  create(context: any) {
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
+
+    return {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      TSPropertySignature(node: any) {
+        if (node.key.type !== "Identifier") return;
+
+        // NOTE: Check if the parent is an interface
+        const parent = node.parent.parent;
+        if (parent.type !== "TSInterfaceDeclaration") return;
+
+        // NOTE: Check if the interface name ends with 'Props'
+        if (!parent.id.name.endsWith("Props")) return;
+
+        // NOTE: Get JSDoc comments
+        const sourceCode = context.sourceCode;
+        const comments = sourceCode.getCommentsBefore(node);
+        const hasJSDoc = comments.some(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ({ type, value }: any) => type === "Block" && value.startsWith("*"),
+        );
+
+        if (!hasJSDoc) {
+          context.report({
+            node,
+            messageId: "missingJSDoc",
+            data: {
+              propertyName: node.key.name,
+            },
+          });
+        }
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      PropertyDefinition(node: any) {
+        if (node.key.type !== "Identifier" || node.parent.type !== "ClassBody") {
+          return;
+        }
+
+        // NOTE: Check if the class extends Construct
+        const classDeclaration = node.parent.parent;
+        if (classDeclaration.type !== "ClassDeclaration" || !classDeclaration.superClass) {
+          return;
+        }
+
+        // NOTE: Check if the class extends Construct and the property is public
+        const classType = safeCall(() => checker.getTypeAtLocation(classDeclaration), undefined);
+        const accessibility = node.accessibility ?? "public";
+        if (
+          !classType ||
+          !isConstructTypeOxlint(classType, checker) ||
+          accessibility !== "public"
+        ) {
+          return;
+        }
+
+        const sourceCode = context.sourceCode;
+        const comments = sourceCode.getCommentsBefore(node);
+        const hasJSDoc = comments.some(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ({ type, value }: any) => type === "Block" && value.startsWith("*"),
+        );
+
+        if (!hasJSDoc) {
+          context.report({
+            node,
+            messageId: "missingJSDoc",
+            data: {
+              propertyName: node.key.name,
+            },
+          });
+        }
+      },
+    };
+  },
+});
