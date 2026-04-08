@@ -1,5 +1,5 @@
 import { CfnOutput } from "aws-cdk-lib";
-import { Bucket } from "aws-cdk-lib/aws-s3/lib/bucket";
+import { Bucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 
 export class MyConstruct extends Construct {
