@@ -1,5 +1,5 @@
-/* eslint-disable awscdk/construct-constructor-property */
-/* eslint-disable awscdk/require-jsdoc */
+/* oxlint-disable awscdk/construct-constructor-property-oxlint */
+/* oxlint-disable awscdk/require-jsdoc-oxlint */
 import { App, Stack, Stage } from "aws-cdk-lib";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
