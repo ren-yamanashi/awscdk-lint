@@ -1,5 +1,5 @@
 /* eslint-disable awscdk/require-jsdoc */
-import { IBucket } from "aws-cdk-lib/aws-s3/lib/bucket";
+import { IBucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 
 export class MyConstruct extends Construct {
