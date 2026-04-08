@@ -25,14 +25,15 @@ export const noVariableConstructIdOxlint = createRuleOxlint({
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
+
         if (!type || !isConstructTypeOxlint(type, checker) || node.arguments.length < 2) return;
 
         // NOTE: CDK constructs always have 2nd param as "id", skip findConstructorPropertyNames
+
         validateConstructId(node, context);
       },
     };

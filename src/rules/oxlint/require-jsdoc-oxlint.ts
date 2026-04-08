@@ -40,7 +40,7 @@ export const requireJSDocOxlint = createRuleOxlint({
 
         // NOTE: Get JSDoc comments
         const sourceCode = context.sourceCode;
-        const comments = sourceCode.getCommentsBefore(node);
+        const comments = sourceCode.getCommentsBefore?.(node) ?? [];
         const hasJSDoc = comments.some(
           ({ type, value }: any) => type === "Block" && value.startsWith("*"),
         );
@@ -67,7 +67,8 @@ export const requireJSDocOxlint = createRuleOxlint({
         }
 
         // NOTE: Check if the class extends Construct and the property is public
-        const classType = safeCall(() => checker.getTypeAtLocation(classDeclaration), undefined);
+        // NOTE: tsgo resolves types at node.id position for ClassDeclaration
+        const classType = safeCall(() => checker.getTypeAtLocation(classDeclaration.id), undefined);
         const accessibility = node.accessibility ?? "public";
         if (
           !classType ||
@@ -78,7 +79,7 @@ export const requireJSDocOxlint = createRuleOxlint({
         }
 
         const sourceCode = context.sourceCode;
-        const comments = sourceCode.getCommentsBefore(node);
+        const comments = sourceCode.getCommentsBefore?.(node) ?? [];
         const hasJSDoc = comments.some(
           ({ type, value }: any) => type === "Block" && value.startsWith("*"),
         );

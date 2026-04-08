@@ -27,11 +27,11 @@ export const propsNameConventionOxlint = createRuleOxlint({
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
       ClassDeclaration(node: any) {
         if (!node.id || !node.superClass) return;
 
+        // NOTE: tsgo resolves types at superClass position
         const type = safeCall(() => checker.getTypeAtLocation(node.superClass), undefined);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 

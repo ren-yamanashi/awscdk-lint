@@ -44,6 +44,23 @@ export class PropsAliasVisitor implements INodeVisitor {
   }
 
   visitIdentifier(node: any): void {
+    /**
+     * Handles alias registration for props.
+     *
+     * This method detects when props is assigned to a simple variable,
+     * which creates an alias that should be tracked for property access.
+     *
+     * Handled pattern:
+     *
+     * **Variable assignment** (`const myProps = props`):
+     *    - Registers 'myProps' as an alias of props
+     *    - Later access like `myProps.bucketName` will be detected by visitMemberExpression
+     *
+     *    AST structure:
+     *      VariableDeclarator
+     *      ├── id: Identifier (name: "myProps" - the alias to register)
+     *      └── init: Identifier (name: "props")
+     */
     if (node.name !== this.propsParamName) return;
 
     const parent = node.parent;

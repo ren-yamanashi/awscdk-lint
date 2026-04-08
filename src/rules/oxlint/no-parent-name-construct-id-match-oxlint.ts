@@ -14,6 +14,8 @@ const defaultOption: Option = {
   disallowContainingParentName: false,
 };
 
+type Args = { parentClassName: string; context: any; checker: any; option: Option };
+
 /**
  * Enforce that construct IDs does not match the parent construct name.
  * @param context - The rule context provided by the linter
@@ -44,23 +46,21 @@ export const noParentNameConstructIdMatchOxlint = createRuleOxlint({
     ],
   },
   defaultOptions: [defaultOption],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(context: any) {
     const option: Option = context.options[0] || defaultOption;
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ClassBody(node: any) {
-        const type = safeCall(() => checker.getTypeAtLocation(node), undefined);
-        if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
-
         const parent = node.parent;
         if (parent?.type !== "ClassDeclaration") return;
 
         const parentClassName = parent.id?.name;
         if (!parentClassName) return;
+
+        // NOTE: tsgo resolves types at parent.id position for ClassBody
+        const type = safeCall(() => checker.getTypeAtLocation(parent.id), undefined);
+        if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
 
         for (const body of node.body) {
           // NOTE: Ignore if neither method nor constructor.
@@ -71,7 +71,13 @@ export const noParentNameConstructIdMatchOxlint = createRuleOxlint({
           ) {
             continue;
           }
-          validateConstructorBody(body.value, parentClassName, context, checker, option);
+          validateConstructorBody({
+            expression: body.value,
+            parentClassName,
+            context,
+            checker,
+            option,
+          });
         }
       },
     };
@@ -80,38 +86,54 @@ export const noParentNameConstructIdMatchOxlint = createRuleOxlint({
 
 /**
  * Validate the constructor body for the parent class
+ * - validate each statement in the constructor body
  */
-const validateConstructorBody = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  expression: any,
-  parentClassName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  checker: any,
-  option: Option,
-): void => {
+const validateConstructorBody = ({
+  expression,
+  parentClassName,
+  context,
+  checker,
+  option,
+}: Args & { expression: any }): void => {
   for (const statement of expression.body.body) {
     switch (statement.type) {
       case "VariableDeclaration": {
         const newExpression = statement.declarations[0].init;
         if (newExpression?.type !== "NewExpression") continue;
-        validateConstructId(newExpression, parentClassName, context, checker, option);
+        validateConstructId({
+          context,
+          expression: newExpression,
+          parentClassName,
+          checker,
+          option,
+        });
         break;
       }
       case "ExpressionStatement": {
         if (statement.expression?.type !== "NewExpression") break;
-        validateStatement(statement, parentClassName, context, checker, option);
+        validateStatement({ statement, parentClassName, context, checker, option });
         break;
       }
       case "IfStatement": {
-        traverseStatements(statement.consequent, parentClassName, context, checker, option);
+        traverseStatements({
+          context,
+          parentClassName,
+          statement: statement.consequent,
+          checker,
+          option,
+        });
         break;
       }
       case "SwitchStatement": {
         for (const switchCase of statement.cases) {
           for (const consequent of switchCase.consequent) {
-            traverseStatements(consequent, parentClassName, context, checker, option);
+            traverseStatements({
+              context,
+              parentClassName,
+              statement: consequent,
+              checker,
+              option,
+            });
           }
         }
         break;
@@ -122,34 +144,33 @@ const validateConstructorBody = (
 
 /**
  * Recursively traverse and validate statements in the AST
+ * - Handles BlockStatement, ExpressionStatement, and VariableDeclaration
+ * - Validates construct IDs against parent class name
  */
-const traverseStatements = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  statement: any,
-  parentClassName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  checker: any,
-  option: Option,
-) => {
+const traverseStatements = ({
+  statement,
+  parentClassName,
+  context,
+  checker,
+  option,
+}: Args & { statement: any }) => {
   switch (statement.type) {
     case "BlockStatement": {
       for (const body of statement.body) {
-        validateStatement(body, parentClassName, context, checker, option);
+        validateStatement({ statement: body, parentClassName, context, checker, option });
       }
       break;
     }
     case "ExpressionStatement": {
       const newExpression = statement.expression;
       if (newExpression?.type !== "NewExpression") break;
-      validateStatement(statement, parentClassName, context, checker, option);
+      validateStatement({ statement, parentClassName, context, checker, option });
       break;
     }
     case "VariableDeclaration": {
       const newExpression = statement.declarations[0].init;
       if (newExpression?.type !== "NewExpression") break;
-      validateConstructId(newExpression, parentClassName, context, checker, option);
+      validateConstructId({ context, expression: newExpression, parentClassName, checker, option });
       break;
     }
   }
@@ -157,41 +178,74 @@ const traverseStatements = (
 
 /**
  * Validate a single statement in the AST
+ * - Handles different types of statements (Variable, Expression, If, Switch)
+ * - Extracts and validates construct IDs from new expressions
  */
-const validateStatement = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  statement: any,
-  parentClassName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  checker: any,
-  option: Option,
-): void => {
+const validateStatement = ({
+  statement,
+  parentClassName,
+  context,
+  checker,
+  option,
+}: Args & { statement: any }): void => {
   switch (statement.type) {
     case "VariableDeclaration": {
       const newExpression = statement.declarations[0].init;
       if (newExpression?.type !== "NewExpression") break;
-      validateConstructId(newExpression, parentClassName, context, checker, option);
+      validateConstructId({ context, expression: newExpression, parentClassName, checker, option });
       break;
     }
     case "ExpressionStatement": {
       const newExpression = statement.expression;
       if (newExpression?.type !== "NewExpression") break;
-      validateConstructId(newExpression, parentClassName, context, checker, option);
+      validateConstructId({ context, expression: newExpression, parentClassName, checker, option });
       break;
     }
     case "IfStatement": {
-      traverseStatements(statement.consequent, parentClassName, context, checker, option);
+      validateIfStatement({ statement, parentClassName, context, checker, option });
       break;
     }
     case "SwitchStatement": {
-      for (const caseStatement of statement.cases) {
-        for (const consequent of caseStatement.consequent) {
-          traverseStatements(consequent, parentClassName, context, checker, option);
-        }
-      }
+      validateSwitchStatement({ statement, parentClassName, context, checker, option });
       break;
+    }
+  }
+};
+
+/**
+ * Validate the `if` statement
+ * - Validate recursively if `if` statements are nested
+ */
+const validateIfStatement = ({
+  statement,
+  parentClassName,
+  context,
+  checker,
+  option,
+}: Args & { statement: any }): void => {
+  traverseStatements({
+    context,
+    parentClassName,
+    statement: statement.consequent,
+    checker,
+    option,
+  });
+};
+
+/**
+ * Validate the `switch` statement
+ * - Validate recursively if `switch` statements are nested
+ */
+const validateSwitchStatement = ({
+  statement,
+  parentClassName,
+  context,
+  checker,
+  option,
+}: Args & { statement: any }): void => {
+  for (const caseStatement of statement.cases) {
+    for (const _consequent of caseStatement.consequent) {
+      traverseStatements({ context, parentClassName, statement: _consequent, checker, option });
     }
   }
 };
@@ -199,16 +253,13 @@ const validateStatement = (
 /**
  * Validate that parent construct name and child id do not match
  */
-const validateConstructId = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  expression: any,
-  parentClassName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  checker: any,
-  option: Option,
-): void => {
+const validateConstructId = ({
+  context,
+  expression,
+  parentClassName,
+  checker,
+  option,
+}: Args & { expression: any }): void => {
   // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
   const type = safeCall(() => checker.getTypeAtLocation(expression.callee), undefined);
 

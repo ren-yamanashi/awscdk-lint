@@ -34,7 +34,8 @@ export const noUnusedPropsOxlint = createRuleOxlint({
       ClassDeclaration(node: any) {
         if (node.abstract) return;
 
-        const type = safeCall(() => checker.getTypeAtLocation(node), undefined);
+        // NOTE: tsgo resolves types at node.id position for ClassDeclaration
+        const type = safeCall(() => checker.getTypeAtLocation(node.id), undefined);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 
         const constructor = findConstructor(node);
@@ -61,7 +62,7 @@ const getPropsParam = (constructor: any, checker: any): { node: any; type: any }
   const propsParam = params[2];
 
   // ++++++++++++++Important+++++++++++++
-  // When AST_NODE_TYPES is "ObjectPattern" (e.g. { bucketName, enableVersioning }: MyConstructProps), it can be confirmed whether the variable is used in the IDE, and it conflicts with the @typescript-eslint/no-unused-vars rule, so this rule does not apply.
+  // When AST_NODE_TYPES is "ObjectPattern", this rule does not apply.
   // ++++++++++++++++++++++++++++++++++++
   if (propsParam.type !== "Identifier") return null;
 
@@ -102,18 +103,15 @@ const isPropsUsedInSuperCall = (constructor: any, propsPropertyName: string): bo
     const visitNode = (node: any, propsName: string): boolean => {
       const nodeValue = node.type === "Property" ? node.value : node;
       switch (nodeValue.type) {
-        case "Identifier": {
+        case "Identifier":
           return nodeValue.name === propsName;
-        }
-        case "ObjectExpression": {
+        case "ObjectExpression":
           for (const prop of nodeValue.properties) {
             if (visitNode(prop, propsName)) return true;
           }
           break;
-        }
-        default: {
+        default:
           break;
-        }
       }
       return false;
     };
@@ -138,9 +136,7 @@ const reportUnusedProperties = (
     context.report({
       node: propsParam,
       messageId: "unusedProp",
-      data: {
-        propName,
-      },
+      data: { propName },
     });
   }
 };

@@ -66,7 +66,6 @@ export const noConstructStackSuffixOxlint = createRuleOxlint({
         }
 
         // NOTE: CDK constructs always have 2nd param as "id", skip findConstructorPropertyNames
-
         validateConstructId(node, context);
       },
     };

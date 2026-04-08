@@ -32,7 +32,8 @@ export const noMutablePublicPropertyOfConstructOxlint = createRuleOxlint({
     return {
       ClassDeclaration(node: any) {
         const sourceCode = context.sourceCode;
-        const type = safeCall(() => checker.getTypeAtLocation(node), undefined);
+        // NOTE: tsgo resolves types at node.id position for ClassDeclaration
+        const type = safeCall(() => checker.getTypeAtLocation(node.id), undefined);
         if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
 
         const publicProperties = findPublicPropertiesInClass(node);
@@ -48,7 +49,11 @@ export const noMutablePublicPropertyOfConstructOxlint = createRuleOxlint({
   },
 });
 
-const validatePublicProperty = (args: { publicProperty: any; context: any; sourceCode: any }) => {
+const validatePublicProperty = (args: {
+  publicProperty: { name: string; node: any };
+  context: any;
+  sourceCode: any;
+}) => {
   const { publicProperty, context, sourceCode } = args;
   if (publicProperty.node.readonly) return;
 

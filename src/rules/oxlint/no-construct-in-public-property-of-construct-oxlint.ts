@@ -28,12 +28,11 @@ export const noConstructInPublicPropertyOfConstructOxlint = createRuleOxlint({
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
       ClassDeclaration(node: any) {
-        const type = safeCall(() => checker.getTypeAtLocation(node), undefined);
+        // NOTE: tsgo resolves types at node.id position for ClassDeclaration
+        const type = safeCall(() => checker.getTypeAtLocation(node.id), undefined);
         if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
-
         const publicProperties = findPublicPropertiesInClass(node);
         for (const publicProperty of publicProperties) {
           validatePublicProperty(publicProperty, context, checker);
@@ -43,18 +42,18 @@ export const noConstructInPublicPropertyOfConstructOxlint = createRuleOxlint({
   },
 });
 
-/**
- * Validates that a public property does not use a CDK Construct type
- */
-const validatePublicProperty = (publicProperty: any, context: any, checker: any): void => {
-  // NOTE: tsgo resolves types at the key position for property definitions
-  const propertyNode = publicProperty.node;
+const validatePublicProperty = (
+  publicProperty: { name: string; node: any },
+  context: any,
+  checker: any,
+) => {
+  // NOTE: tsgo resolves types at the key position for properties
   const keyNode =
-    propertyNode.type === "TSParameterProperty" ? propertyNode.parameter : propertyNode.key;
-
+    publicProperty.node.type === "TSParameterProperty"
+      ? publicProperty.node.parameter
+      : (publicProperty.node.key ?? publicProperty.node);
   const type = safeCall(() => checker.getTypeAtLocation(keyNode), undefined);
   if (!type) return;
-
   const constructType = findTypeOfCdkConstructOxlint(type, checker);
   if (constructType) {
     context.report({

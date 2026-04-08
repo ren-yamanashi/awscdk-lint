@@ -14,7 +14,6 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.10.13",
-    "@typescript/native-preview": "7.0.0-dev.20260405.1",
     "eslint": "^10.0.0",
     "eslint-plugin-awscdk": "workspace:*",
     "typescript": "^5.9.3",

@@ -34,7 +34,6 @@ export const pascalCaseConstructIdOxlint = createRuleOxlint({
   create(context: any) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
@@ -44,6 +43,7 @@ export const pascalCaseConstructIdOxlint = createRuleOxlint({
         }
 
         // NOTE: CDK constructs always have 2nd param as "id", skip findConstructorPropertyNames
+
         validateConstructId(node, context);
       },
     };

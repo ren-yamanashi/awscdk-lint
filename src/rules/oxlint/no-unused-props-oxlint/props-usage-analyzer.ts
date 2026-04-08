@@ -79,6 +79,9 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   /**
    * Analyzes the class body for props usage via instance variables.
    *
+   * When props is assigned to an instance variable (e.g., `this.myProps = props`),
+   * this method tracks usage of that instance variable throughout the entire class.
+   *
    * @example
    * ```typescript
    * class MyConstruct extends Construct {
@@ -111,6 +114,9 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   /**
    * Analyzes private methods that are called from the constructor with props as an argument.
    *
+   * When a constructor calls a private method and passes props to it, this method
+   * finds the method definition and analyzes the props usage within that method.
+   *
    * @example
    * ```typescript
    * class MyConstruct extends Construct {
@@ -120,6 +126,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    *   }
    *
    *   private setupBucket(p: MyConstructProps) {
+   *     // Props usage in this method body is analyzed
    *     new Bucket(this, 'Bucket', { bucketName: p.bucketName });
    *   }
    * }
@@ -155,6 +162,22 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
 
   /**
    * Collects method calls in the constructor body where props is passed as an argument.
+   *
+   * Uses `MethodCallCollectorVisitor` to traverse the constructor body and find
+   * all `this.methodName(props)` patterns.
+   *
+   * @example
+   * ```typescript
+   * constructor(scope: Construct, id: string, props: MyConstructProps) {
+   *   super(scope, id);
+   *   this.setupBucket(props);        // <- Collected: { methodName: "setupBucket", propsArgIndices: [0] }
+   *   this.configure(config, props);  // <- Collected: { methodName: "configure", propsArgIndices: [1] }
+   * }
+   * ```
+   *
+   * @param body - The constructor's BlockStatement to traverse
+   * @param propsParamName - The name of the props parameter (e.g., "props")
+   * @returns Array of method call info with method names and argument indices where props appears
    */
   private collectMethodCallsWithProps(
     body: any,
@@ -167,6 +190,33 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
 
   /**
    * Finds the instance variable name where props is assigned in the constructor.
+   *
+   * This method detects the pattern where props is stored in an instance variable
+   * for later access within the class.
+   *
+   * @example
+   * ```typescript
+   * class MyConstruct extends Construct {
+   *   private myProps: MyConstructProps;
+   *
+   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
+   *     super(scope, id);
+   *     this.myProps = props;  // <- This pattern is detected
+   *   }
+   * }
+   * ```
+   *
+   * AST structure for `this.myProps = props`:
+   *   ExpressionStatement
+   *   └── expression: AssignmentExpression
+   *       ├── left: MemberExpression
+   *       │   ├── object: ThisExpression
+   *       │   └── property: Identifier (name: "myProps" - returned value)
+   *       └── right: Identifier (name: "props" === propsParamName)
+   *
+   * @param body - The constructor's BlockStatement to analyze
+   * @param propsParamName - The name of the props parameter (e.g., "props")
+   * @returns The instance variable name (e.g., "myProps") or null if not found
    */
   private findPropsInstanceVariable(body: any, propsParamName: string): string | null {
     for (const statement of body.body) {
@@ -187,8 +237,36 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
 
   /**
    * Finds a method definition in the class body by its name.
+   *
+   * This method is used to locate the actual method implementation when
+   * a method call like `this.someMethod(props)` is found in the constructor.
+   *
+   * @example
+   * ```typescript
+   * class MyConstruct extends Construct {
+   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
+   *     super(scope, id);
+   *     this.setupBucket(props);  // <- Method call detected
+   *   }
+   *
+   *   private setupBucket(p: MyConstructProps) {  // <- This definition is found
+   *     new Bucket(this, 'Bucket', { bucketName: p.bucketName });
+   *   }
+   * }
+   * ```
+   *
+   * AST structure for method definition:
+   *   MethodDefinition
+   *   ├── key: Identifier (name: "setupBucket" === methodName)
+   *   └── value: FunctionExpression
+   *       ├── params: [Identifier, ...]
+   *       └── body: BlockStatement
+   *
+   * @param classBody - The ClassBody node containing all class members
+   * @param methodName - The name of the method to find (e.g., "setupBucket")
+   * @returns The MethodDefinition node or null if not found
    */
-  private findMethodDefinition(classBody: any, methodName: string): any | null {
+  private findMethodDefinition(classBody: any, methodName: string): any {
     for (const member of classBody.body) {
       if (
         member.type === "MethodDefinition" &&

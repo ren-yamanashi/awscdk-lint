@@ -37,7 +37,7 @@ export const requirePropsDefaultDocOxlint = createRuleOxlint({
 
         // NOTE: Get JSDoc comments
         const sourceCode = context.sourceCode;
-        const comments = sourceCode.getCommentsBefore(node);
+        const comments = sourceCode.getCommentsBefore?.(node) ?? [];
         const hasDefaultDoc = comments.some(
           (comment: any) =>
             comment.type === "Block" &&

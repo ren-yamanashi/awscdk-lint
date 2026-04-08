@@ -1,5 +1,3 @@
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
-
 import { findPropertyNames } from "../../../core/ast-node/finder/property-name";
 import { safeCall } from "../../../shared/safe-call";
 
@@ -52,9 +50,9 @@ export interface IPropsUsageTracker {
 export class PropsUsageTracker implements IPropsUsageTracker {
   private propUsageMap: Map<string, boolean>;
 
-  constructor(propType: TsgoType, checker: TsgoTypeCheckerShape) {
+  constructor(propType: any, checker: any) {
     this.propUsageMap = new Map<string, boolean>(
-      this.getPropsPropertyNames(propType, checker).map((name) => [name, false]),
+      this.getPropsPropertyNames(propType, checker).map((name: string) => [name, false]),
     );
   }
 
@@ -137,16 +135,18 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   /**
    * Gets the property names from the props type
    */
-  private getPropsPropertyNames(propsType: TsgoType, checker: TsgoTypeCheckerShape): string[] {
+  private getPropsPropertyNames(propsType: any, checker: any): string[] {
     const isInternalProperty = (propertyName: string): boolean =>
       propertyName.startsWith("_") ||
       propertyName === "constructor" ||
       propertyName === "prototype";
 
     const typeProperties = safeCall(() => checker.getPropertiesOfType(propsType), []);
-    return typeProperties.reduce<string[]>(
-      (acc, prop) => (!isInternalProperty(prop.name) ? [...acc, prop.name] : acc),
-      [],
+    const result: string[] = typeProperties.reduce(
+      (acc: string[], prop: { name: string }) =>
+        !isInternalProperty(prop.name) ? [...acc, prop.name] : acc,
+      [] as string[],
     );
+    return result;
   }
 }

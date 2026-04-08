@@ -37,6 +37,16 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
     // ===========================================================================
     // Pattern 1: Property access - this.instanceVarName.propertyName
     // ===========================================================================
+    // Matches code like: `console.log(this.myProps.bucketName)` or `return this.myProps.enableVersioning`
+    //
+    // AST structure:
+    //   MemberExpression (node)
+    //   ├── object: MemberExpression (this.myProps)
+    //   │   ├── object: ThisExpression
+    //   │   └── property: Identifier (name: "myProps" === instanceVarName)
+    //   └── property: Identifier (name: "bucketName" - the property being accessed)
+    //
+    // When this pattern matches, we mark the accessed property (e.g., "bucketName") as used.
     if (
       node.type === "MemberExpression" &&
       node.object.type === "MemberExpression" &&
@@ -52,6 +62,23 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
     // ===========================================================================
     // Pattern 2: Whole object usage - this.instanceVarName used as a value
     // ===========================================================================
+    // Matches code like: `console.log(this.myProps)` or `return this.myProps`
+    //
+    // AST structure:
+    //   MemberExpression (node)
+    //   ├── object: ThisExpression
+    //   └── property: Identifier (name: "myProps" === instanceVarName)
+    //
+    // However, we need to exclude certain cases where `this.myProps` appears
+    // but isn't actually being "used as a value":
+    //
+    // Exclusion A: Property access (handled by Pattern 1 above)
+    //   Code: `this.myProps.bucketName`
+    //   The `this.myProps` part has parent MemberExpression where it's the object
+    //
+    // Exclusion B: Assignment left-hand side
+    //   Code: `this.myProps = props`
+    //   The `this.myProps` is being assigned to, not used as a value
     if (
       node.type === "MemberExpression" &&
       node.object.type === "ThisExpression" &&
@@ -61,6 +88,7 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
       const parent = node.parent;
 
       // NOTE: Exclusion A - Skip if this is part of a property access (this.myProps.xxx)
+      // The parent MemberExpression's object being this node means we're accessing a property
       if (parent?.type === "MemberExpression" && parent.object === node) {
         return;
       }
@@ -71,6 +99,8 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
       }
 
       // NOTE: If we reach here, `this.myProps` is used as a whole value
+      // Examples: console.log(this.myProps), return this.myProps, [this.myProps], etc.
+      // Since we can't know which properties will be accessed at runtime, mark all as used
       this.tracker.markAllAsUsed();
       return;
     }

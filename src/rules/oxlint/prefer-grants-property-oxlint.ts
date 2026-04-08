@@ -42,10 +42,8 @@ export const preferGrantsPropertyOxlint = createRuleOxlint({
         );
         if (!grantsProperty) return;
 
-        const grantsType = safeCall(
-          () => checker.getTypeOfSymbolAtLocation(grantsProperty, objectNode),
-          undefined,
-        );
+        // NOTE: Use getTypeOfSymbol instead of getTypeOfSymbolAtLocation (tsgo returns node type instead of symbol type)
+        const grantsType = safeCall(() => checker.getTypeOfSymbol(grantsProperty), undefined);
         if (!grantsType) return;
 
         const grantsTypeName = safeCall(() => checker.typeToString(grantsType), "");

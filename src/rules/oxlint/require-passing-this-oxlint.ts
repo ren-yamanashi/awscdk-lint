@@ -46,11 +46,11 @@ export const requirePassingThisOxlint = createRuleOxlint({
     const options: Option = context.options[0] || defaultOption;
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
+
         if (!type || !isConstructTypeOxlint(type, checker) || !node.arguments.length) return;
 
         const argument = node.arguments[0];
@@ -72,6 +72,7 @@ export const requirePassingThisOxlint = createRuleOxlint({
           return;
         }
         // NOTE: If `allowNonThisAndDisallowScope` is true, allow non-`this` values except `scope` variable
+        // Check if the argument is the `scope` variable
         if (argument.type === "Identifier" && argument.name === "scope") {
           context.report({
             node: argument,

@@ -40,6 +40,54 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
   }
 
   visitIdentifier(node: any): void {
+    /**
+     * Handles cases where the props identifier is used as a whole value.
+     *
+     * This method detects when `props` (or the configured propsParamName) is used
+     * in contexts where all properties should be marked as used, because we cannot
+     * statically determine which properties will be accessed at runtime.
+     *
+     * Handled patterns:
+     *
+     * 1. **External function call** (`someFunction(props)` or `console.log(props)`):
+     *    - Marks ALL properties as used
+     *    - Excludes `this.method(props)` which is handled by analyzePrivateMethodsCalledFromConstructor
+     *
+     *    AST structure:
+     *      CallExpression
+     *      ├── callee: Identifier (someFunction) or MemberExpression (console.log)
+     *      └── arguments: [Identifier (name: "props")]
+     *
+     * 2. **Return statement** (`return props`):
+     *    - Marks ALL properties as used
+     *
+     *    AST structure:
+     *      ReturnStatement
+     *      └── argument: Identifier (name: "props")
+     *
+     * 3. **Array element** (`[props]` or `[a, props, b]`):
+     *    - Marks ALL properties as used
+     *
+     *    AST structure:
+     *      ArrayExpression
+     *      └── elements: [..., Identifier (name: "props"), ...]
+     *
+     * 4. **Object property value** (`{ key: props }`):
+     *    - Marks ALL properties as used
+     *
+     *    AST structure:
+     *      Property
+     *      ├── key: Identifier (name: "key")
+     *      └── value: Identifier (name: "props")
+     *
+     * The following cases are intentionally excluded (handled elsewhere):
+     * - `props.xxx` (MemberExpression) - handled by visitMemberExpression
+     * - `const { xxx } = props` (VariableDeclarator with ObjectPattern) - handled by visitVariableDeclarator
+     * - `this.xxx = props.xxx` (AssignmentExpression) - handled by visitAssignmentExpression
+     * - `this.method(props)` (CallExpression with ThisExpression callee) - handled by analyzePrivateMethodsCalledFromConstructor
+     * - `const a = props` (alias registration) - handled by PropsAliasVisitor
+     */
+
     // NOTE: Check if props object is used as a whole (e.g., console.log(props))
     if (node.name !== this.propsParamName) return;
 

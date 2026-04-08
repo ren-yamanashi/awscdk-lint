@@ -27,6 +27,14 @@ export default defineConfig({
       typeAware: true,
       typeCheck: true,
     },
+    overrides: [
+      {
+        files: ["src/rules/oxlint/**/*.ts", "src/shared/safe-call.ts", "src/shared/type-name.ts"],
+        rules: {
+          "@typescript-eslint/no-explicit-any": "off",
+        },
+      },
+    ],
   },
   test: {
     globals: true,

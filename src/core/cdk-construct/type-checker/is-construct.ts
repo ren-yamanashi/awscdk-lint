@@ -7,9 +7,6 @@ import {
   isExtendsFromTargetSuperClassOxlint,
 } from "../../ts-type/checker/is-extends-target-super-class";
 
-const CDK_BASE_CLASSES = ["Construct", "Stack", "Resource"] as const;
-const IGNORED_CLASSES = ["App", "Stage", "CfnOutput"] as const;
-
 /**
  * Check if the type extends Construct
  * @param type - The type to check
@@ -25,11 +22,16 @@ export const isConstructType = (
 };
 
 /**
- * Check if the type extends a CDK Construct/Stack/Resource (oxlint version)
+ * Check if the type extends Construct (oxlint version)
  * @param type - The type to check
  * @param checker - The tsgo type checker
- * @returns True if the type extends Construct, Stack, or Resource, otherwise false
+ * @returns True if the type extends Construct, otherwise false
  */
 export const isConstructTypeOxlint = (type: TsgoType, checker: TsgoTypeCheckerShape): boolean => {
-  return isExtendsFromTargetSuperClassOxlint(type, checker, CDK_BASE_CLASSES, IGNORED_CLASSES);
+  return isExtendsFromTargetSuperClassOxlint(
+    type,
+    checker,
+    ["Construct"],
+    ["App", "Stage", "CfnOutput", "Stack"],
+  );
 };
