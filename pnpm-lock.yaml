@@ -16,8 +16,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.0.3(jiti@2.6.1))
       '@oxlint/plugins':
-        specifier: ^1.59.0
-        version: 1.59.0
+        specifier: 1.57.0
+        version: 1.57.0
       '@secretlint/secretlint-rule-preset-recommend':
         specifier: ^11.2.5
         version: 11.3.1
@@ -954,10 +954,6 @@ packages:
 
   '@oxlint/plugins@1.57.0':
     resolution: {integrity: sha512-4mAGdfUZNQSZwUbHs0xoUcKjByrdBSJ9iaCI3STn/d1ZVRKhW/82oCA6rdfSzO4vxrWH3/l+qYWh/tyrwPSpag==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  '@oxlint/plugins@1.59.0':
-    resolution: {integrity: sha512-KIEedExMc60HKrkZi79403NbSgnJUyC9w6dCsqrY45ygIPzEyFdpxboiTyI8ZjeEw6Os03bspgZBfm6/fZbkOg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
   '@polka/url@1.0.0-next.29':
@@ -3403,8 +3399,6 @@ snapshots:
     optional: true
 
   '@oxlint/plugins@1.57.0': {}
-
-  '@oxlint/plugins@1.59.0': {}
 
   '@polka/url@1.0.0-next.29': {}
 
