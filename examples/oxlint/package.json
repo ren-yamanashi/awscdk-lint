@@ -13,7 +13,7 @@
     "@types/node": "^24.10.13",
     "@typescript/native-preview": "7.0.0-dev.20260405.1",
     "eslint-plugin-awscdk": "workspace:*",
-    "oxlint": "^1.57.0",
-    "typescript": "^5.8.3"
+    "oxlint": "^1.26.0",
+    "typescript": "^6.0.2"
   }
 }
