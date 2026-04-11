@@ -4,7 +4,6 @@ import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-
 import { isConstructOrStackTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../../shared/converter/to-pascal-case";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 type Option = {
   disallowContainingParentName?: boolean;
@@ -59,7 +58,7 @@ export const noParentNameConstructIdMatchOxlint = createRuleOxlint({
         if (!parentClassName) return;
 
         // NOTE: tsgo resolves types at parent.id position for ClassBody
-        const type = safeCall(() => checker.getTypeAtLocation(parent.id), undefined);
+        const type = checker.getTypeAtLocation(parent.id);
         if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
 
         for (const body of node.body) {
@@ -261,7 +260,7 @@ const validateConstructId = ({
   option,
 }: Args & { expression: any }): void => {
   // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
-  const type = safeCall(() => checker.getTypeAtLocation(expression.callee), undefined);
+  const type = checker.getTypeAtLocation(expression.callee);
 
   if (expression.arguments.length < 2) return;
 

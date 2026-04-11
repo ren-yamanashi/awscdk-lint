@@ -4,7 +4,6 @@ import { findPublicPropertiesInClass } from "../../core/ast-node/finder/public-p
 import { isConstructOrStackTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstructOxlint } from "../../core/cdk-construct/type-finder";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 /**
  * Disallow Construct types in public property of Construct
@@ -31,7 +30,7 @@ export const noConstructInPublicPropertyOfConstructOxlint = createRuleOxlint({
     return {
       ClassDeclaration(node: any) {
         // NOTE: tsgo resolves types at node.id position for ClassDeclaration
-        const type = safeCall(() => checker.getTypeAtLocation(node.id), undefined);
+        const type = checker.getTypeAtLocation(node.id);
         if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
         const publicProperties = findPublicPropertiesInClass(node);
         for (const publicProperty of publicProperties) {
@@ -52,7 +51,7 @@ const validatePublicProperty = (
     publicProperty.node.type === "TSParameterProperty"
       ? publicProperty.node.parameter
       : (publicProperty.node.key ?? publicProperty.node);
-  const type = safeCall(() => checker.getTypeAtLocation(keyNode), undefined);
+  const type = checker.getTypeAtLocation(keyNode);
   if (!type) return;
   const constructType = findTypeOfCdkConstructOxlint(type, checker);
   if (constructType) {
@@ -61,7 +60,7 @@ const validatePublicProperty = (
       messageId: "invalidPublicPropertyOfConstruct",
       data: {
         propertyName: publicProperty.name,
-        typeName: safeCall(() => checker.typeToString(constructType), "unknown"),
+        typeName: checker.typeToString(constructType) ?? "unknown",
       },
     });
   }

@@ -3,7 +3,6 @@ import { getParserServices } from "corsa-oxlint";
 import { isConstructOrStackTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../../shared/converter/to-pascal-case";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 const QUOTE_TYPE = {
   SINGLE: "'",
@@ -37,7 +36,7 @@ export const pascalCaseConstructIdOxlint = createRuleOxlint({
     return {
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
-        const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
+        const type = checker.getTypeAtLocation(node.callee);
         if (!type || !isConstructOrStackTypeOxlint(type, checker) || node.arguments.length < 2) {
           return;
         }

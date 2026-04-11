@@ -2,7 +2,6 @@ import { getParserServices } from "corsa-oxlint";
 
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 /**
  * Prevent Construct ID collisions inside loops.
@@ -29,7 +28,7 @@ export const preventConstructIdCollisionOxlint = createRuleOxlint({
     return {
       NewExpression(node: any) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
-        const type = safeCall(() => checker.getTypeAtLocation(node.callee), undefined);
+        const type = checker.getTypeAtLocation(node.callee);
 
         if (!type || !isConstructTypeOxlint(type, checker) || node.arguments.length < 2) return;
 

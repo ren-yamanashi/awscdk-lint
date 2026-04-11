@@ -3,7 +3,6 @@ import { getParserServices } from "corsa-oxlint";
 import { findPublicPropertiesInClass } from "../../core/ast-node/finder/public-property";
 import { isConstructOrStackTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct-or-stack";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 /**
  * Disallow mutable public properties of Construct
@@ -33,7 +32,7 @@ export const noMutablePublicPropertyOfConstructOxlint = createRuleOxlint({
       ClassDeclaration(node: any) {
         const sourceCode = context.sourceCode;
         // NOTE: tsgo resolves types at node.id position for ClassDeclaration
-        const type = safeCall(() => checker.getTypeAtLocation(node.id), undefined);
+        const type = checker.getTypeAtLocation(node.id);
         if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
 
         const publicProperties = findPublicPropertiesInClass(node);

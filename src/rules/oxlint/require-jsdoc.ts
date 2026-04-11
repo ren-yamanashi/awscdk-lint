@@ -2,7 +2,6 @@ import { getParserServices } from "corsa-oxlint";
 
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 /**
  * Require JSDoc comments for interface properties and public properties in Construct classes
@@ -68,7 +67,7 @@ export const requireJSDocOxlint = createRuleOxlint({
 
         // NOTE: Check if the class extends Construct and the property is public
         // NOTE: tsgo resolves types at node.id position for ClassDeclaration
-        const classType = safeCall(() => checker.getTypeAtLocation(classDeclaration.id), undefined);
+        const classType = checker.getTypeAtLocation(classDeclaration.id);
         const accessibility = node.accessibility ?? "public";
         if (
           !classType ||

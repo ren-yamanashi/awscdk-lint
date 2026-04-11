@@ -3,7 +3,6 @@ import { getParserServices } from "corsa-oxlint";
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 /**
  * Enforces that constructors of classes extending Construct have the property names 'scope, id' or 'scope, id, props'
@@ -35,7 +34,7 @@ export const constructConstructorPropertyOxlint = createRuleOxlint({
     return {
       ClassDeclaration(node: any) {
         // NOTE: tsgo resolves types at node.id position for ClassDeclaration
-        const type = safeCall(() => checker.getTypeAtLocation(node.id), undefined);
+        const type = checker.getTypeAtLocation(node.id);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 
         const constructor = findConstructor(node);
@@ -80,7 +79,7 @@ const checkFirstParamIsScope = (firstParam: any, context: any, checker: any) => 
       messageId: "invalidConstructorProperty",
     });
   } else {
-    const type = safeCall(() => checker.getTypeAtLocation(firstParam), undefined);
+    const type = checker.getTypeAtLocation(firstParam);
     if (type && !isConstructTypeOxlint(type, checker)) {
       context.report({
         node: firstParam,

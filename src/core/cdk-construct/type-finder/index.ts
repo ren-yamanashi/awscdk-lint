@@ -2,7 +2,6 @@ import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
 
 import { Type } from "typescript";
 
-import { safeCall } from "../../../shared/safe-call";
 import { isClassType } from "../../ts-type/checker/is-class";
 import { findArrayElementType } from "../../ts-type/finder/array-element";
 import { findGenericsTypeArgument } from "../../ts-type/finder/generics-type-argument";
@@ -35,7 +34,7 @@ export const findTypeOfCdkConstructOxlint = (
   if (isConstructTypeOxlint(type, checker)) return type;
 
   // NOTE: Check type arguments (for Array<T>, Promise<T>, etc.)
-  const typeArgs = safeCall(() => checker.getTypeArguments(type), []);
+  const typeArgs = checker.getTypeArguments(type);
   for (const arg of typeArgs) {
     const found = findTypeOfCdkConstructOxlint(arg, checker);
     if (found) return found;

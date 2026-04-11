@@ -2,7 +2,6 @@ import { getParserServices } from "corsa-oxlint";
 
 import { findTypeOfCdkConstructOxlint } from "../../core/cdk-construct/type-finder";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties
@@ -34,8 +33,7 @@ export const noConstructInInterfaceOxlint = createRuleOxlint({
             continue;
           }
 
-          // NOTE: tsgo resolves types at the key position, not the property position
-          const type = safeCall(() => checker.getTypeAtLocation(property.key), undefined);
+          const type = checker.getTypeAtLocation(property);
           const result = type ? findTypeOfCdkConstructOxlint(type, checker) : undefined;
 
           if (result) {
@@ -44,7 +42,7 @@ export const noConstructInInterfaceOxlint = createRuleOxlint({
               messageId: "invalidInterfaceProperty",
               data: {
                 propertyName: property.key.name,
-                typeName: safeCall(() => checker.typeToString(result), "unknown"),
+                typeName: checker.typeToString(result) ?? "unknown",
               },
             });
           }

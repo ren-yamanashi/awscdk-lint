@@ -1,5 +1,4 @@
 import { findPropertyNames } from "../../../core/ast-node/finder/property-name";
-import { safeCall } from "../../../shared/safe-call";
 
 export interface IPropsUsageTracker {
   /**
@@ -141,7 +140,7 @@ export class PropsUsageTracker implements IPropsUsageTracker {
       propertyName === "constructor" ||
       propertyName === "prototype";
 
-    const typeProperties = safeCall(() => checker.getPropertiesOfType(propsType), []);
+    const typeProperties = checker.getPropertiesOfType(propsType);
     const result: string[] = typeProperties.reduce(
       (acc: string[], prop: { name: string }) =>
         !isInternalProperty(prop.name) ? [...acc, prop.name] : acc,

@@ -2,7 +2,6 @@ import { getParserServices } from "corsa-oxlint";
 
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 export const preferGrantsPropertyOxlint = createRuleOxlint({
   name: "prefer-grants-property-oxlint",
@@ -32,34 +31,28 @@ export const preferGrantsPropertyOxlint = createRuleOxlint({
         if (!methodName.startsWith("grant")) return;
 
         const objectNode = node.callee.object;
-        const type = safeCall(() => checker.getTypeAtLocation(objectNode), undefined);
+        const type = checker.getTypeAtLocation(objectNode);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 
-        const grantsProperty = safeCall(
-          () =>
-            checker.getPropertiesOfType(type).find((s: { name: string }) => s.name === "grants"),
-          undefined,
-        );
+        const grantsProperty = checker
+          .getPropertiesOfType(type)
+          .find((s: { name: string }) => s.name === "grants");
         if (!grantsProperty) return;
 
         // NOTE: Use getTypeOfSymbol instead of getTypeOfSymbolAtLocation (tsgo returns node type instead of symbol type)
-        const grantsType = safeCall(() => checker.getTypeOfSymbol(grantsProperty), undefined);
+        const grantsType = checker.getTypeOfSymbol(grantsProperty);
         if (!grantsType) return;
 
-        const grantsTypeName = safeCall(() => checker.typeToString(grantsType), "");
+        const grantsTypeName = checker.typeToString(grantsType) ?? "";
         if (!grantsTypeName?.endsWith("Grants")) return;
 
         const convertedMethodName = methodName
           .replace(/^grant/, "")
           .replace(/^./, (c: string) => c.toLowerCase());
 
-        const suggestedMethod = safeCall(
-          () =>
-            checker
-              .getPropertiesOfType(grantsType)
-              .find((s: { name: string }) => s.name === convertedMethodName),
-          undefined,
-        );
+        const suggestedMethod = checker
+          .getPropertiesOfType(grantsType)
+          .find((s: { name: string }) => s.name === convertedMethodName);
         if (!suggestedMethod) return;
 
         const objectName = objectNode.type === "Identifier" ? objectNode.name : "object";

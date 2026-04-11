@@ -3,7 +3,6 @@ import { getParserServices } from "corsa-oxlint";
 import { findConstructor } from "../../../core/ast-node/finder/constructor";
 import { isConstructTypeOxlint } from "../../../core/cdk-construct/type-checker/is-construct";
 import { createRuleOxlint } from "../../../shared/create-rule";
-import { safeCall } from "../../../shared/safe-call";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
 
@@ -35,7 +34,7 @@ export const noUnusedPropsOxlint = createRuleOxlint({
         if (node.abstract) return;
 
         // NOTE: tsgo resolves types at node.id position for ClassDeclaration
-        const type = safeCall(() => checker.getTypeAtLocation(node.id), undefined);
+        const type = checker.getTypeAtLocation(node.id);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 
         const constructor = findConstructor(node);
@@ -68,7 +67,7 @@ const getPropsParam = (constructor: any, checker: any): { node: any; type: any }
 
   return {
     node: propsParam,
-    type: safeCall(() => checker.getTypeAtLocation(propsParam), undefined),
+    type: checker.getTypeAtLocation(propsParam),
   };
 };
 

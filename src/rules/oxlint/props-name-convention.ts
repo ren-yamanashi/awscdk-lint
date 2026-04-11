@@ -3,7 +3,6 @@ import { getParserServices } from "corsa-oxlint";
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRuleOxlint } from "../../shared/create-rule";
-import { safeCall } from "../../shared/safe-call";
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes
@@ -32,7 +31,7 @@ export const propsNameConventionOxlint = createRuleOxlint({
         if (!node.id || !node.superClass) return;
 
         // NOTE: tsgo resolves types at superClass position
-        const type = safeCall(() => checker.getTypeAtLocation(node.superClass), undefined);
+        const type = checker.getTypeAtLocation(node.superClass);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 
         // NOTE: check constructor parameter
