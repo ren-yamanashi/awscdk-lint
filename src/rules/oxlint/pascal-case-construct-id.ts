@@ -30,7 +30,7 @@ export const pascalCaseConstructIdOxlint = createRuleOxlint({
     fixable: "code",
   },
   defaultOptions: [],
-  create(context: any) {
+  create(context) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {

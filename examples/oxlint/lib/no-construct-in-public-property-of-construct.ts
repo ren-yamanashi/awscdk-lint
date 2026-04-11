@@ -3,7 +3,7 @@ import { CognitoUserPoolsAuthorizer } from "aws-cdk-lib/aws-apigateway";
 import { Environment } from "aws-cdk-lib/aws-appconfig";
 import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";
 import { MetricFilter } from "aws-cdk-lib/aws-logs";
-import { Bucket, IBucket } from "aws-cdk-lib/aws-s3/lib/bucket";
+import { Bucket, IBucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 
 export class MyConstruct extends Construct {

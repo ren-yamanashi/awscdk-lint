@@ -17,7 +17,7 @@ export const preferGrantsPropertyOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  create(context: any) {
+  create(context) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 

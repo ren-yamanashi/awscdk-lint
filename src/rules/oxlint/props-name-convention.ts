@@ -14,7 +14,8 @@ export const propsNameConventionOxlint = createRuleOxlint({
   meta: {
     type: "problem",
     docs: {
-      description: "Enforce props interface name to follow ${ConstructName}Props format",
+      description:
+        "Enforce props interface name to follow ${ConstructName}Props format",
     },
     schema: [],
     messages: {
@@ -23,7 +24,7 @@ export const propsNameConventionOxlint = createRuleOxlint({
     },
   },
   defaultOptions: [],
-  create(context: any) {
+  create(context) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {

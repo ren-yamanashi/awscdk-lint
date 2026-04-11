@@ -6,6 +6,7 @@ import { isClassType } from "../../ts-type/checker/is-class";
 import { findArrayElementType } from "../../ts-type/finder/array-element";
 import { findGenericsTypeArgument } from "../../ts-type/finder/generics-type-argument";
 import { isConstructTypeOxlint } from "../type-checker/is-construct";
+import { isResourceTypeOxlint } from "../type-checker/is-resource";
 import { isResourceWithReadonlyInterface } from "../type-checker/is-resource-with-readonly-interface";
 
 /**
@@ -31,7 +32,8 @@ export const findTypeOfCdkConstructOxlint = (
   type: TsgoType,
   checker: TsgoTypeCheckerShape,
 ): TsgoType | undefined => {
-  if (isConstructTypeOxlint(type, checker)) return type;
+  // NOTE: Must extend Resource (not just Construct) to match ESLint version's isResourceWithReadonlyInterface
+  if (isConstructTypeOxlint(type, checker) && isResourceTypeOxlint(type, checker)) return type;
 
   // NOTE: Check type arguments (for Array<T>, Promise<T>, etc.)
   const typeArgs = checker.getTypeArguments(type);

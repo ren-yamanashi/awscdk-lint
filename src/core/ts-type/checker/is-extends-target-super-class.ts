@@ -74,12 +74,6 @@ export const isExtendsFromTargetSuperClassOxlint = (
   // NOTE: Check the base type
   const baseTypes = safeCall(() => checker.getBaseTypes(type), []);
   return baseTypes.some((base) =>
-    isExtendsFromTargetSuperClassOxlint(
-      base,
-      checker,
-      targetSuperClasses,
-      ignoredClasses,
-      visited,
-    ),
+    isExtendsFromTargetSuperClassOxlint(base, checker, targetSuperClasses, ignoredClasses, visited),
   );
 };

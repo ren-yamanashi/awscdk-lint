@@ -52,7 +52,7 @@ export const noConstructStackSuffixOxlint = createRuleOxlint({
     ],
   },
   defaultOptions: [defaultOption],
-  create(context: any) {
+  create(context) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
 

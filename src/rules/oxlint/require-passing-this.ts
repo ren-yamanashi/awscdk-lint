@@ -41,8 +41,8 @@ export const requirePassingThisOxlint = createRuleOxlint({
     fixable: "code",
   },
   defaultOptions: [defaultOption],
-  create(context: any) {
-    const options: Option = context.options[0] || defaultOption;
+  create(context) {
+    const options: Option = (context.options[0] as Option) || defaultOption;
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {

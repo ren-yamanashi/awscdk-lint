@@ -14,7 +14,7 @@ export const migrateDisableCommentsOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  create(context: any) {
+  create(context) {
     return {
       Program() {
         const comments = context.sourceCode.getAllComments();

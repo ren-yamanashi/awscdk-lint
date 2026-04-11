@@ -20,7 +20,7 @@ export const requirePropsDefaultDocOxlint = createRuleOxlint({
     },
   },
   defaultOptions: [],
-  create(context: any) {
+  create(context) {
     return {
       TSPropertySignature(node: any) {
         if (node.key.type !== "Identifier") return;

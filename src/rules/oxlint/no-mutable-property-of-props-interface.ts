@@ -20,7 +20,7 @@ export const noMutablePropertyOfPropsInterfaceOxlint = createRuleOxlint({
     schema: [],
   },
   defaultOptions: [],
-  create(context: any) {
+  create(context) {
     return {
       TSInterfaceDeclaration(node: any) {
         const sourceCode = context.sourceCode;

@@ -1,6 +1,11 @@
+import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+
 import { Type } from "typescript";
 
-import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-target-super-class";
+import {
+  isExtendsFromTargetSuperClass,
+  isExtendsFromTargetSuperClassOxlint,
+} from "../../ts-type/checker/is-extends-target-super-class";
 
 /**
  * Check if the type extends Resource
@@ -14,4 +19,14 @@ export const isResourceType = (
 ): boolean => {
   if (ignoredClasses.includes(type.symbol?.name ?? "")) return false;
   return isExtendsFromTargetSuperClass(type, ["Resource"], isResourceType);
+};
+
+/**
+ * Check if the type extends Resource (oxlint version)
+ * @param type - The type to check
+ * @param checker - The tsgo type checker
+ * @returns True if the type extends Resource, otherwise false
+ */
+export const isResourceTypeOxlint = (type: TsgoType, checker: TsgoTypeCheckerShape): boolean => {
+  return isExtendsFromTargetSuperClassOxlint(type, checker, ["Resource"], []);
 };
