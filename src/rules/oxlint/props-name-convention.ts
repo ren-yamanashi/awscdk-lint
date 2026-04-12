@@ -14,8 +14,7 @@ export const propsNameConventionOxlint = createRuleOxlint({
   meta: {
     type: "problem",
     docs: {
-      description:
-        "Enforce props interface name to follow ${ConstructName}Props format",
+      description: "Enforce props interface name to follow ${ConstructName}Props format",
     },
     schema: [],
     messages: {

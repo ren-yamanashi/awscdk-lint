@@ -17,8 +17,7 @@ export const requireJSDocOxlint = createRuleOxlint({
         "Require JSDoc comments for interface properties and public properties in Construct classes",
     },
     messages: {
-      missingJSDoc:
-        "Property '{{ propertyName }}' should have a JSDoc comment.",
+      missingJSDoc: "Property '{{ propertyName }}' should have a JSDoc comment.",
     },
     schema: [],
   },
@@ -56,19 +55,13 @@ export const requireJSDocOxlint = createRuleOxlint({
         }
       },
       PropertyDefinition(node: any) {
-        if (
-          node.key.type !== "Identifier" ||
-          node.parent.type !== "ClassBody"
-        ) {
+        if (node.key.type !== "Identifier" || node.parent.type !== "ClassBody") {
           return;
         }
 
         // NOTE: Check if the class extends Construct
         const classDeclaration = node.parent.parent;
-        if (
-          classDeclaration.type !== "ClassDeclaration" ||
-          !classDeclaration.superClass
-        ) {
+        if (classDeclaration.type !== "ClassDeclaration" || !classDeclaration.superClass) {
           return;
         }
 

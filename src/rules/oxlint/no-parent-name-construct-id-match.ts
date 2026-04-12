@@ -25,8 +25,7 @@ export const noParentNameConstructIdMatchOxlint = createRuleOxlint({
   meta: {
     type: "problem",
     docs: {
-      description:
-        "Enforce that construct IDs does not match the parent construct name.",
+      description: "Enforce that construct IDs does not match the parent construct name.",
     },
     messages: {
       invalidConstructId:
