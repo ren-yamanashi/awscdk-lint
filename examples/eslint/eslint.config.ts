@@ -1,4 +1,3 @@
-import * as eslint from "@eslint/js";
 import cdkPlugin from "eslint-plugin-awscdk";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
@@ -6,25 +5,48 @@ import tseslint from "typescript-eslint";
 export default defineConfig([
   {
     files: ["**/*.ts"],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      cdkPlugin.configs.strict,
-    ],
+    plugins: {
+      awscdk: cdkPlugin,
+    },
     languageOptions: {
-      ecmaVersion: "latest",
       parser: tseslint.parser,
       parserOptions: {
         projectService: true,
         tsconfigRootDir: __dirname,
       },
     },
+    settings: {
+      typescriptOxlint: {
+        parserOptions: {
+          projectService: true,
+          tsgo: {
+            executable: "./node_modules/.bin/tsgo",
+          },
+        },
+      },
+    },
     rules: {
-      "awscdk/require-passing-this": [
+      "awscdk/no-import-private": "error",
+      "awscdk/construct-constructor-property-oxlint": "error",
+      "awscdk/migrate-disable-comments-oxlint": "error",
+      "awscdk/no-construct-in-interface-oxlint": "error",
+      "awscdk/no-construct-in-public-property-of-construct-oxlint": "error",
+      "awscdk/no-construct-stack-suffix-oxlint": "error",
+      "awscdk/no-mutable-property-of-props-interface-oxlint": "error",
+      "awscdk/no-mutable-public-property-of-construct-oxlint": "error",
+      "awscdk/no-parent-name-construct-id-match-oxlint": [
         "error",
-        // { allowNonThisAndDisallowScope: true },
+        { disallowContainingParentName: true },
       ],
-      "awscdk/no-parent-name-construct-id-match": ["error", { disallowContainingParentName: true }],
+      "awscdk/no-unused-props-oxlint": "error",
+      "awscdk/no-variable-construct-id-oxlint": "error",
+      "awscdk/pascal-case-construct-id-oxlint": "error",
+      "awscdk/prefer-grants-property-oxlint": "error",
+      "awscdk/prevent-construct-id-collision-oxlint": "error",
+      "awscdk/props-name-convention-oxlint": "error",
+      "awscdk/require-jsdoc-oxlint": "error",
+      "awscdk/require-passing-this-oxlint": "error",
+      "awscdk/require-props-default-doc-oxlint": "error",
     },
   },
 ]);
