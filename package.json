@@ -51,14 +51,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@secretlint/secretlint-rule-preset-recommend": "^11.2.5",
+    "@secretlint/secretlint-rule-preset-recommend": "^12.3.1",
     "@types/node": "^24.10.13",
     "@typescript-eslint/parser": "^8.58.0",
     "@typescript-eslint/rule-tester": "^8.58.0",
     "@typescript-eslint/utils": "^8.58.0",
     "@voidzero-dev/vite-plus-core": "^0.1.11",
     "eslint": "^10.0.0",
-    "secretlint": "^11.2.5",
+    "secretlint": "^12.3.1",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0",
     "vite-plus": "^0.1.11"
