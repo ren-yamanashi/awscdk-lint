@@ -63,7 +63,7 @@
     "commander": "^14.0.2",
     "consola": "^3.4.2",
     "eslint": "^10.0.0",
-    "secretlint": "^11.2.5",
+    "secretlint": "^12.3.1",
     "typescript": "^6.0.2",
     "typescript-eslint": "latest",
     "vite-plus": "^0.1.11"
