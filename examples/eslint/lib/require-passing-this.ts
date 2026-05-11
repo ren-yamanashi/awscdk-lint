@@ -36,3 +36,8 @@ export class _MyConstruct extends Construct {
     new Bucket(scope, "SampleBucket");
   }
 }
+
+// ✅ Functions outside Construct classes are not flagged.
+export function createBucket(scope: Construct, id: string) {
+  new Bucket(scope, id);
+}

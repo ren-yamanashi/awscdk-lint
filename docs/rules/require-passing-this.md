@@ -16,11 +16,13 @@ import Playground from '../components/Playground.vue'
 
 This rule enforces passing `this` as the scope when creating new Construct instances within a Construct.
 
-When creating AWS CDK resources, passing `this` as the scope to child Constructs is crucial for maintaining the correct resource hierarchy.  
+When creating AWS CDK resources, passing `this` as the scope to child Constructs is crucial for maintaining the correct resource hierarchy.
 Passing other values as the scope (especially the `scope` variable received by the parent's constructor) can lead to:
 
 - Incorrect resource hierarchy in the generated CloudFormation template
 - Unexpected resource naming
+
+> **Note:** This rule only applies inside classes that extend `Construct` or `Stack`. It does not flag cases where `this` is not available, such as functions outside Construct classes.
 
 ---
 
@@ -56,6 +58,11 @@ export class MyConstruct extends Construct {
     // ✅ `sample` (an instance of a Construct) is allowed as scope.
     new OtherConstruct(sample, "Child");
   }
+}
+
+// ✅ Functions outside Construct classes are not flagged.
+function createBucket(scope: Construct, id: string) {
+  new Bucket(scope, id);
 }
 ```
 
