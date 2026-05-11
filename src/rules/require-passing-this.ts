@@ -1,9 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
@@ -62,8 +57,7 @@ export const requirePassingThis = createRule({
         // NOTE: Only flag when inside a Construct/Stack class where `this` is available
         const enclosingClass = findEnclosingClass(node);
         if (!enclosingClass) return;
-        const enclosingClassType =
-          parserServices.getTypeAtLocation(enclosingClass);
+        const enclosingClassType = parserServices.getTypeAtLocation(enclosingClass);
         if (!isConstructOrStackType(enclosingClassType)) return;
 
         const argument = node.arguments[0];
@@ -88,10 +82,7 @@ export const requirePassingThis = createRule({
         }
         // NOTE: If `allowNonThisAndDisallowScope` is true, allow non-`this` values except `scope` variable
         // Check if the argument is the `scope` variable
-        if (
-          argument.type === AST_NODE_TYPES.Identifier &&
-          argument.name === "scope"
-        ) {
+        if (argument.type === AST_NODE_TYPES.Identifier && argument.name === "scope") {
           context.report({
             node: argument,
             messageId: "missingPassingThis",
@@ -108,9 +99,7 @@ export const requirePassingThis = createRule({
 /**
  * Find the enclosing ClassDeclaration from a given node
  */
-const findEnclosingClass = (
-  node: TSESTree.Node,
-): TSESTree.ClassDeclaration | undefined => {
+const findEnclosingClass = (node: TSESTree.Node): TSESTree.ClassDeclaration | undefined => {
   let current: TSESTree.Node | undefined = node.parent;
   while (current) {
     if (current.type === AST_NODE_TYPES.ClassDeclaration) return current;
