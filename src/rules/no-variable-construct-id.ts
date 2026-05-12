@@ -1,6 +1,8 @@
 import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
+import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
 
@@ -31,6 +33,13 @@ export const noVariableConstructId = createRule({
         const type = parserServices.getTypeAtLocation(node);
 
         if (!isConstructType(type) || node.arguments.length < 2) return;
+
+        // NOTE: Skip when inside a class that is not Construct/Stack
+        const enclosingClass = findEnclosingClass(node);
+        const enclosingClassType = enclosingClass
+          ? parserServices.getTypeAtLocation(enclosingClass)
+          : undefined;
+        if (enclosingClassType && !isConstructOrStackType(enclosingClassType)) return;
 
         const constructorPropertyNames = findConstructorPropertyNames(type);
         if (constructorPropertyNames[1] !== "id") return;
@@ -93,6 +102,12 @@ const shouldSkipIdValidation = (node: TSESTree.Node): boolean => {
     // Constructs in arrow functions are also intended to be called multiple times.
     // This includes usages of array methods like forEach, map, etc.
     if (current.type === AST_NODE_TYPES.ArrowFunctionExpression) {
+      return true;
+    }
+
+    // Constructs in standalone functions (outside of classes) are intended to be called
+    // multiple times with different IDs
+    if (current.type === AST_NODE_TYPES.FunctionDeclaration) {
       return true;
     }
 

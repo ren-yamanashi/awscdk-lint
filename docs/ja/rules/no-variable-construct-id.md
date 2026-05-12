@@ -68,6 +68,11 @@ class MyConstruct extends Construct {
     return new Bucket(this, id);
   }
 }
+
+// ✅ Construct クラス外の関数では検出されない
+function createBucket(scope: Construct, id: string) {
+  new Bucket(scope, id);
+}
 ```
 
 #### ❌ 不適切な例

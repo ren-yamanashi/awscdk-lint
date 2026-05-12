@@ -1,5 +1,6 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 
+import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
@@ -95,15 +96,3 @@ export const requirePassingThis = createRule({
     };
   },
 });
-
-/**
- * Find the enclosing ClassDeclaration from a given node
- */
-const findEnclosingClass = (node: TSESTree.Node): TSESTree.ClassDeclaration | undefined => {
-  let current: TSESTree.Node | undefined = node.parent;
-  while (current) {
-    if (current.type === AST_NODE_TYPES.ClassDeclaration) return current;
-    current = current.parent;
-  }
-  return undefined;
-};

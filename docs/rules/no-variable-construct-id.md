@@ -68,6 +68,11 @@ class MyConstruct extends Construct {
     return new Bucket(this, id);
   }
 }
+
+// ✅ Functions outside Construct classes are not flagged.
+function createBucket(scope: Construct, id: string) {
+  new Bucket(scope, id);
+}
 ```
 
 #### ❌ Incorrect Example
