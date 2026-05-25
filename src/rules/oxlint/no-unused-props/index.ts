@@ -1,6 +1,8 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { getParserServices } from "corsa-oxlint";
 
-import { findConstructor } from "../../../core/ast-node/finder/constructor";
+import { findConstructorOxlint } from "../../../core/ast-node/finder/constructor";
 import { isConstructTypeOxlint } from "../../../core/cdk-construct/type-checker/is-construct";
 import { createRuleOxlint } from "../../../shared/create-rule";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
@@ -30,14 +32,14 @@ export const noUnusedPropsOxlint = createRuleOxlint({
     const checker = services.program.getTypeChecker();
 
     return {
-      ClassDeclaration(node: any) {
-        if (node.abstract) return;
+      ClassDeclaration(node: ESTree.Class) {
+        if (node.abstract || !node.id) return;
 
         // NOTE: tsgo resolves types at node.id position for ClassDeclaration
         const type = checker.getTypeAtLocation(node.id);
         if (!type || !isConstructTypeOxlint(type, checker)) return;
 
-        const constructor = findConstructor(node);
+        const constructor = findConstructorOxlint(node);
         if (!constructor) return;
 
         const propsParam = getPropsParam(constructor, checker);

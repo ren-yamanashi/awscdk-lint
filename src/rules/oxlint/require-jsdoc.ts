@@ -1,3 +1,5 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
@@ -27,12 +29,12 @@ export const requireJSDocOxlint = createRuleOxlint({
     const checker = services.program.getTypeChecker();
 
     return {
-      TSPropertySignature(node: any) {
+      TSPropertySignature(node: ESTree.TSPropertySignature) {
         if (node.key.type !== "Identifier") return;
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
-        if (parent.type !== "TSInterfaceDeclaration") return;
+        if (parent?.type !== "TSInterfaceDeclaration") return;
 
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;
@@ -54,14 +56,18 @@ export const requireJSDocOxlint = createRuleOxlint({
           });
         }
       },
-      PropertyDefinition(node: any) {
+      PropertyDefinition(node: ESTree.PropertyDefinition) {
         if (node.key.type !== "Identifier" || node.parent.type !== "ClassBody") {
           return;
         }
 
         // NOTE: Check if the class extends Construct
         const classDeclaration = node.parent.parent;
-        if (classDeclaration.type !== "ClassDeclaration" || !classDeclaration.superClass) {
+        if (
+          classDeclaration.type !== "ClassDeclaration" ||
+          !classDeclaration.superClass ||
+          !classDeclaration.id
+        ) {
           return;
         }
 

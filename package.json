@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@oxlint/plugins": "1.57.0",
+    "@oxlint/plugins": "1.66.0",
     "@secretlint/secretlint-rule-preset-recommend": "^13.0.0",
     "@types/node": "^24.10.13",
     "@typescript-eslint/parser": "^8.58.0",

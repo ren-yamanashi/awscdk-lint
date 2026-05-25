@@ -1,3 +1,5 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
@@ -25,7 +27,7 @@ export const noVariableConstructIdOxlint = createRuleOxlint({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      NewExpression(node: any) {
+      NewExpression(node: ESTree.NewExpression) {
         // NOTE: tsgo resolves callee type as "typeof ClassName" for NewExpression
         const type = checker.getTypeAtLocation(node.callee);
 

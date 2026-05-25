@@ -1,3 +1,5 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct";
@@ -50,11 +52,11 @@ export const noParentNameConstructIdMatchOxlint = createRuleOxlint({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      ClassBody(node: any) {
+      ClassBody(node: ESTree.ClassBody) {
         const parent = node.parent;
-        if (parent?.type !== "ClassDeclaration") return;
+        if (parent?.type !== "ClassDeclaration" || !parent.id) return;
 
-        const parentClassName = parent.id?.name;
+        const parentClassName = parent.id.name;
         if (!parentClassName) return;
 
         // NOTE: tsgo resolves types at parent.id position for ClassBody

@@ -1,3 +1,5 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { createRuleOxlint } from "../../shared/create-rule";
 
 /**
@@ -22,7 +24,7 @@ export const requirePropsDefaultDocOxlint = createRuleOxlint({
   defaultOptions: [],
   create(context) {
     return {
-      TSPropertySignature(node: any) {
+      TSPropertySignature(node: ESTree.TSPropertySignature) {
         if (node.key.type !== "Identifier") return;
 
         // NOTE: Check if the property is optional
@@ -30,7 +32,7 @@ export const requirePropsDefaultDocOxlint = createRuleOxlint({
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
-        if (parent.type !== "TSInterfaceDeclaration") return;
+        if (parent?.type !== "TSInterfaceDeclaration") return;
 
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;

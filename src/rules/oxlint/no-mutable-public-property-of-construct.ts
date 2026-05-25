@@ -1,6 +1,8 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { getParserServices } from "corsa-oxlint";
 
-import { findPublicPropertiesInClass } from "../../core/ast-node/finder/public-property";
+import { findPublicPropertiesInClassOxlint } from "../../core/ast-node/finder/public-property";
 import { isConstructOrStackTypeOxlint } from "../../core/cdk-construct/type-checker/is-construct-or-stack";
 import { createRuleOxlint } from "../../shared/create-rule";
 
@@ -29,13 +31,14 @@ export const noMutablePublicPropertyOfConstructOxlint = createRuleOxlint({
     const checker = services.program.getTypeChecker();
 
     return {
-      ClassDeclaration(node: any) {
+      ClassDeclaration(node: ESTree.Class) {
+        if (!node.id) return;
         const sourceCode = context.sourceCode;
         // NOTE: tsgo resolves types at node.id position for ClassDeclaration
         const type = checker.getTypeAtLocation(node.id);
         if (!type || !isConstructOrStackTypeOxlint(type, checker)) return;
 
-        const publicProperties = findPublicPropertiesInClass(node);
+        const publicProperties = findPublicPropertiesInClassOxlint(node);
         for (const property of publicProperties) {
           validatePublicProperty({
             publicProperty: property,

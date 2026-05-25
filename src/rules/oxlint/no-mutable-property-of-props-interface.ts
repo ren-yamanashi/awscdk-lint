@@ -1,3 +1,5 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { createRuleOxlint } from "../../shared/create-rule";
 
 /**
@@ -22,7 +24,7 @@ export const noMutablePropertyOfPropsInterfaceOxlint = createRuleOxlint({
   defaultOptions: [],
   create(context) {
     return {
-      TSInterfaceDeclaration(node: any) {
+      TSInterfaceDeclaration(node: ESTree.TSInterfaceDeclaration) {
         const sourceCode = context.sourceCode;
 
         // NOTE: Interface name check for "Props"

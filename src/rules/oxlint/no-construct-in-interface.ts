@@ -1,3 +1,5 @@
+import type { ESTree } from "@oxlint/plugins";
+
 import { getParserServices } from "corsa-oxlint";
 
 import { findTypeOfCdkConstructOxlint } from "../../core/cdk-construct/type-finder";
@@ -27,7 +29,7 @@ export const noConstructInInterfaceOxlint = createRuleOxlint({
     const checker = services.program.getTypeChecker();
 
     return {
-      TSInterfaceDeclaration(node: any) {
+      TSInterfaceDeclaration(node: ESTree.TSInterfaceDeclaration) {
         for (const property of node.body.body) {
           if (property.type !== "TSPropertySignature" || property.key.type !== "Identifier") {
             continue;
