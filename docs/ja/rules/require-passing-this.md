@@ -23,6 +23,8 @@ Construct のコンストラクタの第一引数へ `this` 以外の値 (特に
 - 生成される CloudFormation テンプレートのリソース階層が正しくない
 - 予期しないリソースの命名
 
+> **Note:** このルールは `Construct` または `Stack` を継承したクラスの内部でのみ適用されます。Construct クラス外の関数など、`this` が利用できない場合は検出対象外です。
+
 ---
 
 #### 🔧 使用方法
@@ -57,6 +59,11 @@ export class MyConstruct extends Construct {
     // ✅ 他の Construct インスタンス (この場合は sample) をスコープとして指定できる
     new OtherConstruct(sample, "Child");
   }
+}
+
+// ✅ Construct クラス外の関数では検出されない
+function createBucket(scope: Construct, id: string) {
+  new Bucket(scope, id);
 }
 ```
 

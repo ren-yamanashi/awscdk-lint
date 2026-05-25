@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-awscdk",
-  "version": "4.3.2",
+  "version": "4.3.3",
   "description": "eslint plugin for AWS CDK projects",
   "keywords": [
     "aws",
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@oxlint/plugins": "1.57.0",
-    "@secretlint/secretlint-rule-preset-recommend": "^11.2.5",
+    "@secretlint/secretlint-rule-preset-recommend": "^13.0.0",
     "@types/node": "^24.10.13",
     "@typescript-eslint/parser": "^8.58.0",
     "@typescript-eslint/rule-tester": "^8.58.0",
@@ -60,7 +60,7 @@
     "@voidzero-dev/vite-plus-core": "^0.1.11",
     "corsa-oxlint": "0.4.0",
     "eslint": "^10.0.0",
-    "secretlint": "^11.2.5",
+    "secretlint": "^13.0.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0",
     "vite-plus": "^0.1.11"

@@ -8,18 +8,6 @@ overrides:
 engineStrict: true
 minimumReleaseAge: 2880
 minimumReleaseAgeExclude:
-  - corsa-oxlint
-  - "@corsa-bind/napi"
-  - "@corsa-bind/napi-darwin-arm64"
-  - "@corsa-bind/napi-darwin-x64"
-  - "@corsa-bind/napi-linux-arm64-gnu"
-  - "@corsa-bind/napi-linux-x64-gnu"
-  - "@corsa-bind/napi-win32-arm64-msvc"
-  - "@corsa-bind/napi-win32-x64-msvc"
-  - "@corsa-bind/napi-linux-x64-musl"
-  - "@corsa-bind/napi-linux-arm64-musl"
-  - "@oxlint/plugins"
-  - oxlint
   - vite-plus
   - "@voidzero-dev/vite-plus-core"
   - "@voidzero-dev/vite-plus-darwin-arm64"

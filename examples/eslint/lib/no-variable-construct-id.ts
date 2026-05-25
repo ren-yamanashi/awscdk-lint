@@ -66,3 +66,8 @@ app.synth();
 
 // ✅ when instance of Stage
 new Stage(app, 1 + "StageConstruct");
+
+// ✅ Functions outside Construct classes are not flagged.
+export function createBucket(scope: Construct, id: string) {
+  new Bucket(scope, id);
+}

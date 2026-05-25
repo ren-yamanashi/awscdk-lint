@@ -65,6 +65,50 @@ ruleTester.run("require-passing-this", requirePassingThis, {
       }
       `,
     },
+    // WHEN: new expression is inside a standalone function (no class context)
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      function createResource(scope: Construct, id: string) {
+        new SampleConstruct(scope, id);
+      }
+      `,
+    },
+    // WHEN: new expression is inside an arrow function (no class context)
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      const createResource = (scope: Construct, id: string) => {
+        new SampleConstruct(scope, id);
+      };
+      `,
+    },
+    // WHEN: new expression is inside a class that does not extend Construct
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class NotAConstruct {
+        create(scope: Construct) {
+          new SampleConstruct(scope, "Id");
+        }
+      }
+      `,
+    },
     // WHEN: allowNonThisAndDisallowScope is true and passing a non-scope variable
     {
       code: `
