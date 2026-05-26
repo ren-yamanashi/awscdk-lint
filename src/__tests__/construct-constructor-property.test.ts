@@ -1,16 +1,7 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-
 import { constructConstructorProperty } from "../rules/construct-constructor-property";
+import { createRuleTester } from "./create-rule-tester";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run("construct-constructor-property", constructConstructorProperty, {
   valid: [

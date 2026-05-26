@@ -1,16 +1,7 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-
 import { propsNameConvention } from "../rules/props-name-convention";
+import { createRuleTester } from "./create-rule-tester";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run("props-name-convention", propsNameConvention, {
   valid: [

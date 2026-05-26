@@ -1,16 +1,7 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-
 import { requireJSDoc } from "../rules/require-jsdoc";
+import { createRuleTester } from "./create-rule-tester";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run("require-jsdoc", requireJSDoc, {
   valid: [

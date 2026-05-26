@@ -1,16 +1,7 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-
 import { noUnusedProps } from "../rules/no-unused-props";
+import { createRuleTester } from "./create-rule-tester";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run("no-unused-props", noUnusedProps, {
   valid: [

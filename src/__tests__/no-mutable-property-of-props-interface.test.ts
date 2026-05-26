@@ -1,16 +1,7 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-
 import { noMutablePropertyOfPropsInterface } from "../rules/no-mutable-property-of-props-interface";
+import { createRuleTester } from "./create-rule-tester";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run("no-mutable-property-of-props-interface", noMutablePropertyOfPropsInterface, {
   valid: [

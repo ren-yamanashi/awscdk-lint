@@ -1,18 +1,9 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-
 import { requirePropsDefaultDoc } from "../rules/require-props-default-doc";
+import { createRuleTester } from "./create-rule-tester";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
-ruleTester.run("require-default-doc-optional-props", requirePropsDefaultDoc, {
+ruleTester.run("require-props-default-doc", requirePropsDefaultDoc, {
   valid: [
     {
       // WHEN: Optional property has @default JSDoc in Props interface
