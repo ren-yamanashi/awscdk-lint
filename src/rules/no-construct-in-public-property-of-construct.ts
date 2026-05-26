@@ -35,11 +35,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
     return {
       ClassDeclaration(node: ESTree.Class) {
         if (!node.id) return;
-        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a ClassDeclaration,
-        // so we resolve the class type at the `id` position instead. Ideally we
-        // would derive it from the node directly so this also works under standard
-        // TypeScript, where `getTypeAtLocation(node)` returns the class type.
-        const type = checker.getTypeAtLocation(node.id);
+        const type = checker.getTypeAtLocation(node);
         if (!type || !isConstructOrStackType(type, checker)) return;
         const publicProperties = findPublicPropertiesInClass(node);
         for (const publicProperty of publicProperties) {

@@ -1,11 +1,3 @@
-// FIXME: Cases for union / intersection / mapped types (`Bucket | undefined`,
-// `Bucket & {...}`, `Readonly/Partial/Required<Bucket>`) are omitted because the
-// type checker has no API to decompose these into their member/wrapped types,
-// so the rule can't find a Construct type nested inside them. Restore these
-// cases once such an API exists. Fixtures use real-CDK structure
-// (`class Resource extends Construct {}`) so the Construct + Resource heuristic
-// matches the ESLint behavior.
-
 import { noConstructInPublicPropertyOfConstruct } from "../rules/no-construct-in-public-property-of-construct";
 import { createRuleTester } from "./create-rule-tester";
 
@@ -425,6 +417,60 @@ ruleTester.run(
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
       {
+        name: "public field type is Readonly utility type wrapping class that extends Resource",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  public readonly bucket: Readonly<Bucket>;
+                }
+              `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is Partial utility type wrapping class that extends Resource",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  public bucket: Partial<Bucket>;
+                }
+              `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
         name: "public field type is custom type alias wrapping class that extends Resource (MyWrapper<Bucket>)",
         code: `
           class Construct {}
@@ -482,6 +528,35 @@ ruleTester.run(
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
       {
+        name: "constructor public property type is Readonly utility type wrapping class that extends Resource",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  constructor(public readonly bucket: Readonly<Bucket>) {
+                    super();
+                  }
+                }
+              `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
         name: "public field type is nested generics (Promise<Array<Bucket>>)",
         code: `
           class Construct {}
@@ -536,6 +611,33 @@ ruleTester.run(
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
       {
+        name: "public field type is Class in Union type",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  public bucket: Bucket | { bucketName: string };
+                }
+              `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
         name: "public field type is two-dimensional array of class that extends Resource (Bucket[][])",
         code: `
           class Construct {}
@@ -560,6 +662,114 @@ ruleTester.run(
             public buckets: Bucket[][];
           }
         `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is Optional type (Bucket | undefined)",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  public bucket: Bucket | undefined;
+                }
+              `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is Optional type (Bucket | null)",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  public bucket: Bucket | null;
+                }
+              `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is Class in Intersection type",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  public bucket: Bucket & { customProp: string };
+                }
+              `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is Required utility type wrapping class that extends Resource",
+        code: `
+                class Construct {}
+                class Resource extends Construct {}
+                interface IBucket {
+                  bucketName: string;
+                }
+                export abstract class BucketBase extends Resource implements IBucket {
+                  abstract readonly bucketName: string;
+                  constructor() {
+                    super();
+                  }
+                }
+                export class Bucket extends BucketBase {
+                  readonly bucketName: string;
+                  constructor() {
+                    super();
+                    this.bucketName = "test-bucket";
+                  }
+                }
+                class TestClass extends Construct {
+                  public bucket: Required<Bucket>;
+                }
+              `,
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
       {
@@ -619,227 +829,6 @@ ruleTester.run(
         `,
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
-      // FIXME: commented-out cases the oxlint rule can't satisfy (union /
-      // intersection / mapped types — the type checker can't decompose them).
-      // Restore once such an API exists.
-      // {
-      //         name: "public field type is Readonly utility type wrapping class that extends Resource",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             public readonly bucket: Readonly<Bucket>;
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
-      // {
-      //         name: "public field type is Partial utility type wrapping class that extends Resource",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             public bucket: Partial<Bucket>;
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
-      // {
-      //         name: "constructor public property type is Readonly utility type wrapping class that extends Resource",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             constructor(public readonly bucket: Readonly<Bucket>) {
-      //               super();
-      //             }
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
-      // {
-      //         name: "public field type is Class in Union type",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             public bucket: Bucket | { bucketName: string };
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
-      // {
-      //         name: "public field type is Optional type (Bucket | undefined)",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             public bucket: Bucket | undefined;
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
-      // {
-      //         name: "public field type is Optional type (Bucket | null)",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             public bucket: Bucket | null;
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
-      // {
-      //         name: "public field type is Class in Intersection type",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             public bucket: Bucket & { customProp: string };
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
-      // {
-      //         name: "public field type is Required utility type wrapping class that extends Resource",
-      //         code: `
-      //           class Construct {}
-      //           class Resource {}
-      //           interface IBucket {
-      //             bucketName: string;
-      //           }
-      //           export abstract class BucketBase extends Resource implements IBucket {
-      //             abstract readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //             }
-      //           }
-      //           export class Bucket extends BucketBase {
-      //             readonly bucketName: string;
-      //             constructor() {
-      //               super();
-      //               this.bucketName = "test-bucket";
-      //             }
-      //           }
-      //           class TestClass extends Construct {
-      //             public bucket: Required<Bucket>;
-      //           }
-      //         `,
-      //         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      //       }
     ],
   },
 );

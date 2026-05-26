@@ -74,9 +74,12 @@ export const requirePassingThis = createRule({
         // NOTE: If the first argument is already `this`, it's valid
         if (argument.type === "ThisExpression") return;
 
-        // NOTE: If the first argument is not `scope`, it's valid
-        const constructorParamNames = findConstructorPropertyNames(type, checker);
-        if (constructorParamNames[0] !== "scope") return;
+        // NOTE: Skip when the first constructor parameter resolves to a name other
+        // than "scope" (then passing a non-`this` value is valid). An empty name
+        // means it could not be resolved (e.g. a `.d.ts` parameter), so fall back
+        // to the CDK convention that the first parameter is "scope".
+        const scopeParamName = findConstructorPropertyNames(type, checker)[0];
+        if (scopeParamName && scopeParamName !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases
         if (!options.allowNonThisAndDisallowScope) {

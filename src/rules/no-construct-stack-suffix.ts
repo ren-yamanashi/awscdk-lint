@@ -71,10 +71,12 @@ export const noConstructStackSuffix = createRule({
           return;
         }
 
-        // NOTE: Only validate when the second constructor parameter is named "id"
-        // (otherwise the 2nd argument is not an ID).
-        const constructorParamNames = findConstructorPropertyNames(type, checker);
-        if (constructorParamNames[1] !== "id") return;
+        // NOTE: Skip when the second constructor parameter resolves to a name
+        // other than "id" (then the 2nd argument is not an ID). An empty name
+        // means it could not be resolved (e.g. a `.d.ts` parameter), so fall back
+        // to the CDK convention that the second parameter is "id".
+        const idParamName = findConstructorPropertyNames(type, checker)[1];
+        if (idParamName && idParamName !== "id") return;
 
         validateConstructId(node, context);
       },

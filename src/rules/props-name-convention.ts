@@ -32,11 +32,7 @@ export const propsNameConvention = createRule({
       ClassDeclaration(node: ESTree.Class) {
         if (!node.id || !node.superClass) return;
 
-        // MEMO: tsgo returns `any` for `getTypeAtLocation` on the class node, so we
-        // resolve the type at the `superClass` position to check whether the class
-        // extends Construct. Ideally we would derive it from the node directly so
-        // this also works under standard TypeScript, where `getTypeAtLocation(node)`
-        // returns the class type.
+        // NOTE: check whether the class extends Construct via its superclass type.
         const type = checker.getTypeAtLocation(node.superClass);
         if (!type || !isConstructType(type, checker)) return;
 

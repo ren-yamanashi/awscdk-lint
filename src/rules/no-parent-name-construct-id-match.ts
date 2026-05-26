@@ -67,12 +67,7 @@ export const noParentNameConstructIdMatch = createRule({
         const parentClassName = parent.id.name;
         if (!parentClassName) return;
 
-        // MEMO: tsgo returns `any` for `getTypeAtLocation` on the class node, so we
-        // resolve the class type at the parent ClassDeclaration's `id` position
-        // instead. Ideally we would derive it from the node directly so this also
-        // works under standard TypeScript, where `getTypeAtLocation(node)` returns
-        // the class type.
-        const type = checker.getTypeAtLocation(parent.id);
+        const type = checker.getTypeAtLocation(parent);
         if (!type || !isConstructOrStackType(type, checker)) return;
 
         for (const body of node.body) {
