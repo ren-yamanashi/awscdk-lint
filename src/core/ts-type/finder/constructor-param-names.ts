@@ -9,7 +9,7 @@ const CONSTRUCT_SIGNATURE_KIND = 1;
  * @param checker - The tsgo type checker
  * @returns The constructor parameter names in order (e.g. `["scope", "id", "props"]`)
  */
-export const findConstructorParamNames = (
+export const findConstructorPropertyNames = (
   type: TsgoType,
   checker: TsgoTypeCheckerShape,
 ): string[] => {

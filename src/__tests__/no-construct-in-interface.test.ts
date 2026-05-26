@@ -548,7 +548,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Readonly utility type wrapping class that extends Resource",
       code: `
-      class Resource {}
+      class Construct {}
+      class Resource extends Construct {}
       interface IBucket {
         bucketName: string;
       }
@@ -574,7 +575,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Partial utility type wrapping class that extends Resource",
       code: `
-      class Resource {}
+      class Construct {}
+      class Resource extends Construct {}
       interface IBucket {
         bucketName: string;
       }
@@ -600,7 +602,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class included in Union type that extends Resource",
       code: `
-      class Resource {}
+      class Construct {}
+      class Resource extends Construct {}
       interface IBucket {
         bucketName: string;
       }
@@ -626,7 +629,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class with undefined in Union type",
       code: `
-      class Resource {}
+      class Construct {}
+      class Resource extends Construct {}
       interface IBucket {
         bucketName: string;
       }
@@ -652,7 +656,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class with null in Union type",
       code: `
-      class Resource {}
+      class Construct {}
+      class Resource extends Construct {}
       interface IBucket {
         bucketName: string;
       }
@@ -678,7 +683,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class in Intersection type",
       code: `
-      class Resource {}
+      class Construct {}
+      class Resource extends Construct {}
       interface IBucket {
         bucketName: string;
       }
@@ -704,7 +710,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Required utility type wrapping Class",
       code: `
-      class Resource {}
+      class Construct {}
+      class Resource extends Construct {}
       interface IBucket {
         bucketName: string;
       }
