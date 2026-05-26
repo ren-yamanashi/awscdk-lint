@@ -1,5 +1,5 @@
-/* oxlint-disable awscdk/require-jsdoc-oxlint */
-/* oxlint-disable awscdk/require-props-default-doc-oxlint */
+/* oxlint-disable awscdk/require-jsdoc */
+/* oxlint-disable awscdk/require-props-default-doc */
 import { IBucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 

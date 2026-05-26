@@ -1,5 +1,5 @@
-/* oxlint-disable awscdk/require-props-default-doc-oxlint */
-/* oxlint-disable awscdk/require-jsdoc-oxlint */
+/* oxlint-disable awscdk/require-props-default-doc */
+/* oxlint-disable awscdk/require-jsdoc */
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 

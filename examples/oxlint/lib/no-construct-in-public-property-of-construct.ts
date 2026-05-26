@@ -1,4 +1,4 @@
-/* oxlint-disable awscdk/require-jsdoc-oxlint */
+/* oxlint-disable awscdk/require-jsdoc */
 import { CognitoUserPoolsAuthorizer } from "aws-cdk-lib/aws-apigateway";
 import { Environment } from "aws-cdk-lib/aws-appconfig";
 import { DockerImageAsset } from "aws-cdk-lib/aws-ecr-assets";

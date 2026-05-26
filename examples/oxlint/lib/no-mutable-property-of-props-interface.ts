@@ -1,4 +1,4 @@
-/* oxlint-disable awscdk/require-jsdoc-oxlint */
+/* oxlint-disable awscdk/require-jsdoc */
 import { IBucket } from "aws-cdk-lib/aws-s3";
 
 export interface MyConstructProps {

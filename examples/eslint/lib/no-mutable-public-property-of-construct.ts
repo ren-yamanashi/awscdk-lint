@@ -1,4 +1,4 @@
-/* eslint-disable awscdk/require-jsdoc-oxlint */
+/* eslint-disable awscdk/require-jsdoc */
 import { IBucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 

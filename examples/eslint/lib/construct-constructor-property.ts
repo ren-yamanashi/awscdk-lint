@@ -1,4 +1,4 @@
-/* eslint-disable awscdk/require-jsdoc-oxlint */
+/* eslint-disable awscdk/require-jsdoc */
 import { Construct } from "constructs";
 
 // ✅ Constructor with "scope, id" property names
