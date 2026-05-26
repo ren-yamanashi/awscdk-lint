@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import type { ESTree } from "@oxlint/plugins";
 
 import { INodeVisitor } from "./interface/node-visitor";
 
@@ -32,22 +32,20 @@ export class MethodCallCollectorVisitor implements INodeVisitor {
     this.propsParamName = propsParamName;
   }
 
-  visitCallExpression(node: TSESTree.CallExpression): void {
+  visitCallExpression(node: ESTree.CallExpression): void {
     // NOTE: Check for this.methodName(...) pattern
     if (
-      node.callee.type !== AST_NODE_TYPES.MemberExpression ||
-      node.callee.object.type !== AST_NODE_TYPES.ThisExpression ||
-      node.callee.property.type !== AST_NODE_TYPES.Identifier
+      node.callee.type !== "MemberExpression" ||
+      node.callee.object.type !== "ThisExpression" ||
+      node.callee.property.type !== "Identifier"
     ) {
       return;
     }
 
     const methodName = node.callee.property.name;
-    const propsArgIndices = node.arguments.reduce<number[]>(
+    const propsArgIndices: number[] = node.arguments.reduce<number[]>(
       (acc, arg, index) =>
-        arg.type === AST_NODE_TYPES.Identifier && arg.name === this.propsParamName
-          ? [...acc, index]
-          : acc,
+        arg.type === "Identifier" && arg.name === this.propsParamName ? [...acc, index] : acc,
       [],
     );
 

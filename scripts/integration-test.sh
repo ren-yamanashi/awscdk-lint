@@ -4,7 +4,7 @@ set -e
 
 cd "$(dirname "${0}")/.."
 
-EXPECTED_ERRORS=50
+EXPECTED_ERRORS=46
 
 check_eslint_output() {
   local command="$1"

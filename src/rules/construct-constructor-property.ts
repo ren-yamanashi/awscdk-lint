@@ -1,29 +1,17 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  ParserServicesWithTypeInformation,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import type { Context, ESTree } from "@oxlint/plugins";
+import type { TsgoTypeCheckerShape } from "corsa-oxlint";
+
+import { getParserServices } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
-type Context = TSESLint.RuleContext<
-  "invalidConstructorProperty" | "invalidConstructorType" | "invalidConstructorIdType",
-  []
->;
-
-type ConstructorProperties = [
-  TSESTree.Parameter,
-  TSESTree.Parameter,
-  TSESTree.Parameter | undefined,
-];
+type ConstructorParam = ESTree.MethodDefinition["value"]["params"][number];
 
 /**
  * Enforces that constructors of classes extending Construct have the property names 'scope, id' or 'scope, id, props'
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context provided by the linter
  * @returns An object containing the AST visitor functions
  */
 export const constructConstructorProperty = createRule({
@@ -46,18 +34,24 @@ export const constructConstructorProperty = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = ESLintUtils.getParserServices(context);
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
     return {
-      ClassDeclaration(node) {
-        const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructType(type)) return;
+      ClassDeclaration(node: ESTree.Class) {
+        if (!node.id) return;
+        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a ClassDeclaration,
+        // so we resolve the class type at the `id` position instead. Ideally we
+        // would derive it from the node directly so this also works under standard
+        // TypeScript, where `getTypeAtLocation(node)` returns the class type.
+        const type = checker.getTypeAtLocation(node.id);
+        if (!type || !isConstructType(type, checker)) return;
 
         const constructor = findConstructor(node);
         if (!constructor) return;
 
         const params = checkNumOfConstructorProperty(constructor, context);
         if (params) {
-          checkFirstParamIsScope(params[0], context, parserServices);
+          checkFirstParamIsScope(params[0], context, checker);
           checkSecondParamIsId(params[1], context);
           checkThirdParamIsProps(params[2], context);
         }
@@ -70,9 +64,9 @@ export const constructConstructorProperty = createRule({
  * Checks if the number of constructor properties is valid (at least 2)
  */
 const checkNumOfConstructorProperty = (
-  constructor: TSESTree.MethodDefinition,
+  constructor: ESTree.MethodDefinition,
   context: Context,
-): ConstructorProperties | undefined => {
+): [ConstructorParam, ConstructorParam, ConstructorParam | undefined] | undefined => {
   const params = constructor.value.params;
   if (params.length < 2) {
     context.report({
@@ -88,33 +82,41 @@ const checkNumOfConstructorProperty = (
  * Checks if the first parameter is named "scope" and of type Construct
  */
 const checkFirstParamIsScope = (
-  firstParam: ConstructorProperties[0],
+  firstParam: ConstructorParam,
   context: Context,
-  parserServices: ParserServicesWithTypeInformation,
+  checker: TsgoTypeCheckerShape,
 ) => {
-  if (firstParam.type !== AST_NODE_TYPES.Identifier || firstParam.name !== "scope") {
+  if (firstParam.type !== "Identifier" || firstParam.name !== "scope") {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (!isConstructType(parserServices.getTypeAtLocation(firstParam))) {
-    context.report({
-      node: firstParam,
-      messageId: "invalidConstructorType",
-    });
+  } else {
+    const type = checker.getTypeAtLocation(firstParam);
+    if (type && !isConstructType(type, checker)) {
+      context.report({
+        node: firstParam,
+        messageId: "invalidConstructorType",
+      });
+    }
   }
 };
 
 /**
  * Checks if the second parameter is named "id" and of type string
+ * FIXME: `secondParam` should be typed (no `any`):
+ *   const checkSecondParamIsId = (secondParam: ConstructorParam, context: Context) => {
+ * But the type checker types a binding identifier's `typeAnnotation` as `null`,
+ * so reading `secondParam.typeAnnotation` below would be a type error. We fall
+ * back to `any` until that type is fixed.
  */
-const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Context) => {
-  if (secondParam.type !== AST_NODE_TYPES.Identifier || secondParam.name !== "id") {
+const checkSecondParamIsId = (secondParam: any, context: Context) => {
+  if (secondParam.type !== "Identifier" || secondParam.name !== "id") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (secondParam.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSStringKeyword) {
+  } else if (secondParam.typeAnnotation?.typeAnnotation.type !== "TSStringKeyword") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorIdType",
@@ -125,9 +127,9 @@ const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Co
 /**
  * Checks if the third parameter is named "props"
  */
-const checkThirdParamIsProps = (thirdParam: ConstructorProperties[2], context: Context) => {
+const checkThirdParamIsProps = (thirdParam: ConstructorParam | undefined, context: Context) => {
   if (!thirdParam) return;
-  if (thirdParam.type !== AST_NODE_TYPES.Identifier || thirdParam.name !== "props") {
+  if (thirdParam.type !== "Identifier" || thirdParam.name !== "props") {
     context.report({
       node: thirdParam,
       messageId: "invalidConstructorProperty",

@@ -1,11 +1,7 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  ParserServicesWithTypeInformation,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
-import { Type } from "typescript";
+import type { Context, ESTree } from "@oxlint/plugins";
+import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+
+import { getParserServices } from "corsa-oxlint";
 
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
@@ -13,11 +9,12 @@ import { createRule } from "../../shared/create-rule";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
 
-type Context = TSESLint.RuleContext<"unusedProp", []>;
+type ConstructorParam = ESTree.MethodDefinition["value"]["params"][number];
+type PropsParamNode = Extract<ConstructorParam, { type: "Identifier" }>;
 
 /**
  * Enforces that all properties defined in props type are used within the constructor
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context provided by the linter
  * @returns An object containing the AST visitor functions
  */
 export const noUnusedProps = createRule({
@@ -35,23 +32,28 @@ export const noUnusedProps = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = ESLintUtils.getParserServices(context);
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
 
     return {
-      ClassDeclaration(node) {
-        if (node.abstract) return;
+      ClassDeclaration(node: ESTree.Class) {
+        if (node.abstract || !node.id) return;
 
-        const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructType(type)) return;
+        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a ClassDeclaration,
+        // so we resolve the class type at the `id` position instead. Ideally we
+        // would derive it from the node directly so this also works under standard
+        // TypeScript, where `getTypeAtLocation(node)` returns the class type.
+        const type = checker.getTypeAtLocation(node.id);
+        if (!type || !isConstructType(type, checker)) return;
 
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        const propsParam = getPropsParam(constructor, parserServices);
+        const propsParam = getPropsParam(constructor, checker);
         if (!propsParam) return;
         if (isPropsUsedInSuperCall(constructor, propsParam.node.name)) return;
 
-        const tracker = new PropsUsageTracker(propsParam.type);
+        const tracker = new PropsUsageTracker(propsParam.type, checker);
         const analyzer = new PropsUsageAnalyzer(tracker);
 
         analyzer.analyze(constructor, propsParam.node);
@@ -62,23 +64,23 @@ export const noUnusedProps = createRule({
 });
 
 const getPropsParam = (
-  constructor: TSESTree.MethodDefinition,
-  parserServices: ParserServicesWithTypeInformation,
-): { node: TSESTree.Identifier; type: Type } | null => {
+  constructor: ESTree.MethodDefinition,
+  checker: TsgoTypeCheckerShape,
+): { node: PropsParamNode; type: TsgoType } | null => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
 
   const propsParam = params[2];
 
   // ++++++++++++++Important+++++++++++++
-  // When AST_NODE_TYPES is "ObjectPattern" (e.g. { bucketName, enableVersioning }: MyConstructProps), it can be confirmed whether the variable is used in the IDE, and it conflicts with the @typescript-eslint/no-unused-vars rule, so this rule does not apply.
+  // When AST_NODE_TYPES is "ObjectPattern", this rule does not apply.
   // ++++++++++++++++++++++++++++++++++++
-  if (propsParam.type !== AST_NODE_TYPES.Identifier) return null;
+  if (propsParam.type !== "Identifier") return null;
 
-  return {
-    node: propsParam,
-    type: parserServices.getTypeAtLocation(propsParam),
-  };
+  const type = checker.getTypeAtLocation(propsParam);
+  if (!type) return null;
+
+  return { node: propsParam, type };
 };
 
 /**
@@ -96,37 +98,34 @@ const getPropsParam = (
  * @returns True if props are used in super call, false otherwise
  */
 const isPropsUsedInSuperCall = (
-  constructor: TSESTree.MethodDefinition,
+  constructor: ESTree.MethodDefinition,
   propsPropertyName: string,
 ): boolean => {
   if (constructor.kind !== "constructor") return false;
   const body = constructor.value.body;
-  if (!body) return false;
+  if (!body || body.type !== "BlockStatement") return false;
 
   for (const expr of body.body) {
     if (
-      expr.type !== AST_NODE_TYPES.ExpressionStatement ||
-      expr.expression.type !== AST_NODE_TYPES.CallExpression ||
-      expr.expression.callee.type !== AST_NODE_TYPES.Super
+      expr.type !== "ExpressionStatement" ||
+      expr.expression.type !== "CallExpression" ||
+      expr.expression.callee.type !== "Super"
     ) {
       continue;
     }
 
-    const visitNode = (node: TSESTree.Node, propsName: string): boolean => {
-      const nodeValue = node.type === AST_NODE_TYPES.Property ? node.value : node;
+    const visitNode = (node: ESTree.Node, propsName: string): boolean => {
+      const nodeValue = node.type === "Property" ? node.value : node;
       switch (nodeValue.type) {
-        case AST_NODE_TYPES.Identifier: {
+        case "Identifier":
           return nodeValue.name === propsName;
-        }
-        case AST_NODE_TYPES.ObjectExpression: {
+        case "ObjectExpression":
           for (const prop of nodeValue.properties) {
             if (visitNode(prop, propsName)) return true;
           }
           break;
-        }
-        default: {
+        default:
           break;
-        }
       }
       return false;
     };
@@ -140,20 +139,18 @@ const isPropsUsedInSuperCall = (
 };
 
 /**
- * Reports unused properties to ESLint
+ * Reports unused properties to the linter
  */
 const reportUnusedProperties = (
   tracker: IPropsUsageTracker,
-  propsParam: TSESTree.Parameter,
+  propsParam: PropsParamNode,
   context: Context,
 ): void => {
   for (const propName of tracker.getUnusedProperties()) {
     context.report({
       node: propsParam,
       messageId: "unusedProp",
-      data: {
-        propName,
-      },
+      data: { propName },
     });
   }
 };

@@ -1,34 +1,15 @@
 import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
 
-import { Type } from "typescript";
-
-import {
-  isExtendsFromTargetSuperClass,
-  isExtendsFromTargetSuperClassOxlint,
-} from "../../ts-type/checker/is-extends-target-super-class";
+import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-target-super-class";
 
 /**
  * Check if the type extends Construct
  * @param type - The type to check
- * @param ignoredClasses - Classes that inherit from Construct Class but do not want to be treated as Construct Class
- * @returns True if the type extends Construct, otherwise false
- */
-export const isConstructType = (
-  type: Type,
-  ignoredClasses: readonly string[] = ["App", "Stage", "CfnOutput", "Stack"] as const,
-): boolean => {
-  if (ignoredClasses.includes(type.symbol?.name ?? "")) return false;
-  return isExtendsFromTargetSuperClass(type, ["Construct"], isConstructType);
-};
-
-/**
- * Check if the type extends Construct (oxlint version)
- * @param type - The type to check
  * @param checker - The tsgo type checker
  * @returns True if the type extends Construct, otherwise false
  */
-export const isConstructTypeOxlint = (type: TsgoType, checker: TsgoTypeCheckerShape): boolean => {
-  return isExtendsFromTargetSuperClassOxlint(
+export const isConstructType = (type: TsgoType, checker: TsgoTypeCheckerShape): boolean => {
+  return isExtendsFromTargetSuperClass(
     type,
     checker,
     ["Construct"],

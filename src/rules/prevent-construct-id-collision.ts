@@ -1,7 +1,8 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESTree } from "@typescript-eslint/utils";
+import type { Context, ESTree } from "@oxlint/plugins";
+
+import { getParserServices } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
-import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -24,15 +25,28 @@ export const preventConstructIdCollision = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = ESLintUtils.getParserServices(context);
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
     return {
-      NewExpression(node) {
-        const type = parserServices.getTypeAtLocation(node);
+      NewExpression(node: ESTree.NewExpression) {
+        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a NewExpression, so
+        // we resolve the instance type from the callee's `typeof ClassName` type.
+        // Ideally we would derive it from the node directly so this also works
+        // under standard TypeScript, where `getTypeAtLocation(node)` returns the
+        // instance type.
+        const type = checker.getTypeAtLocation(node.callee);
 
-        if (!isConstructType(type) || node.arguments.length < 2) return;
+        if (!type || !isConstructType(type, checker) || node.arguments.length < 2) {
+          return;
+        }
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
-        if (constructorPropertyNames[1] !== "id") return;
+        // FIXME: This should only validate when the construct's second constructor
+        // parameter is named "id" (otherwise the 2nd argument is not an ID):
+        //   const constructorParamNames = getConstructorParamNames(type, checker);
+        //   if (constructorParamNames[1] !== "id") return;
+        // But the type checker exposes constructor parameters only as opaque IDs
+        // with no way to resolve their names, so for now we rely on the CDK
+        // convention that the second parameter is always "id".
 
         validateConstructIdInLoop(node, context);
       },
@@ -43,16 +57,13 @@ export const preventConstructIdCollision = createRule({
 /**
  * Validate whether a Construct ID is a literal inside a loop
  */
-const validateConstructIdInLoop = (
-  node: TSESTree.NewExpression,
-  context: Parameters<typeof preventConstructIdCollision.create>[0],
-) => {
+const validateConstructIdInLoop = (node: ESTree.NewExpression, context: Context) => {
   if (!isInsideLoop(node)) return;
 
   const secondArg = node.arguments[1];
 
   // NOTE: String literals may cause ID collisions
-  if (secondArg.type === AST_NODE_TYPES.Literal && typeof secondArg.value === "string") {
+  if (secondArg.type === "Literal" && typeof secondArg.value === "string") {
     context.report({
       node: secondArg,
       messageId: "preventConstructIdCollision",
@@ -62,7 +73,7 @@ const validateConstructIdInLoop = (
   }
 
   // NOTE: Template literals without expressions are also static values
-  if (secondArg.type === AST_NODE_TYPES.TemplateLiteral && !secondArg.expressions.length) {
+  if (secondArg.type === "TemplateLiteral" && !secondArg.expressions.length) {
     const constructId = secondArg.quasis.map((q) => q.value.raw).join("");
     context.report({
       node: secondArg,
@@ -78,31 +89,30 @@ const validateConstructIdInLoop = (
  * Detects for, for...in, for...of, while, do...while statements,
  * and callbacks of iteration methods (forEach, map, etc.)
  */
-const isInsideLoop = (node: TSESTree.Node): boolean => {
+const isInsideLoop = (node: ESTree.Node): boolean => {
   let current = node.parent;
   while (current) {
     // NOTE: Detect loop statements
     if (
-      current.type === AST_NODE_TYPES.ForStatement ||
-      current.type === AST_NODE_TYPES.ForInStatement ||
-      current.type === AST_NODE_TYPES.ForOfStatement ||
-      current.type === AST_NODE_TYPES.WhileStatement ||
-      current.type === AST_NODE_TYPES.DoWhileStatement
+      current.type === "ForStatement" ||
+      current.type === "ForInStatement" ||
+      current.type === "ForOfStatement" ||
+      current.type === "WhileStatement" ||
+      current.type === "DoWhileStatement"
     ) {
       return true;
     }
 
     // NOTE: Detect iteration method callbacks (ArrowFunction/FunctionExpression)
     if (
-      (current.type === AST_NODE_TYPES.ArrowFunctionExpression ||
-        current.type === AST_NODE_TYPES.FunctionExpression) &&
+      (current.type === "ArrowFunctionExpression" || current.type === "FunctionExpression") &&
       isIterationMethodCallback(current)
     ) {
       return true;
     }
 
     // NOTE: Stop at non-constructor method definitions
-    if (current.type === AST_NODE_TYPES.MethodDefinition && current.kind !== "constructor") {
+    if (current.type === "MethodDefinition" && current.kind !== "constructor") {
       return false;
     }
 
@@ -129,16 +139,14 @@ const ITERATION_METHODS = new Set([
 /**
  * Check whether an arrow function or function expression is a callback of an iteration method
  */
-const isIterationMethodCallback = (
-  node: TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression,
-): boolean => {
+const isIterationMethodCallback = (node: ESTree.Node): boolean => {
   const parent = node.parent;
-  if (parent?.type !== AST_NODE_TYPES.CallExpression) return false;
+  if (parent?.type !== "CallExpression") return false;
 
   const callee = parent.callee;
-  if (callee.type !== AST_NODE_TYPES.MemberExpression) return false;
+  if (callee.type !== "MemberExpression") return false;
 
-  if (callee.property.type !== AST_NODE_TYPES.Identifier) return false;
+  if (callee.property.type !== "Identifier") return false;
 
   return ITERATION_METHODS.has(callee.property.name);
 };

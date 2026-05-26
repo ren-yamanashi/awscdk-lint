@@ -1,11 +1,13 @@
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import type { ESTree } from "@oxlint/plugins";
+
+import { getParserServices } from "corsa-oxlint";
 
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context provided by the linter
  * @returns An object containing the AST visitor functions
  */
 export const noConstructInInterface = createRule({
@@ -23,19 +25,18 @@ export const noConstructInInterface = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = ESLintUtils.getParserServices(context);
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
+
     return {
-      TSInterfaceDeclaration(node) {
+      TSInterfaceDeclaration(node: ESTree.TSInterfaceDeclaration) {
         for (const property of node.body.body) {
-          if (
-            property.type !== AST_NODE_TYPES.TSPropertySignature ||
-            property.key.type !== AST_NODE_TYPES.Identifier
-          ) {
+          if (property.type !== "TSPropertySignature" || property.key.type !== "Identifier") {
             continue;
           }
 
-          const type = parserServices.getTypeAtLocation(property);
-          const result = findTypeOfCdkConstruct(type);
+          const type = checker.getTypeAtLocation(property);
+          const result = type && findTypeOfCdkConstruct(type, checker);
 
           if (result) {
             context.report({
@@ -43,7 +44,7 @@ export const noConstructInInterface = createRule({
               messageId: "invalidInterfaceProperty",
               data: {
                 propertyName: property.key.name,
-                typeName: result.symbol.name,
+                typeName: checker.typeToString(result),
               },
             });
           }

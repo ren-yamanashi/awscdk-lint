@@ -35,6 +35,10 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
     return {
       ClassDeclaration(node: ESTree.Class) {
         if (!node.id) return;
+        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a ClassDeclaration,
+        // so we resolve the class type at the `id` position instead. Ideally we
+        // would derive it from the node directly so this also works under standard
+        // TypeScript, where `getTypeAtLocation(node)` returns the class type.
         const type = checker.getTypeAtLocation(node.id);
         if (!type || !isConstructOrStackType(type, checker)) return;
         const publicProperties = findPublicPropertiesInClass(node);
@@ -54,7 +58,7 @@ const validatePublicProperty = (
   const keyNode =
     publicProperty.node.type === "TSParameterProperty"
       ? publicProperty.node.parameter
-      : (publicProperty.node.key ?? publicProperty.node);
+      : publicProperty.node.key;
   const type = checker.getTypeAtLocation(keyNode);
   if (!type) return;
   const constructType = findTypeOfCdkConstruct(type, checker);

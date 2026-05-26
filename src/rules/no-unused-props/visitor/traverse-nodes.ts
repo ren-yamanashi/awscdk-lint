@@ -1,27 +1,27 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import type { ESTree } from "@oxlint/plugins";
 
 import { findChildNodes } from "../../../core/ast-node/finder/child-nodes";
 import { INodeVisitor } from "./interface/node-visitor";
 
-export const traverseNodes = (node: TSESTree.Node, visitor: INodeVisitor): void => {
+export const traverseNodes = (node: ESTree.Node, visitor: INodeVisitor): void => {
   switch (node.type) {
-    case AST_NODE_TYPES.MemberExpression: {
+    case "MemberExpression": {
       visitor.visitMemberExpression?.(node);
       break;
     }
-    case AST_NODE_TYPES.VariableDeclarator: {
+    case "VariableDeclarator": {
       visitor.visitVariableDeclarator?.(node);
       break;
     }
-    case AST_NODE_TYPES.AssignmentExpression: {
+    case "AssignmentExpression": {
       visitor.visitAssignmentExpression?.(node);
       break;
     }
-    case AST_NODE_TYPES.Identifier: {
+    case "Identifier": {
       visitor.visitIdentifier?.(node);
       break;
     }
-    case AST_NODE_TYPES.CallExpression: {
+    case "CallExpression": {
       visitor.visitCallExpression?.(node);
       break;
     }

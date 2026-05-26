@@ -1,10 +1,10 @@
-import { TSESTree } from "@typescript-eslint/utils";
+import type { ESTree } from "@oxlint/plugins";
 
 /**
- * find child nodes from a TSESTree.Node
+ * find child nodes from an ESTree.Node
  */
-export const findChildNodes = (node: TSESTree.Node): TSESTree.Node[] => {
-  return Object.entries(node).reduce<TSESTree.Node[]>((acc, [key, value]) => {
+export const findChildNodes = (node: ESTree.Node): ESTree.Node[] => {
+  return Object.entries(node).reduce<ESTree.Node[]>((acc, [key, value]) => {
     if (["parent", "range", "loc"].includes(key)) return acc; // Keys to skip to avoid circular references and unnecessary properties
     if (isESTreeNode(value)) return [...acc, value];
     if (Array.isArray(value)) return [...acc, ...value.filter(isESTreeNode)];
@@ -13,9 +13,9 @@ export const findChildNodes = (node: TSESTree.Node): TSESTree.Node[] => {
 };
 
 /**
- * Type guard to check if a value is a TSESTree.Node
+ * Type guard to check if a value is an ESTree.Node
  */
-const isESTreeNode = (value: unknown): value is TSESTree.Node => {
+const isESTreeNode = (value: unknown): value is ESTree.Node => {
   return (
     value !== null &&
     typeof value === "object" &&

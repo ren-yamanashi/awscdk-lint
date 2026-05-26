@@ -1,17 +1,16 @@
-import { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
+import type { Context, ESTree, SourceCode } from "@oxlint/plugins";
 
-import {
-  findPublicPropertiesInClass,
-  PublicProperty,
-} from "../core/ast-node/finder/public-property";
+import { getParserServices } from "corsa-oxlint";
+
+import type { PublicProperty } from "../core/ast-node/finder/public-property";
+
+import { findPublicPropertiesInClass } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { createRule } from "../shared/create-rule";
 
-type Context = TSESLint.RuleContext<"invalidPublicPropertyOfConstruct", []>;
-
 /**
  * Disallow mutable public properties of Construct
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context provided by the linter
  * @returns An object containing the AST visitor functions
  */
 export const noMutablePublicPropertyOfConstruct = createRule({
@@ -30,13 +29,19 @@ export const noMutablePublicPropertyOfConstruct = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = ESLintUtils.getParserServices(context);
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
 
     return {
-      ClassDeclaration(node) {
+      ClassDeclaration(node: ESTree.Class) {
+        if (!node.id) return;
         const sourceCode = context.sourceCode;
-        const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type)) return;
+        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a ClassDeclaration,
+        // so we resolve the class type at the `id` position instead. Ideally we
+        // would derive it from the node directly so this also works under standard
+        // TypeScript, where `getTypeAtLocation(node)` returns the class type.
+        const type = checker.getTypeAtLocation(node.id);
+        if (!type || !isConstructOrStackType(type, checker)) return;
 
         const publicProperties = findPublicPropertiesInClass(node);
         for (const property of publicProperties) {
@@ -54,7 +59,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
 const validatePublicProperty = (args: {
   publicProperty: PublicProperty;
   context: Context;
-  sourceCode: Readonly<TSESLint.SourceCode>;
+  sourceCode: SourceCode;
 }) => {
   const { publicProperty, context, sourceCode } = args;
   if (publicProperty.node.readonly) return;

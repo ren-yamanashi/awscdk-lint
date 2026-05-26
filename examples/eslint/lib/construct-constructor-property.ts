@@ -46,6 +46,7 @@ export class ____MyConstruct extends Construct {
 // ❌ First parameter type is not "Construct"
 export class _____MyConstruct extends Construct {
   constructor(scope: unknown, id: string) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     super(scope, id);
   }

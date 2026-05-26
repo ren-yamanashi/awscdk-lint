@@ -1,4 +1,6 @@
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import type { ESTree } from "@oxlint/plugins";
+
+import { getParserServices } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
@@ -6,7 +8,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context provided by the linter
  * @returns An object containing the AST visitor functions
  */
 export const propsNameConvention = createRule({
@@ -24,29 +26,40 @@ export const propsNameConvention = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = ESLintUtils.getParserServices(context);
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
     return {
-      ClassDeclaration(node) {
+      ClassDeclaration(node: ESTree.Class) {
         if (!node.id || !node.superClass) return;
 
-        const type = parserServices.getTypeAtLocation(node.superClass);
-        if (!isConstructType(type)) return;
+        // MEMO: tsgo returns `any` for `getTypeAtLocation` on the class node, so we
+        // resolve the type at the `superClass` position to check whether the class
+        // extends Construct. Ideally we would derive it from the node directly so
+        // this also works under standard TypeScript, where `getTypeAtLocation(node)`
+        // returns the class type.
+        const type = checker.getTypeAtLocation(node.superClass);
+        if (!type || !isConstructType(type, checker)) return;
 
         // NOTE: check constructor parameter
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        const propsParam = constructor.value.params?.[2];
-        if (propsParam?.type !== AST_NODE_TYPES.Identifier) return;
+        // FIXME: This should be written without `any`:
+        //   const propsParam = constructor.value.params?.[2];
+        // But the type checker types a binding identifier's `typeAnnotation` as
+        // `null`, so reading `propsParam.typeAnnotation` below would be a type
+        // error. We fall back to `any` until that type is fixed.
+        const propsParam: any = constructor.value.params?.[2];
+        if (propsParam?.type !== "Identifier") return;
 
         const typeAnnotation = propsParam.typeAnnotation;
-        if (typeAnnotation?.type !== AST_NODE_TYPES.TSTypeAnnotation) return;
+        if (typeAnnotation?.type !== "TSTypeAnnotation") return;
 
         const typeNode = typeAnnotation.typeAnnotation;
-        if (typeNode.type !== AST_NODE_TYPES.TSTypeReference) return;
+        if (typeNode.type !== "TSTypeReference") return;
 
         const propsTypeName = typeNode.typeName;
-        if (propsTypeName.type !== AST_NODE_TYPES.Identifier) return;
+        if (propsTypeName.type !== "Identifier") return;
 
         // NOTE: create valid props name
         const constructName = node.id.name;

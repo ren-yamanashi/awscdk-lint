@@ -1,7 +1,8 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+import type { Context, ESTree } from "@oxlint/plugins";
+
+import { getParserServices } from "corsa-oxlint";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
-import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
 
@@ -12,12 +13,9 @@ const QUOTE_TYPE = {
 
 type QuoteType = (typeof QUOTE_TYPE)[keyof typeof QUOTE_TYPE];
 
-type Context = TSESLint.RuleContext<"invalidConstructId", []>;
-
-/**
 /**
  * Enforce PascalCase for Construct ID.
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context provided by the linter
  * @returns An object containing the AST visitor functions
  */
 export const pascalCaseConstructId = createRule({
@@ -35,16 +33,27 @@ export const pascalCaseConstructId = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = ESLintUtils.getParserServices(context);
+    const services = getParserServices(context);
+    const checker = services.program.getTypeChecker();
     return {
-      NewExpression(node) {
-        const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type) || node.arguments.length < 2) {
+      NewExpression(node: ESTree.NewExpression) {
+        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a NewExpression, so
+        // we resolve the instance type from the callee's `typeof ClassName` type.
+        // Ideally we would derive it from the node directly so this also works
+        // under standard TypeScript, where `getTypeAtLocation(node)` returns the
+        // instance type.
+        const type = checker.getTypeAtLocation(node.callee);
+        if (!type || !isConstructOrStackType(type, checker) || node.arguments.length < 2) {
           return;
         }
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
-        if (constructorPropertyNames[1] !== "id") return;
+        // FIXME: This should only validate when the construct's second constructor
+        // parameter is named "id" (otherwise the 2nd argument is not an ID):
+        //   const constructorParamNames = getConstructorParamNames(type, checker);
+        //   if (constructorParamNames[1] !== "id") return;
+        // But the type checker exposes constructor parameters only as opaque IDs
+        // with no way to resolve their names, so for now we rely on the CDK
+        // convention that the second parameter is always "id".
 
         validateConstructId(node, context);
       },
@@ -64,12 +73,12 @@ const isPascalCase = (str: string) => {
 /**
  * Check the construct ID is PascalCase
  */
-const validateConstructId = (node: TSESTree.NewExpression, context: Context) => {
+const validateConstructId = (node: ESTree.NewExpression, context: Context) => {
   if (node.arguments.length < 2) return;
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
-  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
+  if (secondArg.type !== "Literal" || typeof secondArg.value !== "string") {
     return;
   }
 

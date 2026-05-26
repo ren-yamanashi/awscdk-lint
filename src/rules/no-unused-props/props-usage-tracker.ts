@@ -1,5 +1,5 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
-import { Type } from "typescript";
+import type { ESTree } from "@oxlint/plugins";
+import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
 
 import { findPropertyNames } from "../../core/ast-node/finder/property-name";
 
@@ -10,7 +10,7 @@ export interface IPropsUsageTracker {
    * @param node The member expression node.
    * @param propsParamName The name of the property being tracked.
    */
-  markAsUsedForMemberExpression(node: TSESTree.MemberExpression, propsParamName: string): void;
+  markAsUsedForMemberExpression(node: ESTree.MemberExpression, propsParamName: string): void;
 
   /**
    * Marks a property as used when it is accessed in a member expression.
@@ -18,7 +18,7 @@ export interface IPropsUsageTracker {
    * @param node The member expression node.
    * @param propsParamName The name of the property being tracked.
    */
-  markAsUsedForVariableDeclarator(node: TSESTree.VariableDeclarator, propsParamName: string): void;
+  markAsUsedForVariableDeclarator(node: ESTree.VariableDeclarator, propsParamName: string): void;
 
   /**
    * Marks a property as used when it is assigned in an expression.
@@ -27,7 +27,7 @@ export interface IPropsUsageTracker {
    * @param propsParamName The name of the property being tracked.
    */
   markAsUsedForAssignmentExpression(
-    node: TSESTree.AssignmentExpression,
+    node: ESTree.AssignmentExpression,
     propsParamName: string,
   ): void;
 
@@ -55,9 +55,9 @@ export interface IPropsUsageTracker {
 export class PropsUsageTracker implements IPropsUsageTracker {
   private propUsageMap: Map<string, boolean>;
 
-  constructor(propType: Type) {
+  constructor(propType: TsgoType, checker: TsgoTypeCheckerShape) {
     this.propUsageMap = new Map<string, boolean>(
-      this.getPropsPropertyNames(propType).map((name) => [name, false]),
+      this.getPropsPropertyNames(propType, checker).map((name: string) => [name, false]),
     );
   }
 
@@ -81,14 +81,14 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   }
 
   public markAsUsedForMemberExpression(
-    node: TSESTree.MemberExpression,
+    node: ESTree.MemberExpression,
     propsParamName: string,
   ): void {
     // NOTE: Check for props.propertyName or props?.propertyName pattern
     if (
-      node.object.type === AST_NODE_TYPES.Identifier &&
+      node.object.type === "Identifier" &&
       node.object.name === propsParamName &&
-      node.property.type === AST_NODE_TYPES.Identifier
+      node.property.type === "Identifier"
     ) {
       this.markAsUsed(node.property.name);
       return;
@@ -96,11 +96,11 @@ export class PropsUsageTracker implements IPropsUsageTracker {
 
     // NOTE: Check for this.props.propertyName or this.props?.propertyName pattern
     if (
-      node.object.type === AST_NODE_TYPES.MemberExpression &&
-      node.object.object.type === AST_NODE_TYPES.ThisExpression &&
-      node.object.property.type === AST_NODE_TYPES.Identifier &&
+      node.object.type === "MemberExpression" &&
+      node.object.object.type === "ThisExpression" &&
+      node.object.property.type === "Identifier" &&
       node.object.property.name === propsParamName &&
-      node.property.type === AST_NODE_TYPES.Identifier
+      node.property.type === "Identifier"
     ) {
       this.markAsUsed(node.property.name);
       return;
@@ -108,13 +108,13 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   }
 
   public markAsUsedForVariableDeclarator(
-    node: TSESTree.VariableDeclarator,
+    node: ESTree.VariableDeclarator,
     propsParamName: string,
   ): void {
     // NOTE: Check for destructuring assignment: const { prop1, prop2 } = props
     if (
-      node.id.type !== AST_NODE_TYPES.ObjectPattern ||
-      node.init?.type !== AST_NODE_TYPES.Identifier ||
+      node.id.type !== "ObjectPattern" ||
+      node.init?.type !== "Identifier" ||
       node.init.name !== propsParamName
     ) {
       return;
@@ -127,15 +127,15 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   }
 
   public markAsUsedForAssignmentExpression(
-    node: TSESTree.AssignmentExpression,
+    node: ESTree.AssignmentExpression,
     propsParamName: string,
   ): void {
     // NOTE: Check for this.property = props.property pattern
     if (
-      node.right.type !== AST_NODE_TYPES.MemberExpression ||
-      node.right.object.type !== AST_NODE_TYPES.Identifier ||
+      node.right.type !== "MemberExpression" ||
+      node.right.object.type !== "Identifier" ||
       node.right.object.name !== propsParamName ||
-      node.right.property.type !== AST_NODE_TYPES.Identifier
+      node.right.property.type !== "Identifier"
     ) {
       return;
     }
@@ -149,26 +149,18 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   /**
    * Gets the property names from the props type
    */
-  private getPropsPropertyNames(propsType: Type): string[] {
+  private getPropsPropertyNames(propsType: TsgoType, checker: TsgoTypeCheckerShape): string[] {
     const isInternalProperty = (propertyName: string): boolean =>
       propertyName.startsWith("_") ||
       propertyName === "constructor" ||
       propertyName === "prototype";
 
-    const typeProperties = propsType.getProperties();
-    if (typeProperties.length) {
-      return typeProperties.reduce<string[]>(
-        (acc, prop) => (!isInternalProperty(prop.name) ? [...acc, prop.name] : acc),
-        [],
-      );
-    }
-
-    const symbol = propsType.getSymbol();
-    if (!symbol?.members) return [];
-
-    return Array.from(symbol.members.keys()).reduce<string[]>((acc, key) => {
-      const name = String(key);
-      return !isInternalProperty(name) ? [...acc, name] : acc;
-    }, []);
+    const typeProperties = checker.getPropertiesOfType(propsType);
+    const result: string[] = typeProperties.reduce(
+      (acc: string[], prop: { name: string }) =>
+        !isInternalProperty(prop.name) ? [...acc, prop.name] : acc,
+      [] as string[],
+    );
+    return result;
   }
 }

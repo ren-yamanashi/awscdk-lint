@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import type { ESTree } from "@oxlint/plugins";
 
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
@@ -27,7 +27,7 @@ export class PropsAliasVisitor implements INodeVisitor {
     private readonly propsParamName: string,
   ) {}
 
-  visitMemberExpression(node: TSESTree.MemberExpression): void {
+  visitMemberExpression(node: ESTree.MemberExpression): void {
     this.tracker.markAsUsedForMemberExpression(node, this.propsParamName);
     /**
      * NOTE: Check if the object is an alias of props
@@ -37,15 +37,15 @@ export class PropsAliasVisitor implements INodeVisitor {
      * ```
      */
     if (
-      node.object.type === AST_NODE_TYPES.Identifier &&
+      node.object.type === "Identifier" &&
       this.aliases.has(node.object.name) &&
-      node.property.type === AST_NODE_TYPES.Identifier
+      node.property.type === "Identifier"
     ) {
       this.tracker.markAsUsed(node.property.name);
     }
   }
 
-  visitIdentifier(node: TSESTree.Identifier): void {
+  visitIdentifier(node: Extract<ESTree.Node, { type: "Identifier" }>): void {
     /**
      * Handles alias registration for props.
      *
@@ -70,9 +70,9 @@ export class PropsAliasVisitor implements INodeVisitor {
 
     // NOTE: const myProps = props - track 'myProps' as an alias of props
     if (
-      parent.type === AST_NODE_TYPES.VariableDeclarator &&
+      parent.type === "VariableDeclarator" &&
       parent.init === node &&
-      parent.id.type === AST_NODE_TYPES.Identifier
+      parent.id.type === "Identifier"
     ) {
       this.aliases.add(parent.id.name);
     }

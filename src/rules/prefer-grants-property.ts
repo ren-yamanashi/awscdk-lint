@@ -10,8 +10,7 @@ export const preferGrantsProperty = createRule({
   meta: {
     type: "suggestion",
     docs: {
-      description:
-        "Prefer using the grants property over grant* methods when available.",
+      description: "Prefer using the grants property over grant* methods when available.",
     },
     messages: {
       useGrantsProperty:
@@ -26,10 +25,7 @@ export const preferGrantsProperty = createRule({
 
     return {
       CallExpression(node: ESTree.CallExpression) {
-        if (
-          node.callee.type !== "MemberExpression" ||
-          node.callee.property.type !== "Identifier"
-        ) {
+        if (node.callee.type !== "MemberExpression" || node.callee.property.type !== "Identifier") {
           return;
         }
 
@@ -40,9 +36,7 @@ export const preferGrantsProperty = createRule({
         const type = checker.getTypeAtLocation(objectNode);
         if (!type || !isConstructType(type, checker)) return;
 
-        const grantsProperty = checker
-          .getPropertiesOfType(type)
-          .find((s) => s.name === "grants");
+        const grantsProperty = checker.getPropertiesOfType(type).find((s) => s.name === "grants");
         if (!grantsProperty) return;
 
         const grantsType = checker.getTypeOfSymbol(grantsProperty);
@@ -60,8 +54,7 @@ export const preferGrantsProperty = createRule({
           .find((s) => s.name === convertedMethodName);
         if (!suggestedMethod) return;
 
-        const objectName =
-          objectNode.type === "Identifier" ? objectNode.name : "object";
+        const objectName = objectNode.type === "Identifier" ? objectNode.name : "object";
 
         context.report({
           node: node.callee.property,

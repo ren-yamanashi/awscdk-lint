@@ -34,10 +34,7 @@ module.exports = defineConfig([
         "error",
         // { allowNonThisAndDisallowScope: true },
       ],
-      "awscdk/no-parent-name-construct-id-match": [
-        "error",
-        { disallowContainingParentName: true },
-      ],
+      "awscdk/no-parent-name-construct-id-match": ["error", { disallowContainingParentName: true }],
     },
   },
 ]);
