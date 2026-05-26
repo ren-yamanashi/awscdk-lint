@@ -156,28 +156,24 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
       }
       `,
     },
-    // FIXME: the case below ("non-id parameter name in loop is valid") is
-    // commented out: the type checker exposes constructor parameters only as
-    // opaque IDs with no way to resolve their names, so the rule can't tell
-    // whether the 2nd parameter is named "id". Restore once parameter names are
-    // resolvable.
-    // {
-    //   name: "non-id parameter name in loop is valid",
-    //   code: `
-    //   class Construct {}
-    //   class TargetConstruct extends Construct {
-    //     constructor(scope: Construct, validId: string) {
-    //       super(scope, validId);
-    //     }
-    //   }
-    //   class MyConstruct extends Construct {
-    //     constructor(scope: Construct, id: string) {
-    //       super(scope, id);
-    //       [1, 2, 3].forEach(() => new TargetConstruct(this, "SameId"));
-    //     }
-    //   }
-    //   `,
-    // },
+    // WHEN: the second constructor parameter is not named `id` (in a loop)
+    {
+      name: "non-id parameter name in loop is valid",
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, validId: string) {
+          super(scope, validId);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          [1, 2, 3].forEach(() => new TargetConstruct(this, "SameId"));
+        }
+      }
+      `,
+    },
     // WHEN: Literal ID inside an arrow function assigned to a variable (not an iteration callback)
     {
       name: "literal ID in non-iteration arrow function is valid",

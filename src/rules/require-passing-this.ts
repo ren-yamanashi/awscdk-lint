@@ -5,6 +5,7 @@ import { getParserServices } from "corsa-oxlint";
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
+import { getConstructorParamNames } from "../core/ts-type/finder/constructor-param-names";
 import { createRule } from "../shared/create-rule";
 
 type Option = {
@@ -73,13 +74,10 @@ export const requirePassingThis = createRule({
         // NOTE: If the first argument is already `this`, it's valid
         if (argument.type === "ThisExpression") return;
 
-        // FIXME: This should also skip when the construct's first constructor
-        // parameter is not named "scope" (then passing a non-`this` value is valid):
-        //   const constructorParamNames = getConstructorParamNames(type, checker);
-        //   if (constructorParamNames[0] !== "scope") return;
-        // But the type checker exposes constructor parameters only as opaque IDs
-        // with no way to resolve their names, so for now we rely on the CDK
-        // convention that the first parameter is always "scope".
+        // NOTE: Skip when the first constructor parameter is not named "scope"
+        // (then passing a non-`this` value is valid).
+        const constructorParamNames = getConstructorParamNames(type, checker);
+        if (constructorParamNames[0] !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases
         if (!options.allowNonThisAndDisallowScope) {

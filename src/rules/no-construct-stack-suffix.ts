@@ -3,6 +3,7 @@ import type { Context, ESTree } from "@oxlint/plugins";
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
+import { getConstructorParamNames } from "../core/ts-type/finder/constructor-param-names";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
 
@@ -70,13 +71,11 @@ export const noConstructStackSuffix = createRule({
           return;
         }
 
-        // FIXME: This should only validate when the construct's second constructor
-        // parameter is named "id" (otherwise the 2nd argument is not an ID):
-        //   const constructorParamNames = getConstructorParamNames(type, checker);
-        //   if (constructorParamNames[1] !== "id") return;
-        // But the type checker exposes constructor parameters only as opaque IDs
-        // with no way to resolve their names, so for now we rely on the CDK
-        // convention that the second parameter is always "id".
+        // NOTE: Only validate when the second constructor parameter is named "id"
+        // (otherwise the 2nd argument is not an ID).
+        const constructorParamNames = getConstructorParamNames(type, checker);
+        if (constructorParamNames[1] !== "id") return;
+
         validateConstructId(node, context);
       },
     };

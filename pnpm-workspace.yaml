@@ -8,6 +8,8 @@ overrides:
 engineStrict: true
 minimumReleaseAge: 2880
 minimumReleaseAgeExclude:
+  - corsa-oxlint
+  - "@corsa-bind/*"
   - vite-plus
   - "@voidzero-dev/vite-plus-core"
   - "@voidzero-dev/vite-plus-darwin-arm64"
