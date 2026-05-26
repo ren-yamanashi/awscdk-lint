@@ -39,7 +39,7 @@ export const requirePropsDefaultDoc = createRule({
 
         // NOTE: Get JSDoc comments
         const sourceCode = context.sourceCode;
-        const comments = sourceCode.getCommentsBefore?.(node) ?? [];
+        const comments = sourceCode.getCommentsBefore(node);
         const hasDefaultDoc = comments.some(
           (comment) =>
             comment.type === "Block" &&
