@@ -104,19 +104,20 @@ const checkFirstParamIsScope = (
 
 /**
  * Checks if the second parameter is named "id" and of type string
- * FIXME: `secondParam` should be typed (no `any`):
- *   const checkSecondParamIsId = (secondParam: ConstructorParam, context: Context) => {
- * But the type checker types a binding identifier's `typeAnnotation` as `null`,
- * so reading `secondParam.typeAnnotation` below would be a type error. We fall
- * back to `any` until that type is fixed.
  */
-const checkSecondParamIsId = (secondParam: any, context: Context) => {
+const checkSecondParamIsId = (secondParam: ConstructorParam, context: Context) => {
   if (secondParam.type !== "Identifier" || secondParam.name !== "id") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (secondParam.typeAnnotation?.typeAnnotation.type !== "TSStringKeyword") {
+    return;
+  }
+
+  // NOTE: the type checker types a binding identifier's `typeAnnotation` as
+  // `null`, so widen it to the actual node type to read the annotation.
+  const typeAnnotation = secondParam.typeAnnotation as ESTree.TSTypeAnnotation | null;
+  if (typeAnnotation?.typeAnnotation.type !== "TSStringKeyword") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorIdType",

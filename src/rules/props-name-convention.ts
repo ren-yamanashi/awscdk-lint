@@ -44,15 +44,12 @@ export const propsNameConvention = createRule({
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        // FIXME: This should be written without `any`:
-        //   const propsParam = constructor.value.params?.[2];
-        // But the type checker types a binding identifier's `typeAnnotation` as
-        // `null`, so reading `propsParam.typeAnnotation` below would be a type
-        // error. We fall back to `any` until that type is fixed.
-        const propsParam: any = constructor.value.params?.[2];
+        const propsParam = constructor.value.params?.[2];
         if (propsParam?.type !== "Identifier") return;
 
-        const typeAnnotation = propsParam.typeAnnotation;
+        // NOTE: the type checker types a binding identifier's `typeAnnotation` as
+        // `null`, so widen it to the actual node type to read the annotation.
+        const typeAnnotation = propsParam.typeAnnotation as ESTree.TSTypeAnnotation | null;
         if (typeAnnotation?.type !== "TSTypeAnnotation") return;
 
         const typeNode = typeAnnotation.typeAnnotation;
