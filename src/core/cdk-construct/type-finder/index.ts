@@ -14,7 +14,15 @@ export const findTypeOfCdkConstruct = (
   // NOTE: Must extend Resource (not just Construct) to match the ESLint version's isResourceWithReadonlyInterface
   if (isConstructType(type, checker) && isResourceType(type, checker)) return type;
 
-  // NOTE: Check type arguments (for Array<T>, Promise<T>, etc.)
+  // NOTE: Decompose union / intersection types (e.g. `Bucket | undefined`, `Bucket & {...}`)
+  if (checker.isUnionType(type) || checker.isIntersectionType(type)) {
+    for (const member of checker.getTypesOfType(type)) {
+      const found = findTypeOfCdkConstruct(member, checker);
+      if (found) return found;
+    }
+  }
+
+  // NOTE: Check type arguments (for Array<T>, Promise<T>, Readonly<T>, etc.)
   const typeArgs = checker.getTypeArguments(type);
   for (const arg of typeArgs) {
     const found = findTypeOfCdkConstruct(arg, checker);

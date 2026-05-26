@@ -545,188 +545,187 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       `,
       errors: [{ messageId: "invalidInterfaceProperty" }],
     },
-    // FIXME: commented-out cases the oxlint rule can't satisfy (see header).
-    // {
-    //       name: "property type is Readonly utility type wrapping class that extends Resource",
-    //       code: `
-    //       class Resource {}
-    //       interface IBucket {
-    //         bucketName: string;
-    //       }
-    //       export abstract class BucketBase extends Resource implements IBucket {
-    //         abstract readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       export class Bucket extends BucketBase {
-    //         readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //           this.bucketName = "test-bucket";
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: Readonly<Bucket>;
-    //       }
-    //       `,
-    //       errors: [{ messageId: "invalidInterfaceProperty" }],
-    //     }
-    // {
-    //       name: "property type is Partial utility type wrapping class that extends Resource",
-    //       code: `
-    //       class Resource {}
-    //       interface IBucket {
-    //         bucketName: string;
-    //       }
-    //       export abstract class BucketBase extends Resource implements IBucket {
-    //         abstract readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       export class Bucket extends BucketBase {
-    //         readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //           this.bucketName = "test-bucket";
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: Partial<Bucket>;
-    //       }
-    //       `,
-    //       errors: [{ messageId: "invalidInterfaceProperty" }],
-    //     }
-    // {
-    //       name: "property type is Class included in Union type that extends Resource",
-    //       code: `
-    //       class Resource {}
-    //       interface IBucket {
-    //         bucketName: string;
-    //       }
-    //       export abstract class BucketBase extends Resource implements IBucket {
-    //         abstract readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       export class Bucket extends BucketBase {
-    //         readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //           this.bucketName = "test-bucket";
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: Bucket | { bucketName: string; };
-    //       }
-    //       `,
-    //       errors: [{ messageId: "invalidInterfaceProperty" }],
-    //     }
-    // {
-    //       name: "property type is Class with undefined in Union type",
-    //       code: `
-    //       class Resource {}
-    //       interface IBucket {
-    //         bucketName: string;
-    //       }
-    //       export abstract class BucketBase extends Resource implements IBucket {
-    //         abstract readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       export class Bucket extends BucketBase {
-    //         readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //           this.bucketName = "test-bucket";
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: Bucket | undefined;
-    //       }
-    //       `,
-    //       errors: [{ messageId: "invalidInterfaceProperty" }],
-    //     }
-    // {
-    //       name: "property type is Class with null in Union type",
-    //       code: `
-    //       class Resource {}
-    //       interface IBucket {
-    //         bucketName: string;
-    //       }
-    //       export abstract class BucketBase extends Resource implements IBucket {
-    //         abstract readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       export class Bucket extends BucketBase {
-    //         readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //           this.bucketName = "test-bucket";
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: Bucket | null;
-    //       }
-    //       `,
-    //       errors: [{ messageId: "invalidInterfaceProperty" }],
-    //     }
-    // {
-    //       name: "property type is Class in Intersection type",
-    //       code: `
-    //       class Resource {}
-    //       interface IBucket {
-    //         bucketName: string;
-    //       }
-    //       export abstract class BucketBase extends Resource implements IBucket {
-    //         abstract readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       export class Bucket extends BucketBase {
-    //         readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //           this.bucketName = "test-bucket";
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: Bucket & { customProp: string };
-    //       }
-    //       `,
-    //       errors: [{ messageId: "invalidInterfaceProperty" }],
-    //     }
-    // {
-    //       name: "property type is Required utility type wrapping Class",
-    //       code: `
-    //       class Resource {}
-    //       interface IBucket {
-    //         bucketName: string;
-    //       }
-    //       export abstract class BucketBase extends Resource implements IBucket {
-    //         abstract readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       export class Bucket extends BucketBase {
-    //         readonly bucketName: string;
-    //         constructor() {
-    //           super();
-    //           this.bucketName = "test-bucket";
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: Required<Bucket>;
-    //       }
-    //       `,
-    //       errors: [{ messageId: "invalidInterfaceProperty" }],
-    //     }
+    {
+      name: "property type is Readonly utility type wrapping class that extends Resource",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucket: Readonly<Bucket>;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Partial utility type wrapping class that extends Resource",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucket: Partial<Bucket>;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Class included in Union type that extends Resource",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucket: Bucket | { bucketName: string; };
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Class with undefined in Union type",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucket: Bucket | undefined;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Class with null in Union type",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucket: Bucket | null;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Class in Intersection type",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucket: Bucket & { customProp: string };
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Required utility type wrapping Class",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucket: Required<Bucket>;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
   ],
 });

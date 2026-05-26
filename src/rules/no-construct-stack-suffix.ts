@@ -3,7 +3,7 @@ import type { Context, ESTree } from "@oxlint/plugins";
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
-import { getConstructorParamNames } from "../core/ts-type/finder/constructor-param-names";
+import { findConstructorParamNames } from "../core/ts-type/finder/constructor-param-names";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
 
@@ -73,7 +73,7 @@ export const noConstructStackSuffix = createRule({
 
         // NOTE: Only validate when the second constructor parameter is named "id"
         // (otherwise the 2nd argument is not an ID).
-        const constructorParamNames = getConstructorParamNames(type, checker);
+        const constructorParamNames = findConstructorParamNames(type, checker);
         if (constructorParamNames[1] !== "id") return;
 
         validateConstructId(node, context);
