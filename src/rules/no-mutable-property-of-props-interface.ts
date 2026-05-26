@@ -1,10 +1,10 @@
-import { AST_NODE_TYPES } from "@typescript-eslint/utils";
+import type { ESTree } from "@oxlint/plugins";
 
 import { createRule } from "../shared/create-rule";
 
 /**
  * Disallow mutable properties of Construct Props (interface)
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context provided by the linter
  * @returns An object containing the AST visitor functions
  */
 export const noMutablePropertyOfPropsInterface = createRule({
@@ -24,7 +24,7 @@ export const noMutablePropertyOfPropsInterface = createRule({
   defaultOptions: [],
   create(context) {
     return {
-      TSInterfaceDeclaration(node) {
+      TSInterfaceDeclaration(node: ESTree.TSInterfaceDeclaration) {
         const sourceCode = context.sourceCode;
 
         // NOTE: Interface name check for "Props"
@@ -32,10 +32,7 @@ export const noMutablePropertyOfPropsInterface = createRule({
 
         for (const property of node.body.body) {
           // NOTE: check property signature
-          if (
-            property.type !== AST_NODE_TYPES.TSPropertySignature ||
-            property.key.type !== AST_NODE_TYPES.Identifier
-          ) {
+          if (property.type !== "TSPropertySignature" || property.key.type !== "Identifier") {
             continue;
           }
 
