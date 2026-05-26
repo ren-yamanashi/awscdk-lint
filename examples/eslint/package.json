@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "lint": "pnpm run lint:esm & pnpm run lint:cjs",
+    "lint": "pnpm run lint:esm & pnpm run lint:cjs & pnpm run lint:oxlint",
     "lint:esm": "eslint --config eslint.config.ts",
-    "lint:cjs": "eslint --config eslint.config.cts"
+    "lint:cjs": "eslint --config eslint.config.cts",
+    "lint:oxlint": "oxlint"
   },
   "dependencies": {
     "aws-cdk-lib": "latest",
@@ -17,6 +18,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260516.1",
     "eslint": "^10.0.0",
     "eslint-plugin-awscdk": "workspace:*",
+    "oxlint": "1.66.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.56.0"
   }

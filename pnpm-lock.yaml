@@ -91,37 +91,15 @@ importers:
       eslint-plugin-awscdk:
         specifier: workspace:*
         version: link:../..
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.3
-      typescript-eslint:
-        specifier: ^8.56.0
-        version: 8.59.2(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3)
-
-  examples/oxlint:
-    dependencies:
-      aws-cdk-lib:
-        specifier: latest
-        version: 2.253.1(constructs@10.6.0)
-      constructs:
-        specifier: latest
-        version: 10.6.0
-    devDependencies:
-      '@types/node':
-        specifier: ^24.10.13
-        version: 24.10.15
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260516.1
-        version: 7.0.0-dev.20260516.1
-      eslint-plugin-awscdk:
-        specifier: workspace:*
-        version: link:../..
       oxlint:
         specifier: 1.66.0
         version: 1.66.0(oxlint-tsgolint@0.22.0)
       typescript:
         specifier: ^6.0.2
         version: 6.0.3
+      typescript-eslint:
+        specifier: ^8.56.0
+        version: 8.59.2(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3)
 
 packages:
 
