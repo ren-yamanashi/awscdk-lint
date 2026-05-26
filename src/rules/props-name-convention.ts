@@ -32,7 +32,6 @@ export const propsNameConvention = createRule({
       ClassDeclaration(node: ESTree.Class) {
         if (!node.id || !node.superClass) return;
 
-        // NOTE: check whether the class extends Construct via its superclass type.
         const type = checker.getTypeAtLocation(node.superClass);
         if (!type || !isConstructType(type, checker)) return;
 
@@ -43,8 +42,6 @@ export const propsNameConvention = createRule({
         const propsParam = constructor.value.params?.[2];
         if (propsParam?.type !== "Identifier") return;
 
-        // NOTE: the type checker types a binding identifier's `typeAnnotation` as
-        // `null`, so widen it to the actual node type to read the annotation.
         const typeAnnotation = propsParam.typeAnnotation as ESTree.TSTypeAnnotation | null;
         if (typeAnnotation?.type !== "TSTypeAnnotation") return;
 
