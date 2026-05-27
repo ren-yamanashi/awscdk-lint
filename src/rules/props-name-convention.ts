@@ -1,10 +1,18 @@
 import type { ESTree } from "@oxlint/plugins";
+import type { ESTree as CorsaESTree } from "corsa-oxlint";
 
 import { getParserServices } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
+
+// NOTE: corsa widens `BindingIdentifier.typeAnnotation` to `TSTypeAnnotation | null`
+// (it is typed `null` in `@oxlint/plugins`), so use it for the Identifier members to read
+// the props parameter's type annotation type-safely.
+type ConstructorParam =
+  | Exclude<ESTree.MethodDefinition["value"]["params"][number], { type: "Identifier" }>
+  | CorsaESTree["BindingIdentifier"];
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes
@@ -39,10 +47,10 @@ export const propsNameConvention = createRule({
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        const propsParam = constructor.value.params?.[2];
+        const propsParam: ConstructorParam | undefined = constructor.value.params?.[2];
         if (propsParam?.type !== "Identifier") return;
 
-        const typeAnnotation = propsParam.typeAnnotation as ESTree.TSTypeAnnotation | null;
+        const typeAnnotation = propsParam.typeAnnotation;
         if (typeAnnotation?.type !== "TSTypeAnnotation") return;
 
         const typeNode = typeAnnotation.typeAnnotation;

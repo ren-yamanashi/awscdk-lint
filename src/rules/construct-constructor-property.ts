@@ -1,5 +1,5 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import type { CorsaTypeCheckerShape } from "corsa-oxlint";
+import type { ESTree as CorsaESTree, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { getParserServices } from "corsa-oxlint";
 
@@ -7,7 +7,12 @@ import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
-type ConstructorParam = ESTree.MethodDefinition["value"]["params"][number];
+// NOTE: corsa widens `BindingIdentifier.typeAnnotation` to `TSTypeAnnotation | null`
+// (it is typed `null` in `@oxlint/plugins`), so use it for the Identifier members to read
+// a parameter's type annotation type-safely.
+type ConstructorParam =
+  | Exclude<ESTree.MethodDefinition["value"]["params"][number], { type: "Identifier" }>
+  | CorsaESTree["BindingIdentifier"];
 
 /**
  * Enforces that constructors of classes extending Construct have the property names 'scope, id' or 'scope, id, props'
@@ -110,10 +115,7 @@ const checkSecondParamIsId = (secondParam: ConstructorParam, context: Context) =
     return;
   }
 
-  // NOTE: the type checker types a binding identifier's `typeAnnotation` as
-  // `null`, so widen it to the actual node type to read the annotation.
-  const typeAnnotation = secondParam.typeAnnotation as ESTree.TSTypeAnnotation | null;
-  if (typeAnnotation?.typeAnnotation.type !== "TSStringKeyword") {
+  if (secondParam.typeAnnotation?.typeAnnotation.type !== "TSStringKeyword") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorIdType",
