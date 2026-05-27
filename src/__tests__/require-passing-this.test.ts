@@ -37,7 +37,7 @@ ruleTester.run("require-passing-this", requirePassingThis, {
       }
       `,
     },
-    // WHEN: the first constructor parameter is not named `scope`
+    // WHEN: property name is not `scope`
     {
       code: `
       class Construct {}

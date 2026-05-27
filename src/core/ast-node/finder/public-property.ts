@@ -3,7 +3,13 @@ import type { ESTree } from "@oxlint/plugins";
 import { findConstructor } from "./constructor";
 
 export type PublicProperty = {
+  /**
+   * Name of the public property
+   */
   name: string;
+  /**
+   * AST node representing the public property
+   */
   node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
 };
 

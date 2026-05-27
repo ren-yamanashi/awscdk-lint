@@ -70,7 +70,7 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       }
       const test = new SampleConstruct('test', 'ValidId');`,
     },
-    // WHEN: the second constructor parameter is not named `id`
+    // WHEN: property name is not `id`
     {
       code: `
       class Construct {}

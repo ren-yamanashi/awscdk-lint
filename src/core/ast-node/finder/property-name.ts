@@ -1,7 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
 /**
- * Retrieves the property names from an array of object pattern properties.
+ * Retrieves the property names from an array of properties.
  *
  * @param properties An array of properties to extract names from.
  * @returns An array of property names.

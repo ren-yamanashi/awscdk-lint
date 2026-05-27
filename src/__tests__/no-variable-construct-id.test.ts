@@ -186,7 +186,7 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
       }
     `,
     },
-    // WHEN: the second constructor parameter is not named `id`
+    // WHEN: property name is not `id`
     {
       code: `
       class Construct {}
