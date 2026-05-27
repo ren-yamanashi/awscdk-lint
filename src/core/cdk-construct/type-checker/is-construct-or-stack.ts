@@ -1,4 +1,4 @@
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-target-super-class";
 
@@ -11,6 +11,9 @@ const IGNORED_CLASSES = ["App", "Stage", "CfnOutput"] as const;
  * @param checker - The tsgo type checker
  * @returns True if the type extends Construct or Stack, otherwise false
  */
-export const isConstructOrStackType = (type: TsgoType, checker: TsgoTypeCheckerShape): boolean => {
+export const isConstructOrStackType = (
+  type: CorsaType,
+  checker: CorsaTypeCheckerShape,
+): boolean => {
   return isExtendsFromTargetSuperClass(type, checker, TARGET_CLASSES, IGNORED_CLASSES);
 };

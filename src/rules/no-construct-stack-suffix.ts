@@ -61,21 +61,18 @@ export const noConstructStackSuffix = createRule({
 
     return {
       NewExpression(node: ESTree.NewExpression) {
-        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a NewExpression, so
-        // we resolve the instance type from the callee's `typeof ClassName` type.
-        // Ideally we would derive it from the node directly so this also works
-        // under standard TypeScript, where `getTypeAtLocation(node)` returns the
-        // instance type.
-        const type = checker.getTypeAtLocation(node.callee);
+        const type = checker.getTypeAtLocation(node);
         if (!type || !isConstructOrStackType(type, checker) || node.arguments.length < 2) {
           return;
         }
 
         // NOTE: Skip when the second constructor parameter resolves to a name
-        // other than "id" (then the 2nd argument is not an ID). An empty name
-        // means it could not be resolved (e.g. a `.d.ts` parameter), so fall back
-        // to the CDK convention that the second parameter is "id".
-        const idParamName = findConstructorPropertyNames(type, checker)[1];
+        // other than "id" (then the 2nd argument is not an ID). The construct
+        // signature lives on the callee's `typeof` type. An empty name means it
+        // could not be resolved (e.g. a `.d.ts` parameter), so fall back to the
+        // CDK convention that the second parameter is "id".
+        const calleeType = checker.getTypeAtLocation(node.callee);
+        const idParamName = calleeType && findConstructorPropertyNames(calleeType, checker)[1];
         if (idParamName && idParamName !== "id") return;
 
         validateConstructId(node, context);

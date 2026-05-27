@@ -1,5 +1,5 @@
 import type { ESTree } from "@oxlint/plugins";
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { findPropertyNames } from "../../core/ast-node/finder/property-name";
 
@@ -55,7 +55,7 @@ export interface IPropsUsageTracker {
 export class PropsUsageTracker implements IPropsUsageTracker {
   private propUsageMap: Map<string, boolean>;
 
-  constructor(propType: TsgoType, checker: TsgoTypeCheckerShape) {
+  constructor(propType: CorsaType, checker: CorsaTypeCheckerShape) {
     this.propUsageMap = new Map<string, boolean>(
       this.getPropsPropertyNames(propType, checker).map((name: string) => [name, false]),
     );
@@ -149,7 +149,7 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   /**
    * Gets the property names from the props type
    */
-  private getPropsPropertyNames(propsType: TsgoType, checker: TsgoTypeCheckerShape): string[] {
+  private getPropsPropertyNames(propsType: CorsaType, checker: CorsaTypeCheckerShape): string[] {
     const isInternalProperty = (propertyName: string): boolean =>
       propertyName.startsWith("_") ||
       propertyName === "constructor" ||

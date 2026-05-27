@@ -1,4 +1,4 @@
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 // NOTE: SignatureKind.Construct (Call = 0, Construct = 1)
 const CONSTRUCT_SIGNATURE_KIND = 1;
@@ -10,8 +10,8 @@ const CONSTRUCT_SIGNATURE_KIND = 1;
  * @returns The constructor parameter names in order (e.g. `["scope", "id", "props"]`)
  */
 export const findConstructorPropertyNames = (
-  type: TsgoType,
-  checker: TsgoTypeCheckerShape,
+  type: CorsaType,
+  checker: CorsaTypeCheckerShape,
 ): string[] => {
   const signature = checker.getSignaturesOfType(type, CONSTRUCT_SIGNATURE_KIND)[0];
   if (!signature) return [];

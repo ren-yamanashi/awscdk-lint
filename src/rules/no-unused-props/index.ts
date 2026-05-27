@@ -1,5 +1,5 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { getParserServices } from "corsa-oxlint";
 
@@ -61,8 +61,8 @@ export const noUnusedProps = createRule({
 
 const getPropsParam = (
   constructor: ESTree.MethodDefinition,
-  checker: TsgoTypeCheckerShape,
-): { node: PropsParamNode; type: TsgoType } | null => {
+  checker: CorsaTypeCheckerShape,
+): { node: PropsParamNode; type: CorsaType } | null => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
 

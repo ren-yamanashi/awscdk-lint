@@ -1,16 +1,16 @@
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { isConstructType } from "../type-checker/is-construct";
 import { isResourceType } from "../type-checker/is-resource";
 
 /**
- * Recursively find the TsgoType to obtain type of CDK Construct class.
+ * Recursively find the CorsaType to obtain type of CDK Construct class.
  * Handles direct types and type arguments (Array<T>, Promise<T>, etc.)
  */
 export const findTypeOfCdkConstruct = (
-  type: TsgoType,
-  checker: TsgoTypeCheckerShape,
-): TsgoType | undefined => {
+  type: CorsaType,
+  checker: CorsaTypeCheckerShape,
+): CorsaType | undefined => {
   // NOTE: Must extend Resource (not just Construct) to match the ESLint version's isResourceWithReadonlyInterface
   if (isConstructType(type, checker) && isResourceType(type, checker)) return type;
 

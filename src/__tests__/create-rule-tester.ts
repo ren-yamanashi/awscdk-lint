@@ -10,10 +10,10 @@ const tsgoExecutable = resolve(repoRoot, "node_modules/.bin/tsgo");
 type TestCases = Parameters<RuleTester["run"]>[2];
 
 // NOTE: corsa-oxlint's RuleTester `Config` type does not declare `settings`, but
-// its wrapper reads `settings.typescriptOxlint` at runtime, so widen the type.
+// its wrapper reads `settings.corsaOxlint` at runtime, so widen the type.
 type TesterConfig = NonNullable<ConstructorParameters<typeof RuleTester>[0]>;
 type TesterConfigWithSettings = TesterConfig & {
-  settings?: { typescriptOxlint?: { parserOptions?: { tsgo?: { executable?: string } } } };
+  settings?: { corsaOxlint?: { parserOptions?: { corsa?: { executable?: string } } } };
 };
 
 interface RuleTesterLike {
@@ -34,8 +34,8 @@ interface RuleTesterLike {
 export const createRuleTester = (): RuleTesterLike => {
   const config: TesterConfigWithSettings = {
     settings: {
-      typescriptOxlint: {
-        parserOptions: { tsgo: { executable: tsgoExecutable } },
+      corsaOxlint: {
+        parserOptions: { corsa: { executable: tsgoExecutable } },
       },
     },
   };

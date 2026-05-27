@@ -1,5 +1,5 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import type { TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { getParserServices } from "corsa-oxlint";
 
@@ -21,7 +21,7 @@ type ConstructorFn = ESTree.MethodDefinition["value"];
 type Args = {
   parentClassName: string;
   context: Context;
-  checker: TsgoTypeCheckerShape;
+  checker: CorsaTypeCheckerShape;
   option: Option;
 };
 

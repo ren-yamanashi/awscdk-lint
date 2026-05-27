@@ -52,12 +52,7 @@ export const requirePassingThis = createRule({
     const checker = services.program.getTypeChecker();
     return {
       NewExpression(node: ESTree.NewExpression) {
-        // MEMO: tsgo returns `any` for `getTypeAtLocation` on a NewExpression, so
-        // we resolve the instance type from the callee's `typeof ClassName` type.
-        // Ideally we would derive it from the node directly so this also works
-        // under standard TypeScript, where `getTypeAtLocation(node)` returns the
-        // instance type.
-        const type = checker.getTypeAtLocation(node.callee);
+        const type = checker.getTypeAtLocation(node);
 
         if (!type || !isConstructType(type, checker) || !node.arguments.length) return;
 
@@ -75,10 +70,12 @@ export const requirePassingThis = createRule({
         if (argument.type === "ThisExpression") return;
 
         // NOTE: Skip when the first constructor parameter resolves to a name other
-        // than "scope" (then passing a non-`this` value is valid). An empty name
-        // means it could not be resolved (e.g. a `.d.ts` parameter), so fall back
-        // to the CDK convention that the first parameter is "scope".
-        const scopeParamName = findConstructorPropertyNames(type, checker)[0];
+        // than "scope" (then passing a non-`this` value is valid). The construct
+        // signature lives on the callee's `typeof` type. An empty name means it
+        // could not be resolved (e.g. a `.d.ts` parameter), so fall back to the
+        // CDK convention that the first parameter is "scope".
+        const calleeType = checker.getTypeAtLocation(node.callee);
+        const scopeParamName = calleeType && findConstructorPropertyNames(calleeType, checker)[0];
         if (scopeParamName && scopeParamName !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases

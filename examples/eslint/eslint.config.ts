@@ -20,10 +20,10 @@ export default defineConfig([
       },
     },
     settings: {
-      typescriptOxlint: {
+      corsaOxlint: {
         parserOptions: {
           projectService: true,
-          tsgo: {
+          corsa: {
             executable: "./node_modules/.bin/tsgo",
           },
         },

@@ -1,5 +1,5 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import type { TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { getParserServices } from "corsa-oxlint";
 
@@ -49,7 +49,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
 const validatePublicProperty = (
   publicProperty: PublicProperty,
   context: Context,
-  checker: TsgoTypeCheckerShape,
+  checker: CorsaTypeCheckerShape,
 ) => {
   const keyNode =
     publicProperty.node.type === "TSParameterProperty"

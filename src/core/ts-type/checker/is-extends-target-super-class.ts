@@ -1,4 +1,4 @@
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { safeCall } from "../../../shared/safe-call";
 import { normalizeTypeName } from "../../../shared/type-name";
@@ -12,8 +12,8 @@ import { normalizeTypeName } from "../../../shared/type-name";
  * @returns True if the type extends target super class, otherwise false
  */
 export const isExtendsFromTargetSuperClass = (
-  type: TsgoType,
-  checker: TsgoTypeCheckerShape,
+  type: CorsaType,
+  checker: CorsaTypeCheckerShape,
   targetSuperClasses: readonly string[],
   ignoredClasses: readonly string[],
   visited = new Set<string>(),
@@ -46,7 +46,8 @@ export const isExtendsFromTargetSuperClass = (
     }
   }
 
-  // NOTE: Check the base type
+  // NOTE: getBaseTypes still panics on some generic type references (e.g.
+  // `Wrapper<Bucket>`, `Promise<Array<Bucket>>`), so guard it with safeCall.
   const baseTypes = safeCall(() => checker.getBaseTypes(type), []);
   return baseTypes.some((base) =>
     isExtendsFromTargetSuperClass(base, checker, targetSuperClasses, ignoredClasses, visited),

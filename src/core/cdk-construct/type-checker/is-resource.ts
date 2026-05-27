@@ -1,4 +1,4 @@
-import type { TsgoType, TsgoTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-target-super-class";
 
@@ -8,6 +8,6 @@ import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-
  * @param checker - The tsgo type checker
  * @returns True if the type extends Resource, otherwise false
  */
-export const isResourceType = (type: TsgoType, checker: TsgoTypeCheckerShape): boolean => {
+export const isResourceType = (type: CorsaType, checker: CorsaTypeCheckerShape): boolean => {
   return isExtendsFromTargetSuperClass(type, checker, ["Resource"], []);
 };
