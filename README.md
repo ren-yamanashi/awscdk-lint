@@ -12,7 +12,7 @@
 
 ## 📔 Documentation
 
-Please refer to the [website](https://eslint-plugin-awscdk.dev/).
+Please refer to the https://eslint-plugin-awscdk.dev/
 
 ## 📦 Installation
 
@@ -82,6 +82,10 @@ module.exports = {
   },
 };
 ```
+
+## 📝 Rules
+
+Please refer to the https://eslint-plugin-awscdk.dev/rules/
 
 ## ❗ Issue
 
