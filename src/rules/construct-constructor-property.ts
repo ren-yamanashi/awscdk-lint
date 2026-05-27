@@ -16,7 +16,7 @@ type ConstructorParam =
 
 /**
  * Enforces that constructors of classes extending Construct have the property names 'scope, id' or 'scope, id, props'
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const constructConstructorProperty = createRule({

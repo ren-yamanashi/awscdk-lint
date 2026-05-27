@@ -27,7 +27,7 @@ type Args = {
 
 /**
  * Enforce that construct IDs does not match the parent construct name.
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const noParentNameConstructIdMatch = createRule({

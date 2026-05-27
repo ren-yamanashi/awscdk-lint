@@ -7,7 +7,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Require JSDoc comments for interface properties and public properties in Construct classes
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const requireJSDoc = createRule({

@@ -4,7 +4,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Requires @default JSDoc documentation for optional properties in interfaces ending with 'Props'
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const requirePropsDefaultDoc = createRule({

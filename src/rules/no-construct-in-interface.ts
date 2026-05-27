@@ -7,7 +7,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const noConstructInInterface = createRule({
@@ -27,7 +27,6 @@ export const noConstructInInterface = createRule({
   create(context) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
       TSInterfaceDeclaration(node: ESTree.TSInterfaceDeclaration) {
         for (const property of node.body.body) {

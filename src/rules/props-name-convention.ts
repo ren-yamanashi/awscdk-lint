@@ -16,7 +16,7 @@ type ConstructorParam =
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const propsNameConvention = createRule({

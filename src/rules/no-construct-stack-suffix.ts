@@ -24,7 +24,7 @@ const defaultOption: Option = {
 
 /**
  * Enforces that Construct IDs do not end with 'Construct' or 'Stack' suffix
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const noConstructStackSuffix = createRule({

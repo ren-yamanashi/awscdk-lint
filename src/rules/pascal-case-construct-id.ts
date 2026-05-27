@@ -16,7 +16,7 @@ type QuoteType = (typeof QUOTE_TYPE)[keyof typeof QUOTE_TYPE];
 
 /**
  * Enforce PascalCase for Construct ID.
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const pascalCaseConstructId = createRule({

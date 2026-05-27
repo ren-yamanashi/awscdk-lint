@@ -10,7 +10,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Enforce using literal strings for Construct ID.
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const noVariableConstructId = createRule({
@@ -112,8 +112,8 @@ const shouldSkipIdValidation = (node: ESTree.Node): boolean => {
       return true;
     }
 
-    // Constructs in standalone functions (outside of classes) are intended to be
-    // called multiple times with different IDs
+    // Constructs in standalone functions (outside of classes) are intended to be called
+    // multiple times with different IDs
     if (current.type === "FunctionDeclaration") {
       return true;
     }

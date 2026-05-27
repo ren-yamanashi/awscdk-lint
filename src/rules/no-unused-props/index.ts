@@ -14,7 +14,7 @@ type PropsParamNode = Extract<ConstructorParam, { type: "Identifier" }>;
 
 /**
  * Enforces that all properties defined in props type are used within the constructor
- * @param context - The rule context provided by the linter
+ * @param context - The rule context provided by ESLint
  * @returns An object containing the AST visitor functions
  */
 export const noUnusedProps = createRule({
@@ -135,7 +135,7 @@ const isPropsUsedInSuperCall = (
 };
 
 /**
- * Reports unused properties to the linter
+ * Reports unused properties to ESLint
  */
 const reportUnusedProperties = (
   tracker: IPropsUsageTracker,
