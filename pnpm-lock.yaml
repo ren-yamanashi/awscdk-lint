@@ -40,8 +40,8 @@ importers:
         specifier: ^0.1.11
         version: 0.1.20(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(yaml@2.8.1)
       corsa-oxlint:
-        specifier: 0.11.0
-        version: 0.11.0(oxlint-tsgolint@0.22.0)
+        specifier: 0.12.0
+        version: 0.12.0(oxlint-tsgolint@0.22.0)
       eslint:
         specifier: ^10.0.0
         version: 10.3.0(jiti@2.6.1)
@@ -219,60 +219,60 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@corsa-bind/napi-darwin-arm64@0.11.0':
-    resolution: {integrity: sha512-noOVQCamqiP2kGMF60Bv03rcEfxu1EDDWzPPNWMJZsZuhPgDAPSybn0X4IeGEjaLuC7P3Wg466D0i13+hQz7iA==}
+  '@corsa-bind/napi-darwin-arm64@0.12.0':
+    resolution: {integrity: sha512-Yu2LYsugcIhRJWck+ZphKDOnKL9Bo4tXIZv5v06shMof6lp+iQJm4i/oGj+uAK5x37CsoGNsgEpy0yG/Z747JA==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [arm64]
     os: [darwin]
 
-  '@corsa-bind/napi-darwin-x64@0.11.0':
-    resolution: {integrity: sha512-P78UjlJqFEAzNb4dFzx1lXrDBJk0Gn8/Ble2jEe6AkAoAQcbYexNBIKwUvPG1l69v7z0pIhQWXbSd944Fz9Fbg==}
+  '@corsa-bind/napi-darwin-x64@0.12.0':
+    resolution: {integrity: sha512-PSOfVS5lxvoiGXk7xDrB95mqFpiGL7CK7Sl8+aBQppW4NUcoybNspf8zz4HytHZT9VIvPdNbC3Zbc1jaEW3ULg==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [x64]
     os: [darwin]
 
-  '@corsa-bind/napi-linux-arm64-gnu@0.11.0':
-    resolution: {integrity: sha512-vqUFceP/tEr/Fe5BEIAVkbVqAcZKcLJ5oxKJV/kCtzcOb2XsX5yaF7CvmLYB3doSNtXKM+00b9q6DKfzY5ot5w==}
+  '@corsa-bind/napi-linux-arm64-gnu@0.12.0':
+    resolution: {integrity: sha512-vAGZZ43rp4FdWfo2WiuHYr7cD0SPgsm3UV7n1JzSdnTpMOeqMD8NCpinkPRFYxS1ivA3DtX4HzGLLj0DsYnRQA==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@corsa-bind/napi-linux-arm64-musl@0.11.0':
-    resolution: {integrity: sha512-yLiTksAfOgsxksxIx0PVo+ERQO1cLPtTj2iSO6RhlaDKEhs60NHJKuTH/0j0nsVIktHSOeGTGtL+fEMY5X5l7g==}
+  '@corsa-bind/napi-linux-arm64-musl@0.12.0':
+    resolution: {integrity: sha512-h2gVw3YXpfy3QuHI+SLyDuufgpLtiEEgIlRPlnHPzjwFZUi5ids7lfJOCNIupcY6ITCCI4GmhQ3TfpI4gObpxw==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@corsa-bind/napi-linux-x64-gnu@0.11.0':
-    resolution: {integrity: sha512-iUGEWltXELc4MYqfMsbq5q8759rPNSo8G641rSOLWDp6d7ytJ74Tq48d5Pcflwb1TfJ0JkoV48ANROekXo+qNQ==}
+  '@corsa-bind/napi-linux-x64-gnu@0.12.0':
+    resolution: {integrity: sha512-6yZPaMcZS7Jhxq11T3RPfYog2v7IMWIuoK7HRl19eoMPzlyh0Zgyy6TDWq3x5ONNgx2pXazo1ETNKhWE9AFiQQ==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@corsa-bind/napi-linux-x64-musl@0.11.0':
-    resolution: {integrity: sha512-nKHWdP04ZYGKKu2RNkI+4gn72thaPt7OraFAa4UjuCn5ub8rHUaiCHB4aNu6RUf72XACDmLcGbpgsU8TZBABoQ==}
+  '@corsa-bind/napi-linux-x64-musl@0.12.0':
+    resolution: {integrity: sha512-qB0te8VaxnzorSNM9ECYh3+jz2q/33CNJPIQHUhwD9XtQcaUZjJSL+z1zi98Mg1HPaefSIplNpr3IcOnstN6bg==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@corsa-bind/napi-win32-arm64-msvc@0.11.0':
-    resolution: {integrity: sha512-OQDqoc3k4LInwAHdJaNAOZ5wzeBAM1Sse/8jqTWlGWXGBSwi8ZRPYRQSTJRBuqS7evlq72XFSA/RZYwIm59RZw==}
+  '@corsa-bind/napi-win32-arm64-msvc@0.12.0':
+    resolution: {integrity: sha512-Bo9gWuUspJ/nT+it2EM1uymbbH0sXredOX4OntrKgrJ5sSCn8ah5/+/jqiEGgik53hglCWn0ynxJ0QwGYNDX2Q==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [arm64]
     os: [win32]
 
-  '@corsa-bind/napi-win32-x64-msvc@0.11.0':
-    resolution: {integrity: sha512-tDPFbunpTnkzan2jG/olLVVY14cJT5ofe/hB2TkBJ420siNhCiChyl6GqcOirEjzVQh2OK3j2MIwaYz8Rowzfw==}
+  '@corsa-bind/napi-win32-x64-msvc@0.12.0':
+    resolution: {integrity: sha512-YYojHZIjlnKco6lG+jliJPn8mVzCMA9IRdRKt+n/FjxdAMjp/BVmQjK2wKg3VphPgLMDG6Yoh5yyazhOdiHh/g==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
     cpu: [x64]
     os: [win32]
 
-  '@corsa-bind/napi@0.11.0':
-    resolution: {integrity: sha512-RZ9wi8cHPdDqGaROoCuLHHGvATLnXKzOuNrrF4xgymZlIS7JI3shfzgnG5kxOWbZg9/2v+kATfbkLdduIJsSIQ==}
+  '@corsa-bind/napi@0.12.0':
+    resolution: {integrity: sha512-/MVtT228eF357Vz8VYFM5SI8cx3jE24k+pVjHNXaIdyoumGUJHwkcLTS4FvFbkt2FZG6JJBSddztU3dMHOg/IQ==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
 
   '@docsearch/css@3.8.2':
@@ -1688,8 +1688,8 @@ packages:
     resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
     engines: {node: '>=12.13'}
 
-  corsa-oxlint@0.11.0:
-    resolution: {integrity: sha512-o7lDV2tStWaOggOBE4bMxXCgD65O8YAMa5c1P+ZMTu68ZwY11yrrh6VgufTEGcHWclk2zuuFw/5++TGc47UQAA==}
+  corsa-oxlint@0.12.0:
+    resolution: {integrity: sha512-4p37FxlUMFsU9XnpgNjplPGG3umukkHJi8WwQ0XmyiLBGVppjEW31jA/hYi5zIxPGQC95HDdoaRgAvnm8MCc6g==}
     engines: {bun: '>=1.2', deno: '>=2.0', node: '>=22'}
 
   cross-spawn@7.0.6:
@@ -2886,40 +2886,40 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@corsa-bind/napi-darwin-arm64@0.11.0':
+  '@corsa-bind/napi-darwin-arm64@0.12.0':
     optional: true
 
-  '@corsa-bind/napi-darwin-x64@0.11.0':
+  '@corsa-bind/napi-darwin-x64@0.12.0':
     optional: true
 
-  '@corsa-bind/napi-linux-arm64-gnu@0.11.0':
+  '@corsa-bind/napi-linux-arm64-gnu@0.12.0':
     optional: true
 
-  '@corsa-bind/napi-linux-arm64-musl@0.11.0':
+  '@corsa-bind/napi-linux-arm64-musl@0.12.0':
     optional: true
 
-  '@corsa-bind/napi-linux-x64-gnu@0.11.0':
+  '@corsa-bind/napi-linux-x64-gnu@0.12.0':
     optional: true
 
-  '@corsa-bind/napi-linux-x64-musl@0.11.0':
+  '@corsa-bind/napi-linux-x64-musl@0.12.0':
     optional: true
 
-  '@corsa-bind/napi-win32-arm64-msvc@0.11.0':
+  '@corsa-bind/napi-win32-arm64-msvc@0.12.0':
     optional: true
 
-  '@corsa-bind/napi-win32-x64-msvc@0.11.0':
+  '@corsa-bind/napi-win32-x64-msvc@0.12.0':
     optional: true
 
-  '@corsa-bind/napi@0.11.0':
+  '@corsa-bind/napi@0.12.0':
     optionalDependencies:
-      '@corsa-bind/napi-darwin-arm64': 0.11.0
-      '@corsa-bind/napi-darwin-x64': 0.11.0
-      '@corsa-bind/napi-linux-arm64-gnu': 0.11.0
-      '@corsa-bind/napi-linux-arm64-musl': 0.11.0
-      '@corsa-bind/napi-linux-x64-gnu': 0.11.0
-      '@corsa-bind/napi-linux-x64-musl': 0.11.0
-      '@corsa-bind/napi-win32-arm64-msvc': 0.11.0
-      '@corsa-bind/napi-win32-x64-msvc': 0.11.0
+      '@corsa-bind/napi-darwin-arm64': 0.12.0
+      '@corsa-bind/napi-darwin-x64': 0.12.0
+      '@corsa-bind/napi-linux-arm64-gnu': 0.12.0
+      '@corsa-bind/napi-linux-arm64-musl': 0.12.0
+      '@corsa-bind/napi-linux-x64-gnu': 0.12.0
+      '@corsa-bind/napi-linux-x64-musl': 0.12.0
+      '@corsa-bind/napi-win32-arm64-msvc': 0.12.0
+      '@corsa-bind/napi-win32-x64-msvc': 0.12.0
 
   '@docsearch/css@3.8.2': {}
 
@@ -3976,9 +3976,9 @@ snapshots:
     dependencies:
       is-what: 4.1.16
 
-  corsa-oxlint@0.11.0(oxlint-tsgolint@0.22.0):
+  corsa-oxlint@0.12.0(oxlint-tsgolint@0.22.0):
     dependencies:
-      '@corsa-bind/napi': 0.11.0
+      '@corsa-bind/napi': 0.12.0
       '@oxlint/plugins': 1.66.0
       oxlint: 1.66.0(oxlint-tsgolint@0.22.0)
     transitivePeerDependencies:

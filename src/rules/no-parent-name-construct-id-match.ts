@@ -323,11 +323,7 @@ const validateConstructId = ({
   checker,
   option,
 }: Args & { expression: ESTree.NewExpression }): void => {
-  // MEMO: tsgo returns `any` for `getTypeAtLocation` on a NewExpression, so we
-  // resolve the instance type from the callee's `typeof ClassName` type. Ideally
-  // we would derive it from the node directly so this also works under standard
-  // TypeScript, where `getTypeAtLocation(node)` returns the instance type.
-  const type = checker.getTypeAtLocation(expression.callee);
+  const type = checker.getTypeAtLocation(expression);
 
   if (expression.arguments.length < 2) return;
 
