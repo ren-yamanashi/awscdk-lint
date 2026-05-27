@@ -27,7 +27,6 @@ export const requireJSDoc = createRule({
   create(context) {
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
-
     return {
       TSPropertySignature(node: ESTree.TSPropertySignature) {
         if (node.key.type !== "Identifier") return;

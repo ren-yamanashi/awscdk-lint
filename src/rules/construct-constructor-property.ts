@@ -112,10 +112,7 @@ const checkSecondParamIsId = (secondParam: ConstructorParam, context: Context) =
       node: secondParam,
       messageId: "invalidConstructorProperty",
     });
-    return;
-  }
-
-  if (secondParam.typeAnnotation?.typeAnnotation.type !== "TSStringKeyword") {
+  } else if (secondParam.typeAnnotation?.typeAnnotation.type !== "TSStringKeyword") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorIdType",

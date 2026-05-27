@@ -13,19 +13,20 @@ export type PublicProperty = {
   node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
 };
 
-/**
- * Finds public properties in a class
- * @param node The class node provided by the oxlint visitor
- * @returns The public properties (constructor parameter properties and class fields)
- */
 export const findPublicPropertiesInClass = (node: ESTree.Class): PublicProperty[] => {
-  const constructor = findConstructor(node);
-  const constructorProperties =
-    constructor?.value.params.flatMap((property) => findPublicProperty(property) ?? []) ?? [];
-  const classElementProperties = node.body.body.flatMap(
-    (property) => findPublicProperty(property) ?? [],
-  );
+  const constructorProperties = findPropertiesInConstructor(node);
+  const classElementProperties = findPropertiesInClassElement(node);
   return [...constructorProperties, ...classElementProperties];
+};
+
+const findPropertiesInConstructor = (node: ESTree.Class) => {
+  const constructor = findConstructor(node);
+  if (!constructor) return [];
+  return constructor.value.params.flatMap((property) => findPublicProperty(property) ?? []);
+};
+
+const findPropertiesInClassElement = (node: ESTree.Class): PublicProperty[] => {
+  return node.body.body.flatMap((property) => findPublicProperty(property) ?? []);
 };
 
 const findPublicProperty = (
