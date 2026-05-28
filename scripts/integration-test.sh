@@ -4,6 +4,10 @@ set -e
 
 cd "$(dirname "${0}")/.."
 
+# NOTE: main (ESLint-only) reports 43 on the identical fixtures. This branch reports 45
+# because corsa's getImplementedTypesOfType returns [], so no-construct-in-interface /
+# no-construct-in-public-property-of-construct over-match `MetricFilter` (2 false positives).
+# See docs/report-corsa-oxlint.md (corsa-bind #164/#176). Target is 43 once that is fixed.
 EXPECTED_ERRORS=45
 
 check_eslint_output() {

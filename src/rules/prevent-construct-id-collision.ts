@@ -36,14 +36,11 @@ export const preventConstructIdCollision = createRule({
           return;
         }
 
-        // NOTE: Skip when the second constructor parameter resolves to a name
-        // other than "id" (then the 2nd argument is not an ID). The construct
-        // signature lives on the callee's `typeof` type. An empty name means it
-        // could not be resolved (e.g. a `.d.ts` parameter), so fall back to the
-        // CDK convention that the second parameter is "id".
+        // NOTE: Skip when the second constructor parameter is not named "id"
+        // (then the 2nd argument is not an ID).
         const calleeType = checker.getTypeAtLocation(node.callee);
         const idParamName = calleeType && findConstructorPropertyNames(calleeType, checker)[1];
-        if (idParamName && idParamName !== "id") return;
+        if (idParamName !== "id") return;
 
         validateConstructIdInLoop(node, context);
       },

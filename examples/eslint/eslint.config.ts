@@ -19,16 +19,6 @@ export default defineConfig([
         tsconfigRootDir: __dirname,
       },
     },
-    settings: {
-      corsaOxlint: {
-        parserOptions: {
-          projectService: true,
-          corsa: {
-            executable: "./node_modules/.bin/tsgo",
-          },
-        },
-      },
-    },
     rules: {
       "awscdk/require-passing-this": [
         "error",

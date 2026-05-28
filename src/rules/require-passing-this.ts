@@ -69,14 +69,11 @@ export const requirePassingThis = createRule({
         // NOTE: If the first argument is already `this`, it's valid
         if (argument.type === "ThisExpression") return;
 
-        // NOTE: Skip when the first constructor parameter resolves to a name other
-        // than "scope" (then passing a non-`this` value is valid). The construct
-        // signature lives on the callee's `typeof` type. An empty name means it
-        // could not be resolved (e.g. a `.d.ts` parameter), so fall back to the
-        // CDK convention that the first parameter is "scope".
+        // NOTE: Skip when the first constructor parameter is not named "scope"
+        // (then passing a non-`this` value is valid).
         const calleeType = checker.getTypeAtLocation(node.callee);
         const scopeParamName = calleeType && findConstructorPropertyNames(calleeType, checker)[0];
-        if (scopeParamName && scopeParamName !== "scope") return;
+        if (scopeParamName !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases
         if (!options.allowNonThisAndDisallowScope) {
