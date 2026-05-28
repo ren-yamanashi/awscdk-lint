@@ -1,5 +1,3 @@
-import type { ESTree } from "@oxlint/plugins";
-
 import { getParserServices } from "corsa-oxlint";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
@@ -51,7 +49,7 @@ export const requirePassingThis = createRule({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      NewExpression(node: ESTree.NewExpression) {
+      NewExpression(node) {
         const type = checker.getTypeAtLocation(node);
 
         if (!type || !isConstructType(type, checker) || !node.arguments.length) return;

@@ -1,5 +1,3 @@
-import type { ESTree } from "@oxlint/plugins";
-
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
@@ -24,7 +22,7 @@ export const preferGrantsProperty = createRule({
     const checker = services.program.getTypeChecker();
 
     return {
-      CallExpression(node: ESTree.CallExpression) {
+      CallExpression(node) {
         if (node.callee.type !== "MemberExpression" || node.callee.property.type !== "Identifier") {
           return;
         }

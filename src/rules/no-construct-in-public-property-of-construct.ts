@@ -1,4 +1,4 @@
-import type { Context, ESTree } from "@oxlint/plugins";
+import type { Context } from "@oxlint/plugins";
 import type { CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { getParserServices } from "corsa-oxlint";
@@ -33,7 +33,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      ClassDeclaration(node: ESTree.Class) {
+      ClassDeclaration(node) {
         if (!node.id) return;
         const type = checker.getTypeAtLocation(node);
         if (!type || !isConstructOrStackType(type, checker)) return;

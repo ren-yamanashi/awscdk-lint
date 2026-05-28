@@ -1,4 +1,4 @@
-import type { Context, ESTree, SourceCode } from "@oxlint/plugins";
+import type { Context, SourceCode } from "@oxlint/plugins";
 
 import { getParserServices } from "corsa-oxlint";
 
@@ -33,7 +33,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
     const checker = services.program.getTypeChecker();
 
     return {
-      ClassDeclaration(node: ESTree.Class) {
+      ClassDeclaration(node) {
         if (!node.id) return;
         const sourceCode = context.sourceCode;
         const type = checker.getTypeAtLocation(node);

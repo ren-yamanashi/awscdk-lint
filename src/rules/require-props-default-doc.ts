@@ -1,5 +1,3 @@
-import type { ESTree } from "@oxlint/plugins";
-
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -24,7 +22,7 @@ export const requirePropsDefaultDoc = createRule({
   defaultOptions: [],
   create(context) {
     return {
-      TSPropertySignature(node: ESTree.TSPropertySignature) {
+      TSPropertySignature(node) {
         if (node.key.type !== "Identifier") return;
 
         // NOTE: Check if the property is optional

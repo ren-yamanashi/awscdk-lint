@@ -60,7 +60,7 @@ export const noParentNameConstructIdMatch = createRule({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      ClassBody(node: ESTree.ClassBody) {
+      ClassBody(node) {
         const parent = node.parent;
         if (parent?.type !== "ClassDeclaration" || !parent.id) return;
 

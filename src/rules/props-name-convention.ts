@@ -37,7 +37,7 @@ export const propsNameConvention = createRule({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      ClassDeclaration(node: ESTree.Class) {
+      ClassDeclaration(node) {
         if (!node.id || !node.superClass) return;
 
         const type = checker.getTypeAtLocation(node.superClass);

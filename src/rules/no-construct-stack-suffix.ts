@@ -60,7 +60,7 @@ export const noConstructStackSuffix = createRule({
     const checker = services.program.getTypeChecker();
 
     return {
-      NewExpression(node: ESTree.NewExpression) {
+      NewExpression(node) {
         const type = checker.getTypeAtLocation(node);
         if (!type || !isConstructOrStackType(type, checker) || node.arguments.length < 2) {
           return;

@@ -36,7 +36,7 @@ export const noUnusedProps = createRule({
     const checker = services.program.getTypeChecker();
 
     return {
-      ClassDeclaration(node: ESTree.Class) {
+      ClassDeclaration(node) {
         if (node.abstract || !node.id) return;
 
         const type = checker.getTypeAtLocation(node);

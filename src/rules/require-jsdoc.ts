@@ -1,5 +1,3 @@
-import type { ESTree } from "@oxlint/plugins";
-
 import { getParserServices } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
@@ -28,7 +26,7 @@ export const requireJSDoc = createRule({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      TSPropertySignature(node: ESTree.TSPropertySignature) {
+      TSPropertySignature(node) {
         if (node.key.type !== "Identifier") return;
 
         // NOTE: Check if the parent is an interface
@@ -55,7 +53,7 @@ export const requireJSDoc = createRule({
           });
         }
       },
-      PropertyDefinition(node: ESTree.PropertyDefinition) {
+      PropertyDefinition(node) {
         if (node.key.type !== "Identifier" || node.parent.type !== "ClassBody") {
           return;
         }

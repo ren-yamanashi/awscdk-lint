@@ -42,7 +42,7 @@ export const constructConstructorProperty = createRule({
     const services = getParserServices(context);
     const checker = services.program.getTypeChecker();
     return {
-      ClassDeclaration(node: ESTree.Class) {
+      ClassDeclaration(node) {
         if (!node.id) return;
         const type = checker.getTypeAtLocation(node);
         if (!type || !isConstructType(type, checker)) return;
