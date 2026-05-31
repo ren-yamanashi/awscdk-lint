@@ -87,7 +87,6 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       `,
     },
     {
-      // NOTE: `declare module` rewritten as `namespace` (parser rejects class bodies inside `declare module`)
       name: `property type is interface (not construct class) even if there is a class implementing it in module`,
       code: `
       class Resource {}
@@ -216,7 +215,6 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       errors: [{ messageId: "invalidInterfaceProperty" }],
     },
     {
-      // NOTE: `declare module` rewritten as `namespace` (parser rejects class bodies inside `declare module`)
       name: "property type is class that extends Resource (FargateService implements ecs.IFargateService)",
       code: `
       class Resource {}
@@ -245,7 +243,6 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       errors: [{ messageId: "invalidInterfaceProperty" }],
     },
     {
-      // NOTE: `declare module` rewritten as `namespace` (parser rejects class bodies inside `declare module`)
       name: "property type is class defined in module that extends Resource (ecs.FargateService)",
       code: `
       class Resource {}

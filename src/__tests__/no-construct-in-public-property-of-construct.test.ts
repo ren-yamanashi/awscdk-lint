@@ -228,7 +228,6 @@ ruleTester.run(
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
       {
-        // NOTE: `declare module` rewritten as `namespace` (parser rejects class bodies inside `declare module`)
         name: "public field type is class that extends Resource (FargateService implements ecs.IFargateService)",
         code: `
           class Construct {}
