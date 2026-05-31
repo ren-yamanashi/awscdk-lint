@@ -88,35 +88,3 @@ module.exports = {
   },
 };
 ```
-
-## eslint-cdk-plugin からの移行
-
-本パッケージは以前 `eslint-cdk-plugin` として提供しておりましたが、v4.0.0 以降、ESLint の公式命名規則に従うため `eslint-plugin-awscdk` に名称変更いたしました。
-
-### 移行手順
-
-### 1. `eslint-cdk-plugin` を最新バージョンに更新
-
-::: code-group
-
-```sh [npm]
-npm install -D eslint-cdk-plugin@latest
-```
-
-```sh [yarn]
-yarn add -D eslint-cdk-plugin@latest
-```
-
-```sh [pnpm]
-pnpm install -D eslint-cdk-plugin@latest
-```
-
-:::
-
-### 2. 移行コマンドを実行
-
-```sh
-npx migrate-cdk-plugin
-```
-
-古いパッケージ名もしばらくの間更新が続きますが、その後非推奨となります。

@@ -32,7 +32,6 @@ const createFlatConfig = (rules: _FlatConfig.Rules): FlatConfig => {
 
 export const recommended: FlatConfig = createFlatConfig({
   "awscdk/construct-constructor-property": "error",
-  "awscdk/migrate-disable-comments": "error",
   "awscdk/no-construct-in-interface": "error",
   "awscdk/no-construct-in-public-property-of-construct": "error",
   "awscdk/no-construct-stack-suffix": "error",
@@ -48,7 +47,6 @@ export const recommended: FlatConfig = createFlatConfig({
 
 export const strict: FlatConfig = createFlatConfig({
   "awscdk/construct-constructor-property": "error",
-  "awscdk/migrate-disable-comments": "error",
   "awscdk/no-construct-in-interface": "error",
   "awscdk/no-construct-in-public-property-of-construct": "error",
   "awscdk/no-construct-stack-suffix": "error",

@@ -14,7 +14,6 @@ const createClassicConfig = (rules: ClassicConfig.RulesRecord): ClassicRulesConf
 
 export const recommended: ClassicRulesConfig = createClassicConfig({
   "awscdk/construct-constructor-property": "error",
-  "awscdk/migrate-disable-comments": "error",
   "awscdk/no-construct-in-interface": "error",
   "awscdk/no-construct-in-public-property-of-construct": "error",
   "awscdk/no-construct-stack-suffix": "error",
@@ -30,7 +29,6 @@ export const recommended: ClassicRulesConfig = createClassicConfig({
 
 export const strict: ClassicRulesConfig = createClassicConfig({
   "awscdk/construct-constructor-property": "error",
-  "awscdk/migrate-disable-comments": "error",
   "awscdk/no-construct-in-interface": "error",
   "awscdk/no-construct-in-public-property-of-construct": "error",
   "awscdk/no-construct-stack-suffix": "error",
