@@ -60,7 +60,7 @@
     "@typescript-eslint/rule-tester": "^8.48.1",
     "@typescript-eslint/utils": "^8.48.1",
     "@voidzero-dev/vite-plus-core": "^0.1.11",
-    "commander": "^14.0.2",
+    "commander": "^15.0.0",
     "consola": "^3.4.2",
     "eslint": "^10.0.0",
     "secretlint": "^13.0.0",
