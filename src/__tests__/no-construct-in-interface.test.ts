@@ -1,13 +1,3 @@
-// FIXME: Some cases from the ESLint version's test are omitted here because the
-// underlying type checker can't provide the information the oxlint rule needs:
-//   - implements-based discrimination ("extends Resource but does not implement
-//     matching interface", "implements non-matching interface"): the rule uses a
-//     Construct + Resource heuristic instead of inspecting implemented interfaces.
-//   - the parser fails on classes with a body inside `declare module <id> {}`.
-// Restore these cases once the rule discriminates by implemented interfaces.
-// Fixtures here use real-CDK structure (`class Resource extends Construct {}`)
-// so the Construct + Resource heuristic matches the ESLint behavior.
-
 import { noConstructInInterface } from "../rules/no-construct-in-interface";
 import { createRuleTester } from "./create-rule-tester";
 
@@ -51,77 +41,81 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       }
       `,
     },
-    // FIXME: commented-out cases the oxlint rule can't satisfy (see header).
-    // {
-    //       name: `property type is class that extends Resource but does not implement matching interface`,
-    //       code: `
-    //       class Resource {}
-    //       export abstract class BaseLoadBalancer extends Resource {
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: BaseLoadBalancer;
-    //       }
-    //       `,
-    //     }
-    // {
-    //       name: `property type is array of class that extends Resource but does not implement matching interface`,
-    //       code: `
-    //       class Resource {}
-    //       export abstract class BaseLoadBalancer extends Resource {
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: BaseLoadBalancer[];
-    //       }
-    //       `,
-    //     }
-    // {
-    //       name: `property type is class that extends Resource but implements non-matching interface`,
-    //       code: `
-    //       class Resource {}
-    //       interface IVersion {
-    //         version: string;
-    //       }
-    //       export class EdgeFunction extends Resource implements IVersion {
-    //         constructor() {
-    //           super();
-    //         }
-    //       }
-    //       interface MyConstructProps {
-    //         bucket: EdgeFunction;
-    //       }
-    //       `,
-    //     }
+    {
+      name: `property type is class that extends Resource but does not implement matching interface`,
+      code: `
+      class Resource {}
+      export abstract class BaseLoadBalancer extends Resource {
+        constructor() {
+          super();
+        }
+      }
+      interface MyConstructProps {
+        bucket: BaseLoadBalancer;
+      }
+      `,
+    },
+    {
+      name: `property type is array of class that extends Resource but does not implement matching interface`,
+      code: `
+      class Resource {}
+      export abstract class BaseLoadBalancer extends Resource {
+        constructor() {
+          super();
+        }
+      }
+      interface MyConstructProps {
+        bucket: BaseLoadBalancer[];
+      }
+      `,
+    },
+    {
+      name: `property type is class that extends Resource but implements non-matching interface`,
+      code: `
+      class Resource {}
+      interface IVersion {
+        version: string;
+      }
+      export class EdgeFunction extends Resource implements IVersion {
+        constructor() {
+          super();
+        }
+      }
+      interface MyConstructProps {
+        bucket: EdgeFunction;
+      }
+      `,
+    },
     {
       // NOTE: rewritten from `declare module` to `namespace` because the parser
-      // rejects a class with a body inside `declare module`. Property type is an
-      // interface, so it must not be flagged even though a class implementing it
-      // exists in the module.
-      name: "property type is interface (not construct class) even if there is a class implementing it in module",
+      // rejects a class with a body inside `declare module`.
+      name: `property type is interface (not construct class) even if there is a class implementing it in module`,
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
+
       namespace baseService {
         export interface IService {
           serviceArn: string;
         }
         export abstract class BaseService extends Resource implements IService {
           abstract readonly serviceArn: string;
+          constructor() {
+            super();
+          }
         }
       }
+
       namespace ecs {
         export interface IFargateService extends baseService.IService {}
         export class FargateService extends baseService.BaseService implements IFargateService {
           readonly serviceArn: string = "";
+          constructor() {
+            super();
+          }
         }
       }
       interface MyConstructProps {
-        svc: ecs.IFargateService;
+        bucket: ecs.IFargateService;
       }
       `,
     },
@@ -130,8 +124,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is class that extends Resource (Bucket extends BucketBase)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -157,8 +150,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is class that extends Resource (BucketBase)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -177,8 +169,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is class that extends Resource (EmailIdentity extends EmailIdentityBase)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IEmailIdentity {
         emailIdentityName: string;
       }
@@ -202,8 +193,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is class that extends Resource (FargateService implements IFargateService)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IService {
         serviceArn: string;
       }
@@ -227,14 +217,15 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       errors: [{ messageId: "invalidInterfaceProperty" }],
     },
     {
+      // NOTE: rewritten from `declare module` to `namespace` because the parser
+      // rejects a class with a body inside `declare module`.
       name: "property type is class that extends Resource (FargateService implements ecs.IFargateService)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IService {
         serviceArn: string;
       }
-      declare module ecs {
+      namespace ecs {
         export interface IFargateService extends IService {}
       }
       export abstract class BaseService extends Resource implements IService {
@@ -260,13 +251,28 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       // rejects a class with a body inside `declare module`.
       name: "property type is class defined in module that extends Resource (ecs.FargateService)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
+      interface IService {
+        serviceArn: string;
+      }
+      export interface IFargateService extends IService {}
+      export abstract class BaseService extends Resource implements IService {
+        abstract readonly serviceArn: string;
+        constructor() {
+          super();
+        }
+      }
+
       namespace ecs {
-        export class FargateService extends Resource {}
+        export class FargateService extends BaseService implements IFargateService {
+          readonly serviceArn: string = "";
+          constructor() {
+            super();
+          }
+        }
       }
       interface MyConstructProps {
-        svc: ecs.FargateService;
+        bucket: ecs.FargateService;
       }
       `,
       errors: [{ messageId: "invalidInterfaceProperty" }],
@@ -276,8 +282,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       property type is class that extends a base class implementing a matching interface
       (S3OriginAccessControl extends OriginAccessControlBase)`,
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IOriginAccessControl {
         originAccessControlId: string;
       }
@@ -303,8 +308,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is class with BaseV{number} pattern (TableBaseV2)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface ITableV2 {
         tableName: string;
       }
@@ -324,8 +328,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is array of class that extends Resource (Bucket[])",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -351,8 +354,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Array generics type wrapping class that extends Resource (Array<Bucket>)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -378,8 +380,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Readonly utility type wrapping class that extends Resource",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -405,8 +406,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Partial utility type wrapping class that extends Resource",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -432,8 +432,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is custom type alias wrapping class that extends Resource (MyWrapper<Bucket>)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -460,8 +459,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is interface generics type wrapping class that extends Resource (Wrapper<Bucket>)",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -490,8 +488,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is some generics type wrapping class that extends Resource",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -517,8 +514,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class included in Tuple type that extends Resource",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -544,8 +540,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class included in Union type that extends Resource",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -571,8 +566,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class two dimension type that extends Resource",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -598,8 +592,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class with undefined in Union type",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -625,8 +618,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class with null in Union type",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -652,8 +644,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Class in Intersection type",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -679,8 +670,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is Required utility type wrapping Class",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
@@ -706,8 +696,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     {
       name: "property type is NonNullable utility type wrapping Class",
       code: `
-      class Construct {}
-      class Resource extends Construct {}
+      class Resource {}
       interface IBucket {
         bucketName: string;
       }
