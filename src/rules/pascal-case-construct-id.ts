@@ -3,7 +3,7 @@ import type { Context, ESTree } from "@oxlint/plugins";
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
-import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-param-names";
+import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
 import { getParserServices } from "../shared/parser-services";
@@ -44,11 +44,9 @@ export const pascalCaseConstructId = createRule({
           return;
         }
 
-        // NOTE: Skip when the second constructor parameter is not named "id"
-        // (then the 2nd argument is not an ID).
-        const calleeType = checker.getTypeAtLocation(node.callee);
-        const idParamName = calleeType && findConstructorPropertyNames(calleeType, checker)[1];
-        if (idParamName !== "id") return;
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
+        if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructId(node, context);
       },

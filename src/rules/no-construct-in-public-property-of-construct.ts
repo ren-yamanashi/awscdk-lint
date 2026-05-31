@@ -1,5 +1,4 @@
 import type { Context } from "@oxlint/plugins";
-import type { CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import {
   findPublicPropertiesInClass,
@@ -9,6 +8,8 @@ import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-co
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 import { getParserServices } from "../shared/parser-services";
+
+type ParserServicesWithTypeInformation = ReturnType<typeof getParserServices>;
 
 /**
  * Disallow Construct types in public property of Construct
@@ -38,7 +39,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
         if (!isConstructOrStackType(type, checker)) return;
         const publicProperties = findPublicPropertiesInClass(node);
         for (const publicProperty of publicProperties) {
-          validatePublicProperty(publicProperty, context, checker);
+          validatePublicProperty(publicProperty, context, parserServices);
         }
       },
     };
@@ -48,15 +49,15 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
 const validatePublicProperty = (
   publicProperty: PublicProperty,
   context: Context,
-  checker: CorsaTypeCheckerShape,
+  parserServices: ParserServicesWithTypeInformation,
 ) => {
   // NOTE: corsa's getTypeAtLocation needs the binding identifier (not the whole property node)
   const keyNode =
     publicProperty.node.type === "TSParameterProperty"
       ? publicProperty.node.parameter
       : publicProperty.node.key;
-  const type = checker.getTypeAtLocation(keyNode);
-  if (!type) return;
+  const type = parserServices.getTypeAtLocation(keyNode);
+  const checker = parserServices.program.getTypeChecker();
   const constructType = findTypeOfCdkConstruct(type, checker);
   if (constructType) {
     context.report({

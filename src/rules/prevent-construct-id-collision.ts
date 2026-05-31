@@ -3,7 +3,7 @@ import type { Context, ESTree } from "@oxlint/plugins";
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
-import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-param-names";
+import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
 import { getParserServices } from "../shared/parser-services";
 
@@ -37,11 +37,9 @@ export const preventConstructIdCollision = createRule({
           return;
         }
 
-        // NOTE: Skip when the second constructor parameter is not named "id"
-        // (then the 2nd argument is not an ID).
-        const calleeType = checker.getTypeAtLocation(node.callee);
-        const idParamName = calleeType && findConstructorPropertyNames(calleeType, checker)[1];
-        if (idParamName !== "id") return;
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
+        if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructIdInLoop(node, context);
       },
@@ -135,7 +133,9 @@ const ITERATION_METHODS = new Set([
 /**
  * Check whether an arrow function or function expression is a callback of an iteration method
  */
-const isIterationMethodCallback = (node: ESTree.Node): boolean => {
+const isIterationMethodCallback = (
+  node: ESTree.ArrowFunctionExpression | ESTree.Function,
+): boolean => {
   const parent = node.parent;
   if (parent?.type !== AST_NODE_TYPES.CallExpression) return false;
 

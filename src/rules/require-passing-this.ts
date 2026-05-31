@@ -3,7 +3,7 @@ import { AST_NODE_TYPES } from "corsa-oxlint";
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
-import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-param-names";
+import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
 import { getParserServices } from "../shared/parser-services";
 
@@ -58,21 +58,18 @@ export const requirePassingThis = createRule({
         // NOTE: Only flag when inside a Construct/Stack class where `this` is available
         const enclosingClass = findEnclosingClass(node);
         if (!enclosingClass) return;
-        const enclosingClassType = checker.getTypeAtLocation(enclosingClass);
-        if (!enclosingClassType || !isConstructOrStackType(enclosingClassType, checker)) {
-          return;
-        }
+        const enclosingClassType = parserServices.getTypeAtLocation(enclosingClass);
+        if (!isConstructOrStackType(enclosingClassType, checker)) return;
 
         const argument = node.arguments[0];
 
         // NOTE: If the first argument is already `this`, it's valid
         if (argument.type === AST_NODE_TYPES.ThisExpression) return;
 
-        // NOTE: Skip when the first constructor parameter is not named "scope"
-        // (then passing a non-`this` value is valid).
-        const calleeType = checker.getTypeAtLocation(node.callee);
-        const scopeParamName = calleeType && findConstructorPropertyNames(calleeType, checker)[0];
-        if (scopeParamName !== "scope") return;
+        // NOTE: If the first argument is not `scope`, it's valid
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
+        if (constructorPropertyNames[0] !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases
         if (!options.allowNonThisAndDisallowScope) {

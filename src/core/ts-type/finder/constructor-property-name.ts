@@ -4,10 +4,8 @@ import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 const CONSTRUCT_SIGNATURE_KIND = 1;
 
 /**
- * Resolve the parameter names of a class's constructor.
- * @param type - The `typeof ClassName` type (e.g. from `getTypeAtLocation(node.callee)`)
- * @param checker - The tsgo type checker
- * @returns The constructor parameter names in order (e.g. `["scope", "id", "props"]`)
+ * Parses type to get the property names of the class constructor.
+ * @returns The property names of the class constructor.
  */
 export const findConstructorPropertyNames = (
   type: CorsaType,
