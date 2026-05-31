@@ -1,5 +1,5 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
@@ -12,6 +12,7 @@ import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
 
 type ConstructorParam = ESTree.MethodDefinition["value"]["params"][number];
 type PropsParamNode = Extract<ConstructorParam, { type: "Identifier" }>;
+type ParserServicesWithTypeInformation = ReturnType<typeof getParserServices>;
 
 /**
  * Enforces that all properties defined in props type are used within the constructor
@@ -38,7 +39,7 @@ export const noUnusedProps = createRule({
 
     return {
       ClassDeclaration(node) {
-        if (node.abstract || !node.id) return;
+        if (node.abstract) return;
 
         const type = parserServices.getTypeAtLocation(node);
         if (!isConstructType(type, checker)) return;
@@ -46,7 +47,7 @@ export const noUnusedProps = createRule({
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        const propsParam = getPropsParam(constructor, checker);
+        const propsParam = getPropsParam(constructor, parserServices);
         if (!propsParam) return;
         if (isPropsUsedInSuperCall(constructor, propsParam.node.name)) return;
 
@@ -62,7 +63,7 @@ export const noUnusedProps = createRule({
 
 const getPropsParam = (
   constructor: ESTree.MethodDefinition,
-  checker: CorsaTypeCheckerShape,
+  parserServices: ParserServicesWithTypeInformation,
 ): { node: PropsParamNode; type: CorsaType } | null => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
@@ -74,10 +75,10 @@ const getPropsParam = (
   // ++++++++++++++++++++++++++++++++++++
   if (propsParam.type !== AST_NODE_TYPES.Identifier) return null;
 
-  const type = checker.getTypeAtLocation(propsParam);
-  if (!type) return null;
-
-  return { node: propsParam, type };
+  return {
+    node: propsParam,
+    type: parserServices.getTypeAtLocation(propsParam),
+  };
 };
 
 /**
@@ -100,7 +101,7 @@ const isPropsUsedInSuperCall = (
 ): boolean => {
   if (constructor.kind !== "constructor") return false;
   const body = constructor.value.body;
-  if (!body || body.type !== AST_NODE_TYPES.BlockStatement) return false;
+  if (!body) return false;
 
   for (const expr of body.body) {
     if (

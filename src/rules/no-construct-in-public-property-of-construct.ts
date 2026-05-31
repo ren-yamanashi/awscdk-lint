@@ -1,15 +1,19 @@
-import type { Context } from "@oxlint/plugins";
+import type { Context, ESTree } from "@oxlint/plugins";
 
-import {
-  findPublicPropertiesInClass,
-  PublicProperty,
-} from "../core/ast-node/finder/public-property";
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
+import { findPublicPropertiesInClass } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 import { getParserServices } from "../shared/parser-services";
 
 type ParserServicesWithTypeInformation = ReturnType<typeof getParserServices>;
+
+type PublicProperty = {
+  name: string;
+  node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
+};
 
 /**
  * Disallow Construct types in public property of Construct
@@ -53,7 +57,7 @@ const validatePublicProperty = (
 ) => {
   // NOTE: corsa's getTypeAtLocation needs the binding identifier (not the whole property node)
   const keyNode =
-    publicProperty.node.type === "TSParameterProperty"
+    publicProperty.node.type === AST_NODE_TYPES.TSParameterProperty
       ? publicProperty.node.parameter
       : publicProperty.node.key;
   const type = parserServices.getTypeAtLocation(keyNode);

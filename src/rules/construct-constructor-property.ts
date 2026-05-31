@@ -1,5 +1,5 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import type { ESTree as CorsaESTree, CorsaTypeCheckerShape } from "corsa-oxlint";
+import type { ESTree as CorsaESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
@@ -16,6 +16,8 @@ type ConstructorParam =
   | CorsaESTree["BindingIdentifier"];
 
 type ConstructorProperties = [ConstructorParam, ConstructorParam, ConstructorParam | undefined];
+
+type ParserServicesWithTypeInformation = ReturnType<typeof getParserServices>;
 
 /**
  * Enforces that constructors of classes extending Construct have the property names 'scope, id' or 'scope, id, props'
@@ -54,7 +56,7 @@ export const constructConstructorProperty = createRule({
 
         const params = checkNumOfConstructorProperty(constructor, context);
         if (params) {
-          checkFirstParamIsScope(params[0], context, checker);
+          checkFirstParamIsScope(params[0], context, parserServices);
           checkSecondParamIsId(params[1], context);
           checkThirdParamIsProps(params[2], context);
         }
@@ -87,21 +89,23 @@ const checkNumOfConstructorProperty = (
 const checkFirstParamIsScope = (
   firstParam: ConstructorProperties[0],
   context: Context,
-  checker: CorsaTypeCheckerShape,
+  parserServices: ParserServicesWithTypeInformation,
 ) => {
   if (firstParam.type !== AST_NODE_TYPES.Identifier || firstParam.name !== "scope") {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorProperty",
     });
-  } else {
-    const type = checker.getTypeAtLocation(firstParam);
-    if (type && !isConstructType(type, checker)) {
-      context.report({
-        node: firstParam,
-        messageId: "invalidConstructorType",
-      });
-    }
+  } else if (
+    !isConstructType(
+      parserServices.getTypeAtLocation(firstParam),
+      parserServices.program.getTypeChecker(),
+    )
+  ) {
+    context.report({
+      node: firstParam,
+      messageId: "invalidConstructorType",
+    });
   }
 };
 

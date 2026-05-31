@@ -41,8 +41,8 @@ export const propsNameConvention = createRule({
       ClassDeclaration(node) {
         if (!node.id || !node.superClass) return;
 
-        const type = checker.getTypeAtLocation(node.superClass);
-        if (!type || !isConstructType(type, checker)) return;
+        const type = parserServices.getTypeAtLocation(node.superClass);
+        if (!isConstructType(type, checker)) return;
 
         // NOTE: check constructor parameter
         const constructor = findConstructor(node);

@@ -45,7 +45,7 @@ export class MethodCallCollectorVisitor implements INodeVisitor {
     }
 
     const methodName = node.callee.property.name;
-    const propsArgIndices: number[] = node.arguments.reduce<number[]>(
+    const propsArgIndices = node.arguments.reduce<number[]>(
       (acc, arg, index) =>
         arg.type === AST_NODE_TYPES.Identifier && arg.name === this.propsParamName
           ? [...acc, index]

@@ -31,7 +31,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     const constructorBody = constructor.value.body;
     const classNode = constructor.parent;
     const propsParamName = propsParam.name;
-    if (!constructorBody || constructorBody.type !== AST_NODE_TYPES.BlockStatement) return;
+    if (!constructorBody) return;
     if (!classNode || classNode.type !== AST_NODE_TYPES.ClassBody) return;
 
     this.checkUsageForDirectAccess(constructorBody, propsParamName);

@@ -35,8 +35,8 @@ export const preferGrantsProperty = createRule({
         if (!methodName.startsWith("grant")) return;
 
         const objectNode = node.callee.object;
-        const type = checker.getTypeAtLocation(objectNode);
-        if (!type || !isConstructType(type, checker)) return;
+        const type = parserServices.getTypeAtLocation(objectNode);
+        if (!isConstructType(type, checker)) return;
 
         const grantsProperty = checker.getPropertiesOfType(type).find((s) => s.name === "grants");
         if (!grantsProperty) return;

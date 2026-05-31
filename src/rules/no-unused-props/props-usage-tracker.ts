@@ -59,7 +59,7 @@ export class PropsUsageTracker implements IPropsUsageTracker {
 
   constructor(propType: CorsaType, checker: CorsaTypeCheckerShape) {
     this.propUsageMap = new Map<string, boolean>(
-      this.getPropsPropertyNames(propType, checker).map((name: string) => [name, false]),
+      this.getPropsPropertyNames(propType, checker).map((name) => [name, false]),
     );
   }
 

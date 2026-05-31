@@ -72,6 +72,8 @@ export const noParentNameConstructIdMatch = createRule({
     const checker = parserServices.program.getTypeChecker();
     return {
       ClassBody(node) {
+        // NOTE: corsa's getTypeAtLocation(ClassBody) does not yield a usable class type;
+        // pass the parent ClassDeclaration instead, which requires the parent guards first.
         const parent = node.parent;
         if (parent?.type !== AST_NODE_TYPES.ClassDeclaration) return;
 
@@ -114,7 +116,7 @@ const validateConstructorBody = ({
   parserServices,
   option,
 }: ValidateExpressionArgs<ConstructorFn>): void => {
-  if (!expression.body || expression.body.type !== AST_NODE_TYPES.BlockStatement) return;
+  if (!expression.body) return;
   for (const statement of expression.body.body) {
     switch (statement.type) {
       case AST_NODE_TYPES.VariableDeclaration: {

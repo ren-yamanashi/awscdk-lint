@@ -73,9 +73,9 @@ export const requireJSDoc = createRule({
         }
 
         // NOTE: Check if the class extends Construct and the property is public
-        const classType = checker.getTypeAtLocation(classDeclaration.id);
+        const classType = parserServices.getTypeAtLocation(classDeclaration.id);
         const accessibility = node.accessibility ?? "public";
-        if (!classType || !isConstructType(classType, checker) || accessibility !== "public") {
+        if (!isConstructType(classType, checker) || accessibility !== "public") {
           return;
         }
 

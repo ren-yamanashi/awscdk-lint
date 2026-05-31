@@ -33,9 +33,7 @@ export const preventConstructIdCollision = createRule({
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
 
-        if (!isConstructType(type, checker) || node.arguments.length < 2) {
-          return;
-        }
+        if (!isConstructType(type, checker) || node.arguments.length < 2) return;
 
         const calleeType = parserServices.getTypeAtLocation(node.callee);
         const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
