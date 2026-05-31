@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
 
@@ -50,12 +52,12 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
     //
     // When this pattern matches, we mark the accessed property (e.g., "bucketName") as used.
     if (
-      node.type === "MemberExpression" &&
-      node.object.type === "MemberExpression" &&
-      node.object.object.type === "ThisExpression" &&
-      node.object.property.type === "Identifier" &&
+      node.type === AST_NODE_TYPES.MemberExpression &&
+      node.object.type === AST_NODE_TYPES.MemberExpression &&
+      node.object.object.type === AST_NODE_TYPES.ThisExpression &&
+      node.object.property.type === AST_NODE_TYPES.Identifier &&
       node.object.property.name === this.instanceVarName &&
-      node.property.type === "Identifier"
+      node.property.type === AST_NODE_TYPES.Identifier
     ) {
       this.tracker.markAsUsed(node.property.name);
       return;
@@ -82,21 +84,21 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
     //   Code: `this.myProps = props`
     //   The `this.myProps` is being assigned to, not used as a value
     if (
-      node.type === "MemberExpression" &&
-      node.object.type === "ThisExpression" &&
-      node.property.type === "Identifier" &&
+      node.type === AST_NODE_TYPES.MemberExpression &&
+      node.object.type === AST_NODE_TYPES.ThisExpression &&
+      node.property.type === AST_NODE_TYPES.Identifier &&
       node.property.name === this.instanceVarName
     ) {
       const parent = node.parent;
 
       // NOTE: Exclusion A - Skip if this is part of a property access (this.myProps.xxx)
       // The parent MemberExpression's object being this node means we're accessing a property
-      if (parent?.type === "MemberExpression" && parent.object === node) {
+      if (parent?.type === AST_NODE_TYPES.MemberExpression && parent.object === node) {
         return;
       }
 
       // NOTE: Exclusion B - Skip if this is the left side of an assignment (this.myProps = ...)
-      if (parent?.type === "AssignmentExpression" && parent.left === node) {
+      if (parent?.type === AST_NODE_TYPES.AssignmentExpression && parent.left === node) {
         return;
       }
 

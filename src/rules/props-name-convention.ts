@@ -1,11 +1,12 @@
 import type { ESTree } from "@oxlint/plugins";
 import type { ESTree as CorsaESTree } from "corsa-oxlint";
 
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 // NOTE: corsa widens `BindingIdentifier.typeAnnotation` to `TSTypeAnnotation | null`
 // (it is typed `null` in `@oxlint/plugins`), so use it for the Identifier members to read
@@ -34,8 +35,8 @@ export const propsNameConvention = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       ClassDeclaration(node) {
         if (!node.id || !node.superClass) return;
@@ -48,16 +49,16 @@ export const propsNameConvention = createRule({
         if (!constructor) return;
 
         const propsParam: ConstructorParam | undefined = constructor.value.params?.[2];
-        if (propsParam?.type !== "Identifier") return;
+        if (propsParam?.type !== AST_NODE_TYPES.Identifier) return;
 
         const typeAnnotation = propsParam.typeAnnotation;
-        if (typeAnnotation?.type !== "TSTypeAnnotation") return;
+        if (typeAnnotation?.type !== AST_NODE_TYPES.TSTypeAnnotation) return;
 
         const typeNode = typeAnnotation.typeAnnotation;
-        if (typeNode.type !== "TSTypeReference") return;
+        if (typeNode.type !== AST_NODE_TYPES.TSTypeReference) return;
 
         const propsTypeName = typeNode.typeName;
-        if (propsTypeName.type !== "Identifier") return;
+        if (propsTypeName.type !== AST_NODE_TYPES.Identifier) return;
 
         // NOTE: create valid props name
         const constructName = node.id.name;

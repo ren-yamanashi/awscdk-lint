@@ -1,7 +1,8 @@
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties
@@ -23,17 +24,20 @@ export const noConstructInInterface = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       TSInterfaceDeclaration(node) {
         for (const property of node.body.body) {
-          if (property.type !== "TSPropertySignature" || property.key.type !== "Identifier") {
+          if (
+            property.type !== AST_NODE_TYPES.TSPropertySignature ||
+            property.key.type !== AST_NODE_TYPES.Identifier
+          ) {
             continue;
           }
 
-          const type = checker.getTypeAtLocation(property);
-          const result = type && findTypeOfCdkConstruct(type, checker);
+          const type = parserServices.getTypeAtLocation(property);
+          const result = findTypeOfCdkConstruct(type, checker);
 
           if (result) {
             context.report({

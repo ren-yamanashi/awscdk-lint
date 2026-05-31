@@ -1,3 +1,5 @@
+import { AST_NODE_TYPES, AST_TOKEN_TYPES } from "corsa-oxlint";
+
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -23,14 +25,14 @@ export const requirePropsDefaultDoc = createRule({
   create(context) {
     return {
       TSPropertySignature(node) {
-        if (node.key.type !== "Identifier") return;
+        if (node.key.type !== AST_NODE_TYPES.Identifier) return;
 
         // NOTE: Check if the property is optional
         if (!node.optional) return;
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
-        if (parent?.type !== "TSInterfaceDeclaration") return;
+        if (parent?.type !== AST_NODE_TYPES.TSInterfaceDeclaration) return;
 
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;
@@ -40,7 +42,7 @@ export const requirePropsDefaultDoc = createRule({
         const comments = sourceCode.getCommentsBefore(node);
         const hasDefaultDoc = comments.some(
           (comment) =>
-            comment.type === "Block" &&
+            comment.type === AST_TOKEN_TYPES.Block &&
             comment.value.includes("*") &&
             comment.value.includes("@default"),
         );

@@ -1,10 +1,11 @@
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-param-names";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 type Option = {
   allowNonThisAndDisallowScope?: boolean;
@@ -45,14 +46,14 @@ export const requirePassingThis = createRule({
   },
   defaultOptions: [defaultOption],
   create(context) {
-    const options: Option = (context.options[0] as Option) || defaultOption;
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const options: Option = (context.options[0] as Option | undefined) ?? defaultOption;
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
-        const type = checker.getTypeAtLocation(node);
+        const type = parserServices.getTypeAtLocation(node);
 
-        if (!type || !isConstructType(type, checker) || !node.arguments.length) return;
+        if (!isConstructType(type, checker) || !node.arguments.length) return;
 
         // NOTE: Only flag when inside a Construct/Stack class where `this` is available
         const enclosingClass = findEnclosingClass(node);
@@ -65,7 +66,7 @@ export const requirePassingThis = createRule({
         const argument = node.arguments[0];
 
         // NOTE: If the first argument is already `this`, it's valid
-        if (argument.type === "ThisExpression") return;
+        if (argument.type === AST_NODE_TYPES.ThisExpression) return;
 
         // NOTE: Skip when the first constructor parameter is not named "scope"
         // (then passing a non-`this` value is valid).
@@ -86,7 +87,7 @@ export const requirePassingThis = createRule({
         }
         // NOTE: If `allowNonThisAndDisallowScope` is true, allow non-`this` values except `scope` variable
         // Check if the argument is the `scope` variable
-        if (argument.type === "Identifier" && argument.name === "scope") {
+        if (argument.type === AST_NODE_TYPES.Identifier && argument.name === "scope") {
           context.report({
             node: argument,
             messageId: "missingPassingThis",

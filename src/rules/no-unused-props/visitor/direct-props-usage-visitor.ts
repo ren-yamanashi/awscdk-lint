@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
 
@@ -98,11 +100,11 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
 
     switch (parent.type) {
       // NOTE: Pattern 1: External function call
-      case "CallExpression": {
+      case AST_NODE_TYPES.CallExpression: {
         if (!parent.arguments.some((arg) => arg === node)) return;
         if (
-          parent.callee.type === "MemberExpression" &&
-          parent.callee.object.type === "ThisExpression"
+          parent.callee.type === AST_NODE_TYPES.MemberExpression &&
+          parent.callee.object.type === AST_NODE_TYPES.ThisExpression
         ) {
           return;
         }
@@ -111,7 +113,7 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
       }
 
       // NOTE: Pattern 2: Return statement
-      case "ReturnStatement": {
+      case AST_NODE_TYPES.ReturnStatement: {
         // NOTE: return props - props as a whole
         if (parent.argument === node) {
           this.tracker.markAllAsUsed();
@@ -120,7 +122,7 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
       }
 
       // NOTE: Pattern 3: Array element
-      case "ArrayExpression": {
+      case AST_NODE_TYPES.ArrayExpression: {
         // NOTE: [props] - props as a whole
         if (parent.elements.some((el) => el === node)) {
           this.tracker.markAllAsUsed();
@@ -129,7 +131,7 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
       }
 
       // NOTE: Pattern 4: Object property value
-      case "Property": {
+      case AST_NODE_TYPES.Property: {
         // NOTE: { key: props } - props as a whole
         if (parent.value === node) {
           this.tracker.markAllAsUsed();

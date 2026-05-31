@@ -1,12 +1,13 @@
 import type { Context, ESTree } from "@oxlint/plugins";
 
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-param-names";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 /**
  * Enforce using literal strings for Construct ID.
@@ -27,13 +28,13 @@ export const noVariableConstructId = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
-        const type = checker.getTypeAtLocation(node);
+        const type = parserServices.getTypeAtLocation(node);
 
-        if (!type || !isConstructType(type, checker) || node.arguments.length < 2) return;
+        if (!isConstructType(type, checker) || node.arguments.length < 2) return;
 
         // NOTE: Skip when inside a class that is not Construct/Stack
         const enclosingClass = findEnclosingClass(node);
@@ -64,12 +65,12 @@ const validateConstructId = (node: ESTree.NewExpression, context: Context) => {
   const secondArg = node.arguments[1];
 
   // NOTE: When id is string literal, it's OK
-  if (secondArg.type === "Literal" && typeof secondArg.value === "string") {
+  if (secondArg.type === AST_NODE_TYPES.Literal && typeof secondArg.value === "string") {
     return;
   }
 
   // NOTE: When id is template literal, only those without expressions are OK
-  if (secondArg.type === "TemplateLiteral" && !secondArg.expressions.length) {
+  if (secondArg.type === AST_NODE_TYPES.TemplateLiteral && !secondArg.expressions.length) {
     return;
   }
 
@@ -88,30 +89,30 @@ const shouldSkipIdValidation = (node: ESTree.Node): boolean => {
   while (current) {
     // Constructs defined in loops require variable IDs
     if (
-      current.type === "ForStatement" ||
-      current.type === "ForInStatement" ||
-      current.type === "ForOfStatement" ||
-      current.type === "WhileStatement" ||
-      current.type === "DoWhileStatement"
+      current.type === AST_NODE_TYPES.ForStatement ||
+      current.type === AST_NODE_TYPES.ForInStatement ||
+      current.type === AST_NODE_TYPES.ForOfStatement ||
+      current.type === AST_NODE_TYPES.WhileStatement ||
+      current.type === AST_NODE_TYPES.DoWhileStatement
     ) {
       return true;
     }
 
     // Constructs defined in class methods are intended to be called multiple times,
     // which requires variable IDs
-    if (current.type === "MethodDefinition" && current.kind !== "constructor") {
+    if (current.type === AST_NODE_TYPES.MethodDefinition && current.kind !== "constructor") {
       return true;
     }
 
     // Constructs in arrow functions are also intended to be called multiple times.
     // This includes usages of array methods like forEach, map, etc.
-    if (current.type === "ArrowFunctionExpression") {
+    if (current.type === AST_NODE_TYPES.ArrowFunctionExpression) {
       return true;
     }
 
     // Constructs in standalone functions (outside of classes) are intended to be called
     // multiple times with different IDs
-    if (current.type === "FunctionDeclaration") {
+    if (current.type === AST_NODE_TYPES.FunctionDeclaration) {
       return true;
     }
 

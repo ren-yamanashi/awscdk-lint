@@ -1,7 +1,8 @@
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 export const preferGrantsProperty = createRule({
   name: "prefer-grants-property",
@@ -18,12 +19,15 @@ export const preferGrantsProperty = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
 
     return {
       CallExpression(node) {
-        if (node.callee.type !== "MemberExpression" || node.callee.property.type !== "Identifier") {
+        if (
+          node.callee.type !== AST_NODE_TYPES.MemberExpression ||
+          node.callee.property.type !== AST_NODE_TYPES.Identifier
+        ) {
           return;
         }
 
@@ -52,7 +56,8 @@ export const preferGrantsProperty = createRule({
           .find((s) => s.name === convertedMethodName);
         if (!suggestedMethod) return;
 
-        const objectName = objectNode.type === "Identifier" ? objectNode.name : "object";
+        const objectName =
+          objectNode.type === AST_NODE_TYPES.Identifier ? objectNode.name : "object";
 
         context.report({
           node: node.callee.property,

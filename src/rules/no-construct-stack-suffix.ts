@@ -1,11 +1,12 @@
 import type { Context, ESTree } from "@oxlint/plugins";
 
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-param-names";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 const SUFFIX_TYPE = {
   CONSTRUCT: "Construct",
@@ -56,13 +57,13 @@ export const noConstructStackSuffix = createRule({
   },
   defaultOptions: [defaultOption],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
 
     return {
       NewExpression(node) {
-        const type = checker.getTypeAtLocation(node);
-        if (!type || !isConstructOrStackType(type, checker) || node.arguments.length < 2) {
+        const type = parserServices.getTypeAtLocation(node);
+        if (!isConstructOrStackType(type, checker) || node.arguments.length < 2) {
           return;
         }
 
@@ -86,7 +87,7 @@ const validateConstructId = (node: ESTree.NewExpression, context: Context): void
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
-  if (secondArg.type !== "Literal" || typeof secondArg.value !== "string") {
+  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
     return;
   }
 

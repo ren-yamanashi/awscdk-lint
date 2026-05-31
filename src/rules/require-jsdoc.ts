@@ -1,7 +1,8 @@
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES, AST_TOKEN_TYPES } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 /**
  * Require JSDoc comments for interface properties and public properties in Construct classes
@@ -23,15 +24,15 @@ export const requireJSDoc = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       TSPropertySignature(node) {
-        if (node.key.type !== "Identifier") return;
+        if (node.key.type !== AST_NODE_TYPES.Identifier) return;
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
-        if (parent?.type !== "TSInterfaceDeclaration") return;
+        if (parent?.type !== AST_NODE_TYPES.TSInterfaceDeclaration) return;
 
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;
@@ -40,7 +41,7 @@ export const requireJSDoc = createRule({
         const sourceCode = context.sourceCode;
         const comments = sourceCode.getCommentsBefore(node);
         const hasJSDoc = comments.some(
-          ({ type, value }) => type === "Block" && value.startsWith("*"),
+          ({ type, value }) => type === AST_TOKEN_TYPES.Block && value.startsWith("*"),
         );
 
         if (!hasJSDoc) {
@@ -54,14 +55,17 @@ export const requireJSDoc = createRule({
         }
       },
       PropertyDefinition(node) {
-        if (node.key.type !== "Identifier" || node.parent.type !== "ClassBody") {
+        if (
+          node.key.type !== AST_NODE_TYPES.Identifier ||
+          node.parent.type !== AST_NODE_TYPES.ClassBody
+        ) {
           return;
         }
 
         // NOTE: Check if the class extends Construct
         const classDeclaration = node.parent.parent;
         if (
-          classDeclaration.type !== "ClassDeclaration" ||
+          classDeclaration.type !== AST_NODE_TYPES.ClassDeclaration ||
           !classDeclaration.superClass ||
           !classDeclaration.id
         ) {
@@ -78,7 +82,7 @@ export const requireJSDoc = createRule({
         const sourceCode = context.sourceCode;
         const comments = sourceCode.getCommentsBefore(node);
         const hasJSDoc = comments.some(
-          ({ type, value }) => type === "Block" && value.startsWith("*"),
+          ({ type, value }) => type === AST_TOKEN_TYPES.Block && value.startsWith("*"),
         );
 
         if (!hasJSDoc) {

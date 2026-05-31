@@ -1,12 +1,13 @@
 import type { Context, ESTree } from "@oxlint/plugins";
 import type { CorsaTypeCheckerShape } from "corsa-oxlint";
 
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 type Option = {
   disallowContainingParentName?: boolean;
@@ -18,7 +19,16 @@ const defaultOption: Option = {
 
 type ConstructorFn = ESTree.MethodDefinition["value"];
 
-type Args = {
+type ValidateStatementArgs<T extends ESTree.Statement> = {
+  statement: T;
+  parentClassName: string;
+  context: Context;
+  checker: CorsaTypeCheckerShape;
+  option: Option;
+};
+
+type ValidateExpressionArgs<T extends ESTree.Expression | ConstructorFn> = {
+  expression: T;
   parentClassName: string;
   context: Context;
   checker: CorsaTypeCheckerShape;
@@ -55,14 +65,15 @@ export const noParentNameConstructIdMatch = createRule({
     ],
   },
   defaultOptions: [defaultOption],
+
   create(context) {
-    const option: Option = (context.options[0] as Option) || defaultOption;
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const option: Option = (context.options[0] as Option | undefined) ?? defaultOption;
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       ClassBody(node) {
         const parent = node.parent;
-        if (parent?.type !== "ClassDeclaration" || !parent.id) return;
+        if (parent?.type !== AST_NODE_TYPES.ClassDeclaration || !parent.id) return;
 
         const parentClassName = parent.id.name;
         if (!parentClassName) return;
@@ -73,9 +84,9 @@ export const noParentNameConstructIdMatch = createRule({
         for (const body of node.body) {
           // NOTE: Ignore if neither method nor constructor.
           if (
-            body.type !== "MethodDefinition" ||
+            body.type !== AST_NODE_TYPES.MethodDefinition ||
             !["method", "constructor"].includes(body.kind) ||
-            body.value.type !== "FunctionExpression"
+            body.value.type !== AST_NODE_TYPES.FunctionExpression
           ) {
             continue;
           }
@@ -102,13 +113,13 @@ const validateConstructorBody = ({
   context,
   checker,
   option,
-}: Args & { expression: ConstructorFn }): void => {
-  if (!expression.body || expression.body.type !== "BlockStatement") return;
+}: ValidateExpressionArgs<ConstructorFn>): void => {
+  if (!expression.body || expression.body.type !== AST_NODE_TYPES.BlockStatement) return;
   for (const statement of expression.body.body) {
     switch (statement.type) {
-      case "VariableDeclaration": {
+      case AST_NODE_TYPES.VariableDeclaration: {
         const newExpression = statement.declarations[0].init;
-        if (newExpression?.type !== "NewExpression") continue;
+        if (newExpression?.type !== AST_NODE_TYPES.NewExpression) continue;
         validateConstructId({
           context,
           expression: newExpression,
@@ -118,8 +129,8 @@ const validateConstructorBody = ({
         });
         break;
       }
-      case "ExpressionStatement": {
-        if (statement.expression?.type !== "NewExpression") break;
+      case AST_NODE_TYPES.ExpressionStatement: {
+        if (statement.expression?.type !== AST_NODE_TYPES.NewExpression) break;
         validateStatement({
           statement,
           parentClassName,
@@ -129,7 +140,7 @@ const validateConstructorBody = ({
         });
         break;
       }
-      case "IfStatement": {
+      case AST_NODE_TYPES.IfStatement: {
         traverseStatements({
           context,
           parentClassName,
@@ -139,13 +150,13 @@ const validateConstructorBody = ({
         });
         break;
       }
-      case "SwitchStatement": {
+      case AST_NODE_TYPES.SwitchStatement: {
         for (const switchCase of statement.cases) {
-          for (const consequent of switchCase.consequent) {
+          for (const statement of switchCase.consequent) {
             traverseStatements({
               context,
               parentClassName,
-              statement: consequent,
+              statement,
               checker,
               option,
             });
@@ -168,9 +179,9 @@ const traverseStatements = ({
   context,
   checker,
   option,
-}: Args & { statement: ESTree.Statement }) => {
+}: ValidateStatementArgs<ESTree.Statement>) => {
   switch (statement.type) {
-    case "BlockStatement": {
+    case AST_NODE_TYPES.BlockStatement: {
       for (const body of statement.body) {
         validateStatement({
           statement: body,
@@ -182,9 +193,9 @@ const traverseStatements = ({
       }
       break;
     }
-    case "ExpressionStatement": {
+    case AST_NODE_TYPES.ExpressionStatement: {
       const newExpression = statement.expression;
-      if (newExpression?.type !== "NewExpression") break;
+      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
       validateStatement({
         statement,
         parentClassName,
@@ -194,9 +205,9 @@ const traverseStatements = ({
       });
       break;
     }
-    case "VariableDeclaration": {
+    case AST_NODE_TYPES.VariableDeclaration: {
       const newExpression = statement.declarations[0].init;
-      if (newExpression?.type !== "NewExpression") break;
+      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
       validateConstructId({
         context,
         expression: newExpression,
@@ -220,11 +231,11 @@ const validateStatement = ({
   context,
   checker,
   option,
-}: Args & { statement: ESTree.Statement }): void => {
+}: ValidateStatementArgs<ESTree.Statement>): void => {
   switch (statement.type) {
-    case "VariableDeclaration": {
+    case AST_NODE_TYPES.VariableDeclaration: {
       const newExpression = statement.declarations[0].init;
-      if (newExpression?.type !== "NewExpression") break;
+      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
       validateConstructId({
         context,
         expression: newExpression,
@@ -234,9 +245,9 @@ const validateStatement = ({
       });
       break;
     }
-    case "ExpressionStatement": {
+    case AST_NODE_TYPES.ExpressionStatement: {
       const newExpression = statement.expression;
-      if (newExpression?.type !== "NewExpression") break;
+      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
       validateConstructId({
         context,
         expression: newExpression,
@@ -246,7 +257,7 @@ const validateStatement = ({
       });
       break;
     }
-    case "IfStatement": {
+    case AST_NODE_TYPES.IfStatement: {
       validateIfStatement({
         statement,
         parentClassName,
@@ -256,7 +267,7 @@ const validateStatement = ({
       });
       break;
     }
-    case "SwitchStatement": {
+    case AST_NODE_TYPES.SwitchStatement: {
       validateSwitchStatement({
         statement,
         parentClassName,
@@ -279,7 +290,7 @@ const validateIfStatement = ({
   context,
   checker,
   option,
-}: Args & { statement: ESTree.IfStatement }): void => {
+}: ValidateStatementArgs<ESTree.IfStatement>): void => {
   traverseStatements({
     context,
     parentClassName,
@@ -299,7 +310,7 @@ const validateSwitchStatement = ({
   context,
   checker,
   option,
-}: Args & { statement: ESTree.SwitchStatement }): void => {
+}: ValidateStatementArgs<ESTree.SwitchStatement>): void => {
   for (const caseStatement of statement.cases) {
     for (const _consequent of caseStatement.consequent) {
       traverseStatements({
@@ -322,14 +333,14 @@ const validateConstructId = ({
   parentClassName,
   checker,
   option,
-}: Args & { expression: ESTree.NewExpression }): void => {
+}: ValidateExpressionArgs<ESTree.NewExpression>): void => {
   const type = checker.getTypeAtLocation(expression);
 
   if (expression.arguments.length < 2) return;
 
   // NOTE: Treat the second argument as ID
   const secondArg = expression.arguments[1];
-  if (secondArg.type !== "Literal" || typeof secondArg.value !== "string") {
+  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
     return;
   }
 

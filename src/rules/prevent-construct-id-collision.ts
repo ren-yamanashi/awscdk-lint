@@ -1,10 +1,11 @@
 import type { Context, ESTree } from "@oxlint/plugins";
 
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-param-names";
 import { createRule } from "../shared/create-rule";
+import { getParserServices } from "../shared/parser-services";
 
 /**
  * Prevent Construct ID collisions inside loops.
@@ -26,13 +27,13 @@ export const preventConstructIdCollision = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
-        const type = checker.getTypeAtLocation(node);
+        const type = parserServices.getTypeAtLocation(node);
 
-        if (!type || !isConstructType(type, checker) || node.arguments.length < 2) {
+        if (!isConstructType(type, checker) || node.arguments.length < 2) {
           return;
         }
 
@@ -57,7 +58,7 @@ const validateConstructIdInLoop = (node: ESTree.NewExpression, context: Context)
   const secondArg = node.arguments[1];
 
   // NOTE: String literals may cause ID collisions
-  if (secondArg.type === "Literal" && typeof secondArg.value === "string") {
+  if (secondArg.type === AST_NODE_TYPES.Literal && typeof secondArg.value === "string") {
     context.report({
       node: secondArg,
       messageId: "preventConstructIdCollision",
@@ -67,7 +68,7 @@ const validateConstructIdInLoop = (node: ESTree.NewExpression, context: Context)
   }
 
   // NOTE: Template literals without expressions are also static values
-  if (secondArg.type === "TemplateLiteral" && !secondArg.expressions.length) {
+  if (secondArg.type === AST_NODE_TYPES.TemplateLiteral && !secondArg.expressions.length) {
     const constructId = secondArg.quasis.map((q) => q.value.raw).join("");
     context.report({
       node: secondArg,
@@ -88,25 +89,26 @@ const isInsideLoop = (node: ESTree.Node): boolean => {
   while (current) {
     // NOTE: Detect loop statements
     if (
-      current.type === "ForStatement" ||
-      current.type === "ForInStatement" ||
-      current.type === "ForOfStatement" ||
-      current.type === "WhileStatement" ||
-      current.type === "DoWhileStatement"
+      current.type === AST_NODE_TYPES.ForStatement ||
+      current.type === AST_NODE_TYPES.ForInStatement ||
+      current.type === AST_NODE_TYPES.ForOfStatement ||
+      current.type === AST_NODE_TYPES.WhileStatement ||
+      current.type === AST_NODE_TYPES.DoWhileStatement
     ) {
       return true;
     }
 
     // NOTE: Detect iteration method callbacks (ArrowFunction/FunctionExpression)
     if (
-      (current.type === "ArrowFunctionExpression" || current.type === "FunctionExpression") &&
+      (current.type === AST_NODE_TYPES.ArrowFunctionExpression ||
+        current.type === AST_NODE_TYPES.FunctionExpression) &&
       isIterationMethodCallback(current)
     ) {
       return true;
     }
 
     // NOTE: Stop at non-constructor method definitions
-    if (current.type === "MethodDefinition" && current.kind !== "constructor") {
+    if (current.type === AST_NODE_TYPES.MethodDefinition && current.kind !== "constructor") {
       return false;
     }
 
@@ -135,12 +137,12 @@ const ITERATION_METHODS = new Set([
  */
 const isIterationMethodCallback = (node: ESTree.Node): boolean => {
   const parent = node.parent;
-  if (parent?.type !== "CallExpression") return false;
+  if (parent?.type !== AST_NODE_TYPES.CallExpression) return false;
 
   const callee = parent.callee;
-  if (callee.type !== "MemberExpression") return false;
+  if (callee.type !== AST_NODE_TYPES.MemberExpression) return false;
 
-  if (callee.property.type !== "Identifier") return false;
+  if (callee.property.type !== AST_NODE_TYPES.Identifier) return false;
 
   return ITERATION_METHODS.has(callee.property.name);
 };

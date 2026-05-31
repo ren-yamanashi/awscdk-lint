@@ -1,3 +1,5 @@
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -30,7 +32,10 @@ export const noMutablePropertyOfPropsInterface = createRule({
 
         for (const property of node.body.body) {
           // NOTE: check property signature
-          if (property.type !== "TSPropertySignature" || property.key.type !== "Identifier") {
+          if (
+            property.type !== AST_NODE_TYPES.TSPropertySignature ||
+            property.key.type !== AST_NODE_TYPES.Identifier
+          ) {
             continue;
           }
 

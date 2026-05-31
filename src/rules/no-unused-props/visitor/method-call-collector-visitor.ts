@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { INodeVisitor } from "./interface/node-visitor";
 
 type MethodCallInfo = {
@@ -35,9 +37,9 @@ export class MethodCallCollectorVisitor implements INodeVisitor {
   visitCallExpression(node: ESTree.CallExpression): void {
     // NOTE: Check for this.methodName(...) pattern
     if (
-      node.callee.type !== "MemberExpression" ||
-      node.callee.object.type !== "ThisExpression" ||
-      node.callee.property.type !== "Identifier"
+      node.callee.type !== AST_NODE_TYPES.MemberExpression ||
+      node.callee.object.type !== AST_NODE_TYPES.ThisExpression ||
+      node.callee.property.type !== AST_NODE_TYPES.Identifier
     ) {
       return;
     }
@@ -45,7 +47,9 @@ export class MethodCallCollectorVisitor implements INodeVisitor {
     const methodName = node.callee.property.name;
     const propsArgIndices: number[] = node.arguments.reduce<number[]>(
       (acc, arg, index) =>
-        arg.type === "Identifier" && arg.name === this.propsParamName ? [...acc, index] : acc,
+        arg.type === AST_NODE_TYPES.Identifier && arg.name === this.propsParamName
+          ? [...acc, index]
+          : acc,
       [],
     );
 

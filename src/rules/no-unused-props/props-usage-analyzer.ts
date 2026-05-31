@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { IPropsUsageTracker } from "./props-usage-tracker";
 import {
   DirectPropsUsageVisitor,
@@ -9,8 +11,13 @@ import {
   traverseNodes,
 } from "./visitor";
 
+type PropsParamNode = Extract<
+  ESTree.MethodDefinition["value"]["params"][number],
+  { type: "Identifier" }
+>;
+
 export interface IPropsUsageAnalyzer {
-  analyze(constructor: ESTree.MethodDefinition, propsParam: { name: string }): void;
+  analyze(constructor: ESTree.MethodDefinition, propsParam: PropsParamNode): void;
 }
 
 export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
@@ -20,12 +27,12 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     this.tracker = tracker;
   }
 
-  analyze(constructor: ESTree.MethodDefinition, propsParam: { name: string }): void {
+  analyze(constructor: ESTree.MethodDefinition, propsParam: PropsParamNode): void {
     const constructorBody = constructor.value.body;
     const classNode = constructor.parent;
     const propsParamName = propsParam.name;
-    if (!constructorBody || constructorBody.type !== "BlockStatement") return;
-    if (!classNode || classNode.type !== "ClassBody") return;
+    if (!constructorBody || constructorBody.type !== AST_NODE_TYPES.BlockStatement) return;
+    if (!classNode || classNode.type !== AST_NODE_TYPES.ClassBody) return;
 
     this.checkUsageForDirectAccess(constructorBody, propsParamName);
     this.checkUsageForAliasAccess(constructorBody, propsParamName);
@@ -165,7 +172,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
       // NOTE: Get the actual parameter names from the method definition
       for (const argIndex of propsArgIndices) {
         const param = methodDef.value.params[argIndex];
-        if (param?.type === "Identifier") {
+        if (param?.type === AST_NODE_TYPES.Identifier) {
           const visitor = new DirectPropsUsageVisitor(this.tracker, param.name);
           traverseNodes(methodDef.value.body, visitor);
         }
@@ -237,12 +244,12 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   ): string | null {
     for (const statement of body.body) {
       if (
-        statement.type === "ExpressionStatement" &&
-        statement.expression.type === "AssignmentExpression" &&
-        statement.expression.left.type === "MemberExpression" &&
-        statement.expression.left.object.type === "ThisExpression" &&
-        statement.expression.left.property.type === "Identifier" &&
-        statement.expression.right.type === "Identifier" &&
+        statement.type === AST_NODE_TYPES.ExpressionStatement &&
+        statement.expression.type === AST_NODE_TYPES.AssignmentExpression &&
+        statement.expression.left.type === AST_NODE_TYPES.MemberExpression &&
+        statement.expression.left.object.type === AST_NODE_TYPES.ThisExpression &&
+        statement.expression.left.property.type === AST_NODE_TYPES.Identifier &&
+        statement.expression.right.type === AST_NODE_TYPES.Identifier &&
         statement.expression.right.name === propsParamName
       ) {
         return statement.expression.left.property.name;
@@ -288,8 +295,8 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   ): ESTree.MethodDefinition | null {
     for (const member of classBody.body) {
       if (
-        member.type === "MethodDefinition" &&
-        member.key.type === "Identifier" &&
+        member.type === AST_NODE_TYPES.MethodDefinition &&
+        member.key.type === AST_NODE_TYPES.Identifier &&
         member.key.name === methodName
       ) {
         return member;

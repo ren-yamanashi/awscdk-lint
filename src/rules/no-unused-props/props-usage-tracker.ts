@@ -1,6 +1,8 @@
 import type { ESTree } from "@oxlint/plugins";
 import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { findPropertyNames } from "../../core/ast-node/finder/property-name";
 
 export interface IPropsUsageTracker {
@@ -86,9 +88,9 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   ): void {
     // NOTE: Check for props.propertyName or props?.propertyName pattern
     if (
-      node.object.type === "Identifier" &&
+      node.object.type === AST_NODE_TYPES.Identifier &&
       node.object.name === propsParamName &&
-      node.property.type === "Identifier"
+      node.property.type === AST_NODE_TYPES.Identifier
     ) {
       this.markAsUsed(node.property.name);
       return;
@@ -96,11 +98,11 @@ export class PropsUsageTracker implements IPropsUsageTracker {
 
     // NOTE: Check for this.props.propertyName or this.props?.propertyName pattern
     if (
-      node.object.type === "MemberExpression" &&
-      node.object.object.type === "ThisExpression" &&
-      node.object.property.type === "Identifier" &&
+      node.object.type === AST_NODE_TYPES.MemberExpression &&
+      node.object.object.type === AST_NODE_TYPES.ThisExpression &&
+      node.object.property.type === AST_NODE_TYPES.Identifier &&
       node.object.property.name === propsParamName &&
-      node.property.type === "Identifier"
+      node.property.type === AST_NODE_TYPES.Identifier
     ) {
       this.markAsUsed(node.property.name);
       return;
@@ -113,8 +115,8 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   ): void {
     // NOTE: Check for destructuring assignment: const { prop1, prop2 } = props
     if (
-      node.id.type !== "ObjectPattern" ||
-      node.init?.type !== "Identifier" ||
+      node.id.type !== AST_NODE_TYPES.ObjectPattern ||
+      node.init?.type !== AST_NODE_TYPES.Identifier ||
       node.init.name !== propsParamName
     ) {
       return;
@@ -132,10 +134,10 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   ): void {
     // NOTE: Check for this.property = props.property pattern
     if (
-      node.right.type !== "MemberExpression" ||
-      node.right.object.type !== "Identifier" ||
+      node.right.type !== AST_NODE_TYPES.MemberExpression ||
+      node.right.object.type !== AST_NODE_TYPES.Identifier ||
       node.right.object.name !== propsParamName ||
-      node.right.property.type !== "Identifier"
+      node.right.property.type !== AST_NODE_TYPES.Identifier
     ) {
       return;
     }
@@ -156,11 +158,9 @@ export class PropsUsageTracker implements IPropsUsageTracker {
       propertyName === "prototype";
 
     const typeProperties = checker.getPropertiesOfType(propsType);
-    const result: string[] = typeProperties.reduce(
-      (acc: string[], prop: { name: string }) =>
-        !isInternalProperty(prop.name) ? [...acc, prop.name] : acc,
-      [] as string[],
+    return typeProperties.reduce<string[]>(
+      (acc, prop) => (!isInternalProperty(prop.name) ? [...acc, prop.name] : acc),
+      [],
     );
-    return result;
   }
 }

@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
 
@@ -37,9 +39,9 @@ export class PropsAliasVisitor implements INodeVisitor {
      * ```
      */
     if (
-      node.object.type === "Identifier" &&
+      node.object.type === AST_NODE_TYPES.Identifier &&
       this.aliases.has(node.object.name) &&
-      node.property.type === "Identifier"
+      node.property.type === AST_NODE_TYPES.Identifier
     ) {
       this.tracker.markAsUsed(node.property.name);
     }
@@ -70,9 +72,9 @@ export class PropsAliasVisitor implements INodeVisitor {
 
     // NOTE: const myProps = props - track 'myProps' as an alias of props
     if (
-      parent.type === "VariableDeclarator" &&
+      parent.type === AST_NODE_TYPES.VariableDeclarator &&
       parent.init === node &&
-      parent.id.type === "Identifier"
+      parent.id.type === AST_NODE_TYPES.Identifier
     ) {
       this.aliases.add(parent.id.name);
     }

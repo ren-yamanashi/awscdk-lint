@@ -1,11 +1,12 @@
 import type { Context, ESTree } from "@oxlint/plugins";
 import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
-import { getParserServices } from "corsa-oxlint";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../../shared/create-rule";
+import { getParserServices } from "../../shared/parser-services";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
 
@@ -32,15 +33,15 @@ export const noUnusedProps = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const services = getParserServices(context);
-    const checker = services.program.getTypeChecker();
+    const parserServices = getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
 
     return {
       ClassDeclaration(node) {
         if (node.abstract || !node.id) return;
 
-        const type = checker.getTypeAtLocation(node);
-        if (!type || !isConstructType(type, checker)) return;
+        const type = parserServices.getTypeAtLocation(node);
+        if (!isConstructType(type, checker)) return;
 
         const constructor = findConstructor(node);
         if (!constructor) return;
@@ -69,9 +70,9 @@ const getPropsParam = (
   const propsParam = params[2];
 
   // ++++++++++++++Important+++++++++++++
-  // When AST_NODE_TYPES is "ObjectPattern", this rule does not apply.
+  // When AST_NODE_TYPES is "ObjectPattern" (e.g. { bucketName, enableVersioning }: MyConstructProps), it can be confirmed whether the variable is used in the IDE, and it conflicts with the @typescript-eslint/no-unused-vars rule, so this rule does not apply.
   // ++++++++++++++++++++++++++++++++++++
-  if (propsParam.type !== "Identifier") return null;
+  if (propsParam.type !== AST_NODE_TYPES.Identifier) return null;
 
   const type = checker.getTypeAtLocation(propsParam);
   if (!type) return null;
@@ -99,29 +100,32 @@ const isPropsUsedInSuperCall = (
 ): boolean => {
   if (constructor.kind !== "constructor") return false;
   const body = constructor.value.body;
-  if (!body || body.type !== "BlockStatement") return false;
+  if (!body || body.type !== AST_NODE_TYPES.BlockStatement) return false;
 
   for (const expr of body.body) {
     if (
-      expr.type !== "ExpressionStatement" ||
-      expr.expression.type !== "CallExpression" ||
-      expr.expression.callee.type !== "Super"
+      expr.type !== AST_NODE_TYPES.ExpressionStatement ||
+      expr.expression.type !== AST_NODE_TYPES.CallExpression ||
+      expr.expression.callee.type !== AST_NODE_TYPES.Super
     ) {
       continue;
     }
 
     const visitNode = (node: ESTree.Node, propsName: string): boolean => {
-      const nodeValue = node.type === "Property" ? node.value : node;
+      const nodeValue = node.type === AST_NODE_TYPES.Property ? node.value : node;
       switch (nodeValue.type) {
-        case "Identifier":
+        case AST_NODE_TYPES.Identifier: {
           return nodeValue.name === propsName;
-        case "ObjectExpression":
+        }
+        case AST_NODE_TYPES.ObjectExpression: {
           for (const prop of nodeValue.properties) {
             if (visitNode(prop, propsName)) return true;
           }
           break;
-        default:
+        }
+        default: {
           break;
+        }
       }
       return false;
     };
