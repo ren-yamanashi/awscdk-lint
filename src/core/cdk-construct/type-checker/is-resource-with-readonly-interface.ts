@@ -10,7 +10,9 @@ import { isResourceType } from "./is-resource";
  * 2. The type or any of its base classes implements an interface following CDK's read-only interface naming convention
  *    - Pattern 1: Class name with I prefix (e.g., Bucket -> IBucket)
  *    - Pattern 2: Class name without Base suffix/prefix with I prefix (e.g., BucketBase -> IBucket, BaseService -> IService)
- *    - Pattern 3: Class name with BaseV{number} suffix with I prefix (e.g., TableBaseV2 -> ITableV2)
+ *
+ * @param type - The TypeScript type to check
+ * @returns true if the type is a resource Construct with a matching read-only interface, false otherwise
  *
  * @example
  * // Returns true for:
@@ -28,8 +30,7 @@ export const isResourceWithReadonlyInterface = (
   type: CorsaType | undefined,
   checker: CorsaTypeCheckerShape,
 ): boolean => {
-  if (!type) return false;
-  if (!isResourceType(type, checker)) return false;
+  if (!type || !isResourceType(type, checker)) return false;
   const className = getSimpleTypeName(type, checker);
   if (!className || isIgnoreClass(className)) return false;
   return hasMatchingInterfaceInHierarchy(type, checker);
@@ -37,6 +38,8 @@ export const isResourceWithReadonlyInterface = (
 
 /**
  * Checks if a type or any of its base classes implements an interface matching its class name
+ * @param type - The TypeScript type to check
+ * @returns true if any class in the hierarchy implements a matching interface
  * @private
  */
 const hasMatchingInterfaceInHierarchy = (
@@ -80,8 +83,12 @@ const hasMatchingInterfaceInHierarchy = (
  * 1. Class name with I prefix (e.g., Bucket -> IBucket)
  * 2. Class name without Base suffix/prefix with I prefix (e.g., BucketBase -> IBucket, BaseService -> IService)
  * 3. Class name with BaseV{number} suffix with I prefix (e.g., TableBaseV2 -> ITableV2)
+ *
+ * @param interfaceName - The name of the interface to check
+ * @param classname - The name of the class to compare against
+ * @returns boolean - true if the interface name matches the class name patterns, false otherwise
  */
-const checkInterfaceMatchClassName = (interfaceName: string, classname: string): boolean => {
+const checkInterfaceMatchClassName = (interfaceName: string, classname: string) => {
   // Pattern 1: Class name with I prefix
   if (interfaceName === `I${classname}`) return true;
 
@@ -120,13 +127,9 @@ const getImplementedInterfaceNames = (
  * @private
  */
 const getSimpleTypeName = (type: CorsaType, checker: CorsaTypeCheckerShape): string | undefined => {
-  const raw = checker.typeToString(type);
-  if (!raw) return undefined;
-  const withoutGenerics = raw.replace(/<.*$/, "").trim();
-  const lastSegment = withoutGenerics.includes(".")
-    ? (withoutGenerics.split(".").pop() ?? withoutGenerics)
-    : withoutGenerics;
-  return lastSegment || undefined;
+  const raw = checker.typeToString(type).replace(/<.*$/, "").trim();
+  const segment = raw.split(".").pop() ?? raw;
+  return segment || undefined;
 };
 
 const isIgnoreClass = (className: string): boolean => {

@@ -268,12 +268,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside map
     {
@@ -292,12 +287,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside for...of loop
     {
@@ -319,12 +309,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside for...in loop
     {
@@ -346,12 +331,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside for loop
     {
@@ -372,12 +352,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside while loop
     {
@@ -400,12 +375,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside do...while loop
     {
@@ -428,12 +398,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Template literal without expressions inside forEach
     {
@@ -452,12 +417,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside flatMap
     {
@@ -476,12 +436,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside reduce
     {
@@ -500,12 +455,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside function expression callback in forEach
     {
@@ -524,12 +474,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
     // WHEN: Literal ID inside nested loop (forEach inside for)
     {
@@ -550,12 +495,7 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
         }
       }
       `,
-      errors: [
-        {
-          messageId: "preventConstructIdCollision",
-          data: { constructId: "Bucket" },
-        },
-      ],
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
   ],
 });

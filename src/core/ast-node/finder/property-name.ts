@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 /**
  * Retrieves the property names from an array of properties.
  *
@@ -9,7 +11,9 @@ import type { ESTree } from "@oxlint/plugins";
 export const findPropertyNames = (properties: ESTree.ObjectPattern["properties"]): string[] => {
   return properties.reduce<string[]>(
     (acc, prop) =>
-      prop.type === "Property" && prop.key.type === "Identifier" ? [...acc, prop.key.name] : acc,
+      prop.type === AST_NODE_TYPES.Property && prop.key.type === AST_NODE_TYPES.Identifier
+        ? [...acc, prop.key.name]
+        : acc,
     [],
   );
 };

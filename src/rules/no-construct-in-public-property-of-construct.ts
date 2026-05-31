@@ -1,17 +1,15 @@
-import type { Context, ESTree } from "@oxlint/plugins";
+import type { Context } from "@oxlint/plugins";
 import type { ParserServices } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
-import { findPublicPropertiesInClass } from "../core/ast-node/finder/public-property";
+import {
+  findPublicPropertiesInClass,
+  PublicProperty,
+} from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
-
-type PublicProperty = {
-  name: string;
-  node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
-};
 
 /**
  * Disallow Construct types in public property of Construct

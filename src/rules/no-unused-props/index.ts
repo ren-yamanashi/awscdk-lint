@@ -152,7 +152,9 @@ const reportUnusedProperties = (
     context.report({
       node: propsParam,
       messageId: "unusedProp",
-      data: { propName },
+      data: {
+        propName,
+      },
     });
   }
 };

@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 /**
  * Finds the constructor method in a class declaration
  * @param node The class declaration
@@ -8,6 +10,6 @@ import type { ESTree } from "@oxlint/plugins";
 export const findConstructor = (node: ESTree.Class): ESTree.MethodDefinition | undefined => {
   return node.body.body.find(
     (member): member is ESTree.MethodDefinition =>
-      member.type === "MethodDefinition" && member.kind === "constructor",
+      member.type === AST_NODE_TYPES.MethodDefinition && member.kind === "constructor",
   );
 };

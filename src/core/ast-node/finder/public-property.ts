@@ -1,5 +1,7 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { AST_NODE_TYPES } from "corsa-oxlint";
+
 import { findConstructor } from "./constructor";
 
 export type PublicProperty = {
@@ -34,18 +36,27 @@ const findPublicProperty = (
 ): PublicProperty | undefined => {
   switch (property.type) {
     // NOTE: get from constructor
-    case "TSParameterProperty": {
-      if (property.parameter.type !== "Identifier") return;
-      if (["private", "protected"].includes(property.accessibility ?? "")) return;
+    case AST_NODE_TYPES.TSParameterProperty: {
+      if (property.parameter.type !== AST_NODE_TYPES.Identifier) {
+        return;
+      }
+      if (["private", "protected"].includes(property.accessibility ?? "")) {
+        return;
+      }
+      if (!property.parameter.typeAnnotation) return;
       return {
         name: property.parameter.name,
         node: property,
       };
     }
     // NOTE: get from class element
-    case "PropertyDefinition": {
-      if (property.key.type !== "Identifier") return;
-      if (["private", "protected"].includes(property.accessibility ?? "")) return;
+    case AST_NODE_TYPES.PropertyDefinition: {
+      if (property.key.type !== AST_NODE_TYPES.Identifier) {
+        return;
+      }
+      if (["private", "protected"].includes(property.accessibility ?? "")) {
+        return;
+      }
       if (!property.typeAnnotation) return;
       return {
         name: property.key.name,

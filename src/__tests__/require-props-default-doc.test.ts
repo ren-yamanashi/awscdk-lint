@@ -3,7 +3,7 @@ import { createRuleTester } from "./create-rule-tester";
 
 const ruleTester = createRuleTester();
 
-ruleTester.run("require-props-default-doc", requirePropsDefaultDoc, {
+ruleTester.run("require-default-doc-optional-props", requirePropsDefaultDoc, {
   valid: [
     {
       // WHEN: Optional property has @default JSDoc in Props interface
