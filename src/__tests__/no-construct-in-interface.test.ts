@@ -106,7 +106,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       namespace ecs {
         export interface IFargateService extends baseService.IService {}
         export class FargateService extends baseService.BaseService implements IFargateService {
-          readonly serviceArn: string = "";
+          readonly serviceArn: string;
           constructor() {
             super();
           }
@@ -259,7 +259,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
 
       namespace ecs {
         export class FargateService extends BaseService implements IFargateService {
-          readonly serviceArn: string = "";
+          readonly serviceArn: string;
           constructor() {
             super();
           }
