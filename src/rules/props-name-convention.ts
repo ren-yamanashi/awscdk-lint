@@ -7,9 +7,6 @@ import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
-// NOTE: corsa widens `BindingIdentifier.typeAnnotation` to `TSTypeAnnotation | null`
-// (it is typed `null` in `@oxlint/plugins`), so use it for the Identifier members to read
-// the props parameter's type annotation type-safely.
 type ConstructorParam =
   | Exclude<ESTree.MethodDefinition["value"]["params"][number], { type: "Identifier" }>
   | CorsaESTree["BindingIdentifier"];
