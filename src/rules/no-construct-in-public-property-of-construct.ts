@@ -1,14 +1,12 @@
 import type { Context, ESTree } from "@oxlint/plugins";
+import type { ParserServices } from "corsa-oxlint";
 
-import { AST_NODE_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findPublicPropertiesInClass } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
-
-type ParserServicesWithTypeInformation = ReturnType<typeof getParserServices>;
 
 type PublicProperty = {
   name: string;
@@ -35,7 +33,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
       ClassDeclaration(node) {
@@ -53,7 +51,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
 const validatePublicProperty = (
   publicProperty: PublicProperty,
   context: Context,
-  parserServices: ParserServicesWithTypeInformation,
+  parserServices: ParserServices,
 ) => {
   // NOTE: corsa's getTypeAtLocation needs the binding identifier (not the whole property node)
   const keyNode =

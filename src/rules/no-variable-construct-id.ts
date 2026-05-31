@@ -1,13 +1,12 @@
 import type { Context, ESTree } from "@oxlint/plugins";
 
-import { AST_NODE_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
 
 /**
  * Enforce using literal strings for Construct ID.
@@ -28,7 +27,7 @@ export const noVariableConstructId = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {

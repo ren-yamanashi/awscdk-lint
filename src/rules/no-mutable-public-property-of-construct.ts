@@ -1,12 +1,13 @@
 import type { Context, SourceCode } from "@oxlint/plugins";
 
+import { ESLintUtils } from "corsa-oxlint";
+
 import {
   findPublicPropertiesInClass,
   PublicProperty,
 } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
 
 /**
  * Disallow mutable public properties of Construct
@@ -29,7 +30,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
 
     return {

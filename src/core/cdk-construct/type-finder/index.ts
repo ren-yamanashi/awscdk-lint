@@ -7,9 +7,10 @@ import { isResourceWithReadonlyInterface } from "../type-checker/is-resource-wit
  * Handles direct types and type arguments (Array<T>, Promise<T>, etc.)
  */
 export const findTypeOfCdkConstruct = (
-  type: CorsaType,
+  type: CorsaType | undefined,
   checker: CorsaTypeCheckerShape,
 ): CorsaType | undefined => {
+  if (!type) return undefined;
   if (isResourceWithReadonlyInterface(type, checker)) return type;
 
   if (checker.isUnionType(type) || checker.isIntersectionType(type)) {

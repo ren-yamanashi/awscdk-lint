@@ -12,8 +12,9 @@ const IGNORED_CLASSES = ["App", "Stage", "CfnOutput"] as const;
  * @returns True if the type extends Construct or Stack, otherwise false
  */
 export const isConstructOrStackType = (
-  type: CorsaType,
+  type: CorsaType | undefined,
   checker: CorsaTypeCheckerShape,
 ): boolean => {
+  if (!type) return false;
   return isExtendsFromTargetSuperClass(type, checker, TARGET_CLASSES, IGNORED_CLASSES);
 };

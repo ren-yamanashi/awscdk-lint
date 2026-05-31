@@ -8,7 +8,11 @@ import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-
  * @param checker - The tsgo type checker
  * @returns True if the type extends Construct, otherwise false
  */
-export const isConstructType = (type: CorsaType, checker: CorsaTypeCheckerShape): boolean => {
+export const isConstructType = (
+  type: CorsaType | undefined,
+  checker: CorsaTypeCheckerShape,
+): boolean => {
+  if (!type) return false;
   return isExtendsFromTargetSuperClass(
     type,
     checker,

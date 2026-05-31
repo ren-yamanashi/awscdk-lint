@@ -1,12 +1,12 @@
 import type { Context, ESTree } from "@oxlint/plugins";
+import type { ParserServices } from "corsa-oxlint";
 
-import { AST_NODE_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
 
 type Option = {
   disallowContainingParentName?: boolean;
@@ -17,13 +17,12 @@ const defaultOption: Option = {
 };
 
 type ConstructorFn = ESTree.MethodDefinition["value"];
-type ParserServicesWithTypeInformation = ReturnType<typeof getParserServices>;
 
 type ValidateStatementArgs<T extends ESTree.Statement> = {
   statement: T;
   parentClassName: string;
   context: Context;
-  parserServices: ParserServicesWithTypeInformation;
+  parserServices: ParserServices;
   option: Option;
 };
 
@@ -31,7 +30,7 @@ type ValidateExpressionArgs<T extends ESTree.Expression | ConstructorFn> = {
   expression: T;
   parentClassName: string;
   context: Context;
-  parserServices: ParserServicesWithTypeInformation;
+  parserServices: ParserServices;
   option: Option;
 };
 
@@ -68,7 +67,7 @@ export const noParentNameConstructIdMatch = createRule({
 
   create(context) {
     const option: Option = (context.options[0] as Option | undefined) ?? defaultOption;
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
       ClassBody(node) {

@@ -1,12 +1,11 @@
 import type { ESTree } from "@oxlint/plugins";
 import type { ESTree as CorsaESTree } from "corsa-oxlint";
 
-import { AST_NODE_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
 
 // NOTE: corsa widens `BindingIdentifier.typeAnnotation` to `TSTypeAnnotation | null`
 // (it is typed `null` in `@oxlint/plugins`), so use it for the Identifier members to read
@@ -35,7 +34,7 @@ export const propsNameConvention = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
       ClassDeclaration(node) {

@@ -1,8 +1,7 @@
-import { AST_NODE_TYPES, AST_TOKEN_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, AST_TOKEN_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
 
 /**
  * Require JSDoc comments for interface properties and public properties in Construct classes
@@ -24,7 +23,7 @@ export const requireJSDoc = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
       TSPropertySignature(node) {

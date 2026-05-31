@@ -8,9 +8,10 @@ const CONSTRUCT_SIGNATURE_KIND = 1;
  * @returns The property names of the class constructor.
  */
 export const findConstructorPropertyNames = (
-  type: CorsaType,
+  type: CorsaType | undefined,
   checker: CorsaTypeCheckerShape,
 ): string[] => {
+  if (!type) return [];
   const signature = checker.getSignaturesOfType(type, CONSTRUCT_SIGNATURE_KIND)[0];
   if (!signature) return [];
 

@@ -9,12 +9,13 @@ import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
  * @returns True if the type extends target super class, otherwise false
  */
 export const isExtendsFromTargetSuperClass = (
-  type: CorsaType,
+  type: CorsaType | undefined,
   checker: CorsaTypeCheckerShape,
   targetSuperClasses: readonly string[],
   ignoredClasses: readonly string[],
   visited = new Set<string>(),
 ): boolean => {
+  if (!type) return false;
   const rawTypeName = checker.typeToString(type);
   if (!rawTypeName || visited.has(rawTypeName)) return false;
   visited.add(rawTypeName);

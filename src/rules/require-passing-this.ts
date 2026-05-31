@@ -1,11 +1,10 @@
-import { AST_NODE_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
 
 type Option = {
   allowNonThisAndDisallowScope?: boolean;
@@ -47,7 +46,7 @@ export const requirePassingThis = createRule({
   defaultOptions: [defaultOption],
   create(context) {
     const options: Option = (context.options[0] as Option | undefined) ?? defaultOption;
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {

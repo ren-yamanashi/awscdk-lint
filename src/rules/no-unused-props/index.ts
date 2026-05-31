@@ -1,18 +1,16 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import type { CorsaType } from "corsa-oxlint";
+import type { CorsaType, ParserServices } from "corsa-oxlint";
 
-import { AST_NODE_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../../shared/create-rule";
-import { getParserServices } from "../../shared/parser-services";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
 
 type ConstructorParam = ESTree.MethodDefinition["value"]["params"][number];
 type PropsParamNode = Extract<ConstructorParam, { type: "Identifier" }>;
-type ParserServicesWithTypeInformation = ReturnType<typeof getParserServices>;
 
 /**
  * Enforces that all properties defined in props type are used within the constructor
@@ -34,7 +32,7 @@ export const noUnusedProps = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
 
     return {
@@ -63,7 +61,7 @@ export const noUnusedProps = createRule({
 
 const getPropsParam = (
   constructor: ESTree.MethodDefinition,
-  parserServices: ParserServicesWithTypeInformation,
+  parserServices: ParserServices,
 ): { node: PropsParamNode; type: CorsaType } | null => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
@@ -75,9 +73,12 @@ const getPropsParam = (
   // ++++++++++++++++++++++++++++++++++++
   if (propsParam.type !== AST_NODE_TYPES.Identifier) return null;
 
+  const type = parserServices.getTypeAtLocation(propsParam);
+  if (!type) return null;
+
   return {
     node: propsParam,
-    type: parserServices.getTypeAtLocation(propsParam),
+    type,
   };
 };
 

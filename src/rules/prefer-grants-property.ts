@@ -1,8 +1,7 @@
-import { AST_NODE_TYPES } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
-import { getParserServices } from "../shared/parser-services";
 
 export const preferGrantsProperty = createRule({
   name: "prefer-grants-property",
@@ -19,7 +18,7 @@ export const preferGrantsProperty = createRule({
   },
   defaultOptions: [],
   create(context) {
-    const parserServices = getParserServices(context);
+    const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
 
     return {
@@ -36,7 +35,7 @@ export const preferGrantsProperty = createRule({
 
         const objectNode = node.callee.object;
         const type = parserServices.getTypeAtLocation(objectNode);
-        if (!isConstructType(type, checker)) return;
+        if (!type || !isConstructType(type, checker)) return;
 
         const grantsProperty = checker.getPropertiesOfType(type).find((s) => s.name === "grants");
         if (!grantsProperty) return;

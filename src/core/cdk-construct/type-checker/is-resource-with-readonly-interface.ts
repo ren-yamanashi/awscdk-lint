@@ -15,9 +15,10 @@ const IGNORED_CLASS_NAMES: ReadonlySet<string> = new Set(["Resource", "Construct
  *    - Pattern 3: Class name with BaseV{number} suffix with I prefix (e.g., TableBaseV2 -> ITableV2)
  */
 export const isResourceWithReadonlyInterface = (
-  type: CorsaType,
+  type: CorsaType | undefined,
   checker: CorsaTypeCheckerShape,
 ): boolean => {
+  if (!type) return false;
   if (!isResourceType(type, checker)) return false;
 
   const className = getSimpleTypeName(type, checker);

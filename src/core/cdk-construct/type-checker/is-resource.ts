@@ -8,6 +8,10 @@ import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-
  * @param checker - The tsgo type checker
  * @returns True if the type extends Resource, otherwise false
  */
-export const isResourceType = (type: CorsaType, checker: CorsaTypeCheckerShape): boolean => {
+export const isResourceType = (
+  type: CorsaType | undefined,
+  checker: CorsaTypeCheckerShape,
+): boolean => {
+  if (!type) return false;
   return isExtendsFromTargetSuperClass(type, checker, ["Resource"], []);
 };
