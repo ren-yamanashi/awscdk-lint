@@ -8,7 +8,10 @@ import {
   PublicProperty,
 } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
-import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
+import {
+  findTypeOfCdkConstruct,
+  resolveCdkConstructTypeAtNode,
+} from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -51,13 +54,17 @@ const validatePublicProperty = (
   context: Context,
   parserServices: ParserServices,
 ) => {
-  // NOTE: corsa's getTypeAtLocation needs the binding identifier (not the whole property node)
-  const keyNode =
+  const typeAnnotation =
     publicProperty.node.type === AST_NODE_TYPES.TSParameterProperty
-      ? publicProperty.node.parameter
-      : publicProperty.node.key;
-  const type = parserServices.getTypeAtLocation(keyNode);
+      ? publicProperty.node.parameter.typeAnnotation
+      : publicProperty.node.typeAnnotation;
   const checker = parserServices.program.getTypeChecker();
+  const type = resolveCdkConstructTypeAtNode(
+    typeAnnotation,
+    publicProperty.node,
+    parserServices,
+    checker,
+  );
   const constructType = findTypeOfCdkConstruct(type, checker);
   if (constructType) {
     context.report({
