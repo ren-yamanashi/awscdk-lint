@@ -51,17 +51,8 @@ const validatePublicProperty = (
   context: Context,
   parserServices: ParserServices,
 ) => {
-  const typeAnnotation =
-    publicProperty.node.type === AST_NODE_TYPES.TSParameterProperty
-      ? publicProperty.node.parameter.typeAnnotation
-      : publicProperty.node.typeAnnotation;
   const checker = parserServices.program.getTypeChecker();
-  const type = resolveCdkConstructTypeAtNode(
-    typeAnnotation,
-    publicProperty.node,
-    parserServices,
-    checker,
-  );
+  const type = parserServices.getTypeAtLocation(publicProperty.node);
   const constructType = findTypeOfCdkConstruct(type, checker);
   if (constructType) {
     context.report({
