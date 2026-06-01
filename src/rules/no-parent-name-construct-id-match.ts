@@ -71,14 +71,14 @@ export const noParentNameConstructIdMatch = createRule({
     const checker = parserServices.program.getTypeChecker();
     return {
       ClassBody(node) {
+        const type = parserServices.getTypeAtLocation(node);
+        if (!isConstructOrStackType(type, checker)) return;
+
         const parent = node.parent;
         if (parent?.type !== AST_NODE_TYPES.ClassDeclaration) return;
 
         const parentClassName = parent.id?.name;
         if (!parentClassName) return;
-
-        const type = parserServices.getTypeAtLocation(parent);
-        if (!isConstructOrStackType(type, checker)) return;
 
         for (const body of node.body) {
           // NOTE: Ignore if neither method nor constructor.

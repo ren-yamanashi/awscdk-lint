@@ -65,14 +65,13 @@ export const requireJSDoc = createRule({
         const classDeclaration = node.parent.parent;
         if (
           classDeclaration.type !== AST_NODE_TYPES.ClassDeclaration ||
-          !classDeclaration.superClass ||
-          !classDeclaration.id
+          !classDeclaration.superClass
         ) {
           return;
         }
 
         // NOTE: Check if the class extends Construct and the property is public
-        const classType = parserServices.getTypeAtLocation(classDeclaration.id);
+        const classType = parserServices.getTypeAtLocation(classDeclaration);
         const accessibility = node.accessibility ?? "public";
         if (!isConstructType(classType, checker) || accessibility !== "public") {
           return;

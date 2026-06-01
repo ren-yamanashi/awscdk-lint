@@ -1,17 +1,14 @@
 import type { Context } from "@oxlint/plugins";
 import type { ParserServices } from "corsa-oxlint";
 
-import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
+import { ESLintUtils } from "corsa-oxlint";
 
 import {
   findPublicPropertiesInClass,
   PublicProperty,
 } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
-import {
-  findTypeOfCdkConstruct,
-  resolveCdkConstructTypeAtNode,
-} from "../core/cdk-construct/type-finder";
+import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
 /**
