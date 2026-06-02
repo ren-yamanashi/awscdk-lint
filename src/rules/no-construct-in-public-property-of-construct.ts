@@ -60,7 +60,7 @@ const validatePublicProperty = (
       messageId: "invalidPublicPropertyOfConstruct",
       data: {
         propertyName: publicProperty.name,
-        typeName: checker.typeToString(constructType),
+        typeName: checker.getSymbolOfType(constructType)?.name ?? "",
       },
     });
   }

@@ -106,10 +106,7 @@ const checkInterfaceMatchClassName = (interfaceName: string, classname: string) 
 };
 
 /**
- * Retrieves the names of interfaces implemented by a type. Note: corsa's
- * `getImplementedTypesOfType` returns inherited interfaces too, unlike main's
- * direct-only heritage-clause reader. The walking in
- * `hasMatchingInterfaceInHierarchy` still bails out at the topmost match.
+ * Retrieves interface names a type implements (inherited interfaces included).
  * @private
  */
 const getImplementedInterfaceNames = (

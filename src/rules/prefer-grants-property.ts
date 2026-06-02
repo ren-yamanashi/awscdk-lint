@@ -43,8 +43,8 @@ export const preferGrantsProperty = createRule({
         const grantsType = checker.getTypeOfSymbol(grantsProperty);
         if (!grantsType) return;
 
-        const grantsTypeName = checker.typeToString(grantsType);
-        if (!grantsTypeName.endsWith("Grants")) return;
+        const grantsTypeName = checker.getSymbolOfType(grantsType)?.name;
+        if (!grantsTypeName?.endsWith("Grants")) return;
 
         const convertedMethodName = methodName
           .replace(/^grant/, "")

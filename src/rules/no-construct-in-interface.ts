@@ -44,7 +44,7 @@ export const noConstructInInterface = createRule({
               messageId: "invalidInterfaceProperty",
               data: {
                 propertyName: property.key.name,
-                typeName: checker.typeToString(result),
+                typeName: checker.getSymbolOfType(result)?.name ?? "",
               },
             });
           }
