@@ -1,7 +1,6 @@
 import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
-// NOTE: SignatureKind.Construct (Call = 0, Construct = 1)
-const CONSTRUCT_SIGNATURE_KIND = 1;
+import { SignatureKind } from "corsa-oxlint";
 
 /**
  * Parses type to get the property names of the class constructor.
@@ -12,7 +11,7 @@ export const findConstructorPropertyNames = (
   checker: CorsaTypeCheckerShape,
 ): string[] => {
   if (!type) return [];
-  const signature = checker.getSignaturesOfType(type, CONSTRUCT_SIGNATURE_KIND)[0];
+  const signature = checker.getSignaturesOfType(type, SignatureKind.Construct)[0];
   if (!signature) return [];
 
   return signature.parameters.reduce<string[]>((acc, id) => {

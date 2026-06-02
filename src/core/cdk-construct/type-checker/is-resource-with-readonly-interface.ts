@@ -123,13 +123,11 @@ const getImplementedInterfaceNames = (
 };
 
 /**
- * Extracts the simple class name from a CorsaType (strips generics and namespace).
+ * Extracts the simple class name from a CorsaType via its symbol.
  * @private
  */
 const getSimpleTypeName = (type: CorsaType, checker: CorsaTypeCheckerShape): string | undefined => {
-  const raw = checker.typeToString(type).replace(/<.*$/, "").trim();
-  const segment = raw.split(".").pop() ?? raw;
-  return segment || undefined;
+  return checker.getSymbolOfType(type)?.name;
 };
 
 const isIgnoreClass = (className: string): boolean => {

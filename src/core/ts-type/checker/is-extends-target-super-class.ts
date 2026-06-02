@@ -13,10 +13,10 @@ export const isExtendsFromTargetSuperClass = (
   ignoredClasses: readonly string[],
 ): boolean => {
   if (!type) return false;
-  const rawTypeName = checker.typeToString(type);
+  const name = checker.getSymbolOfType(type)?.name ?? "";
 
-  if (ignoredClasses.includes(rawTypeName)) return false;
-  if (targetSuperClasses.includes(rawTypeName)) return true;
+  if (ignoredClasses.includes(name)) return false;
+  if (targetSuperClasses.includes(name)) return true;
 
   const baseTypes = checker.getBaseTypes(type);
   return baseTypes.some((base) =>
