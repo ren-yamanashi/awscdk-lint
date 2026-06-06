@@ -45,6 +45,7 @@ export const noParentNameConstructIdMatch = createRule({
     type: "problem",
     docs: {
       description: "Enforce that construct IDs does not match the parent construct name.",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructId:

@@ -20,6 +20,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
     type: "problem",
     docs: {
       description: "Disallow mutable public properties of Construct",
+      requiresTypeChecking: true,
     },
     fixable: "code",
     messages: {

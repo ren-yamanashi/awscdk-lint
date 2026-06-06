@@ -17,6 +17,7 @@ export const preventConstructIdCollision = createRule({
     docs: {
       description:
         "Disallow using literal Construct IDs inside loops, which may cause ID collisions.",
+      requiresTypeChecking: true,
     },
     messages: {
       preventConstructIdCollision:

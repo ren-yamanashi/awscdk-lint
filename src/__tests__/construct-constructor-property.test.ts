@@ -1,7 +1,8 @@
-import { constructConstructorProperty } from "../rules/construct-constructor-property";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { constructConstructorProperty } from "../rules/construct-constructor-property";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("construct-constructor-property", constructConstructorProperty, {
   valid: [

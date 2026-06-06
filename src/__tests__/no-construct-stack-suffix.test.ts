@@ -1,7 +1,8 @@
-import { noConstructStackSuffix } from "../rules/no-construct-stack-suffix";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noConstructStackSuffix } from "../rules/no-construct-stack-suffix";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-construct-stack-suffix", noConstructStackSuffix, {
   valid: [

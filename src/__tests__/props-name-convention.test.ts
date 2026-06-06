@@ -1,7 +1,8 @@
-import { propsNameConvention } from "../rules/props-name-convention";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { propsNameConvention } from "../rules/props-name-convention";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("props-name-convention", propsNameConvention, {
   valid: [

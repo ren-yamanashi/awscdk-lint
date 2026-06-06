@@ -9,6 +9,7 @@ export const preferGrantsProperty = createRule({
     type: "suggestion",
     docs: {
       description: "Prefer using the grants property over grant* methods when available.",
+      requiresTypeChecking: true,
     },
     messages: {
       useGrantsProperty:

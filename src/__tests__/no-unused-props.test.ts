@@ -1,7 +1,8 @@
-import { noUnusedProps } from "../rules/no-unused-props";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noUnusedProps } from "../rules/no-unused-props";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-unused-props", noUnusedProps, {
   valid: [

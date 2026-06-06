@@ -1,7 +1,8 @@
-import { requireJSDoc } from "../rules/require-jsdoc";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { requireJSDoc } from "../rules/require-jsdoc";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("require-jsdoc", requireJSDoc, {
   valid: [

@@ -1,7 +1,8 @@
-import { preferGrantsProperty } from "../rules/prefer-grants-property";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { preferGrantsProperty } from "../rules/prefer-grants-property";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("prefer-grants-property", preferGrantsProperty, {
   valid: [

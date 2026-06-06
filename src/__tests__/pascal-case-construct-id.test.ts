@@ -1,7 +1,8 @@
-import { pascalCaseConstructId } from "../rules/pascal-case-construct-id";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { pascalCaseConstructId } from "../rules/pascal-case-construct-id";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
   valid: [

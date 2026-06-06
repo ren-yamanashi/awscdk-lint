@@ -1,7 +1,8 @@
-import { requirePropsDefaultDoc } from "../rules/require-props-default-doc";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { requirePropsDefaultDoc } from "../rules/require-props-default-doc";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("require-default-doc-optional-props", requirePropsDefaultDoc, {
   valid: [

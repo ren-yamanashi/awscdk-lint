@@ -1,7 +1,8 @@
-import { noParentNameConstructIdMatch } from "../rules/no-parent-name-construct-id-match";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noParentNameConstructIdMatch } from "../rules/no-parent-name-construct-id-match";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch, {
   valid: [

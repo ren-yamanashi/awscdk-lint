@@ -22,6 +22,7 @@ export const propsNameConvention = createRule({
     type: "problem",
     docs: {
       description: "Enforce props interface name to follow ${ConstructName}Props format",
+      requiresTypeChecking: true,
     },
     schema: [],
     messages: {

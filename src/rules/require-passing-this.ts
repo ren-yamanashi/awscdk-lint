@@ -25,6 +25,7 @@ export const requirePassingThis = createRule({
     type: "problem",
     docs: {
       description: "Require passing `this` in a constructor.",
+      requiresTypeChecking: true,
     },
     messages: {
       missingPassingThis: "Require passing `this` in a constructor.",

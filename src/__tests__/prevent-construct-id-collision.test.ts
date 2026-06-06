@@ -1,7 +1,8 @@
-import { preventConstructIdCollision } from "../rules/prevent-construct-id-collision";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { preventConstructIdCollision } from "../rules/prevent-construct-id-collision";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
   valid: [

@@ -1,7 +1,8 @@
-import { noMutablePublicPropertyOfConstruct } from "../rules/no-mutable-public-property-of-construct";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noMutablePublicPropertyOfConstruct } from "../rules/no-mutable-public-property-of-construct";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropertyOfConstruct, {
   valid: [

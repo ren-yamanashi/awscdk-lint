@@ -1,7 +1,8 @@
-import { requirePassingThis } from "../rules/require-passing-this";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { requirePassingThis } from "../rules/require-passing-this";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("require-passing-this", requirePassingThis, {
   valid: [

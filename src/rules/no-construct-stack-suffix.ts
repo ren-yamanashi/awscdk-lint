@@ -33,6 +33,7 @@ export const noConstructStackSuffix = createRule({
     type: "problem",
     docs: {
       description: "Effort to avoid using 'Construct' and 'Stack' suffix in construct id.",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructId: "{{ classType }} ID '{{ id }}' should not include {{ suffix }} suffix.",

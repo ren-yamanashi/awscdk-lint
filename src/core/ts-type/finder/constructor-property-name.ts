@@ -12,10 +12,7 @@ export const findConstructorPropertyNames = (
 ): string[] => {
   if (!type) return [];
   const signature = checker.getSignaturesOfType(type, SignatureKind.Construct)[0];
-  if (!signature) return [];
+  if (!signature?.parameterSymbols) return [];
 
-  return signature.parameters.reduce<string[]>((acc, id) => {
-    const symbol = checker.getSymbolById(id);
-    return symbol ? [...acc, symbol.name] : acc;
-  }, []);
+  return signature.parameterSymbols.map((symbol) => symbol.name);
 };

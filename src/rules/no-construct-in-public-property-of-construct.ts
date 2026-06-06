@@ -22,6 +22,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
     type: "problem",
     docs: {
       description: "Disallow Construct types in public property of Construct",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidPublicPropertyOfConstruct:

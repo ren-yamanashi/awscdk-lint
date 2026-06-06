@@ -1,7 +1,8 @@
-import { noConstructInInterface } from "../rules/no-construct-in-interface";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noConstructInInterface } from "../rules/no-construct-in-interface";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-construct-in-interface", noConstructInInterface, {
   valid: [

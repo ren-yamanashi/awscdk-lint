@@ -25,6 +25,7 @@ export const constructConstructorProperty = createRule({
     docs: {
       description:
         "Enforces that constructors of classes extending Construct have the property names 'scope, id' or 'scope, id, props'",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructorProperty:

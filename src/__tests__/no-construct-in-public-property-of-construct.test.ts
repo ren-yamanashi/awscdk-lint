@@ -1,7 +1,8 @@
-import { noConstructInPublicPropertyOfConstruct } from "../rules/no-construct-in-public-property-of-construct";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noConstructInPublicPropertyOfConstruct } from "../rules/no-construct-in-public-property-of-construct";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run(
   "no-construct-in-public-property-of-construct",

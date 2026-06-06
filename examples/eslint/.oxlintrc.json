@@ -3,7 +3,6 @@
   "settings": {
     "corsaOxlint": {
       "parserOptions": {
-        "projectService": true,
         "corsa": {
           "executable": "./node_modules/.bin/tsgo"
         }

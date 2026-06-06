@@ -14,6 +14,7 @@ export const noConstructInInterface = createRule({
     type: "problem",
     docs: {
       description: "Disallow CDK Construct types in interface properties",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidInterfaceProperty:

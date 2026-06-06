@@ -24,6 +24,7 @@ export const noUnusedProps = createRule({
     docs: {
       description:
         "Enforces that all properties defined in props type are used within the constructor",
+      requiresTypeChecking: true,
     },
     messages: {
       unusedProp: "Property '{{propName}}' is defined in props but never used",

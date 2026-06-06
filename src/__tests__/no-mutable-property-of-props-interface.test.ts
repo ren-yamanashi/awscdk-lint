@@ -1,7 +1,8 @@
-import { noMutablePropertyOfPropsInterface } from "../rules/no-mutable-property-of-props-interface";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noMutablePropertyOfPropsInterface } from "../rules/no-mutable-property-of-props-interface";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-mutable-property-of-props-interface", noMutablePropertyOfPropsInterface, {
   valid: [

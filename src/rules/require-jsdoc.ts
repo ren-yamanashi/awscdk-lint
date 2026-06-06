@@ -15,6 +15,7 @@ export const requireJSDoc = createRule({
     docs: {
       description:
         "Require JSDoc comments for interface properties and public properties in Construct classes",
+      requiresTypeChecking: true,
     },
     messages: {
       missingJSDoc: "Property '{{ propertyName }}' should have a JSDoc comment.",

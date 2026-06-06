@@ -19,6 +19,7 @@ export const noVariableConstructId = createRule({
     type: "problem",
     docs: {
       description: `Enforce using literal strings for Construct ID.`,
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructId: "Shouldn't use a parameter as a Construct ID.",

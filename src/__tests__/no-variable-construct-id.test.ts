@@ -1,7 +1,8 @@
-import { noVariableConstructId } from "../rules/no-variable-construct-id";
-import { createRuleTester } from "./create-rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
-const ruleTester = createRuleTester();
+import { noVariableConstructId } from "../rules/no-variable-construct-id";
+
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-variable-construct-id", noVariableConstructId, {
   valid: [
