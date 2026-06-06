@@ -1,14 +1,5 @@
 {
   "jsPlugins": ["eslint-plugin-awscdk"],
-  "settings": {
-    "corsaOxlint": {
-      "parserOptions": {
-        "corsa": {
-          "executable": "./node_modules/.bin/tsgo"
-        }
-      }
-    }
-  },
   "rules": {
     "awscdk/no-import-private": "error",
     "awscdk/construct-constructor-property": "error",
