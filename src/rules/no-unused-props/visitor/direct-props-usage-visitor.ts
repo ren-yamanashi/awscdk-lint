@@ -1,4 +1,4 @@
-import type { ESTree } from "@oxlint/plugins";
+import type { ESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
@@ -43,7 +43,7 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
     this.tracker.markAsUsedForAssignmentExpression(node, this.propsParamName);
   }
 
-  visitIdentifier(node: Extract<ESTree.Node, { type: "Identifier" }>): void {
+  visitIdentifier(node: ESTree.Identifier): void {
     /**
      * Handles cases where the props identifier is used as a whole value.
      *
