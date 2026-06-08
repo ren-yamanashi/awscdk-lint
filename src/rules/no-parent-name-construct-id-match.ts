@@ -67,7 +67,7 @@ export const noParentNameConstructIdMatch = createRule({
   defaultOptions: [defaultOption],
 
   create(context) {
-    const option: Option = (context.options[0] as Option | undefined) ?? defaultOption;
+    const option: Option = context.options[0] ?? defaultOption;
     const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
