@@ -48,9 +48,6 @@ export default defineConfig({
       onlyBundle: false,
     },
   },
-  staged: {
-    "*": ["vp check --fix", "bash scripts/secretlint.sh"],
-  },
   run: {
     tasks: {
       "test:integration": {

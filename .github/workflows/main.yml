@@ -65,10 +65,16 @@ jobs:
           path: ./docs/.vitepress/dist
 
   deploy:
+    needs: [integration, release]
     if: |
-      github.ref == 'refs/heads/main' &&
-      github.event_name == 'push'
-    needs: integration
+      always() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      needs.integration.result == 'success' &&
+      (
+        (contains(github.event.pull_request.labels.*.name, 'Type: Release') && needs.release.result == 'success') ||
+        contains(github.event.pull_request.labels.*.name, 'Docs: Deploy')
+      )
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
