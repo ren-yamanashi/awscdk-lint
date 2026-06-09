@@ -37,6 +37,8 @@ jobs:
         run: vp test --run
       - name: Run Integration Tests
         run: vp run test:integration
+      - name: Run Script Tests
+        run: vp run test:scripts
       - name: Run Vite+ Checks
         run: vp check
       - name: Upload package artifacts
@@ -116,20 +118,11 @@ jobs:
 
       - name: Get package info
         id: package
-        run: |
-          VERSION=$(jq -r '.version' package.json)
-          PACKAGE_NAME=$(jq -r '.name' package.json)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+        run: bash .github/scripts/get-package-info.sh
 
       - name: Check if tag exists
         id: tag-check
-        run: |
-          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
+        run: bash .github/scripts/check-tag.sh
         env:
           VERSION: ${{ steps.package.outputs.version }}
 
@@ -142,36 +135,28 @@ jobs:
 
       - name: Publish to npm with provenance
         if: steps.tag-check.outputs.exists == 'false'
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public --tag "$DIST_TAG"
+        env:
+          DIST_TAG: ${{ steps.package.outputs.dist_tag }}
 
       - name: Create GitHub Release with tag
         id: create-release
         if: steps.tag-check.outputs.exists == 'false'
-        run: |
-          RELEASE_URL=$(gh release create "v$VERSION" \
-            --title "v$VERSION" \
-            --target "$SHA" \
-            --notes "$PR_BODY")
-          echo "url=$RELEASE_URL" >> $GITHUB_OUTPUT
+        run: bash .github/scripts/create-github-release.sh
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.package.outputs.version }}
           SHA: ${{ github.sha }}
           PR_BODY: ${{ github.event.pull_request.body }}
+          IS_PRERELEASE: ${{ steps.package.outputs.is_prerelease }}
 
       - name: Comment on PR - Success
         if: |
-          always() && 
-          github.event_name == 'pull_request' && 
+          always() &&
+          github.event_name == 'pull_request' &&
           steps.tag-check.outputs.exists == 'false' &&
           success()
-        run: |
-          gh pr comment "$PR_NUMBER" \
-            --body "✅ **Release v$VERSION completed successfully!**
-
-          - 📦 npm package: https://www.npmjs.com/package/$PACKAGE_NAME/v/$VERSION
-          - 🏷️ GitHub Release: $RELEASE_URL
-          - 🔗 Workflow run: $SERVER_URL/$REPOSITORY/actions/runs/$RUN_ID"
+        run: bash .github/scripts/comment-release-success.sh
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -184,16 +169,11 @@ jobs:
 
       - name: Comment on PR - Failure
         if: |
-          always() && 
-          github.event_name == 'pull_request' && 
+          always() &&
+          github.event_name == 'pull_request' &&
           steps.tag-check.outputs.exists == 'false' &&
           failure()
-        run: |
-          gh pr comment "$PR_NUMBER" \
-            --body "❌ **Release v$VERSION failed**
-
-          Please check the workflow logs for details.
-          🔗 Workflow run: $SERVER_URL/$REPOSITORY/actions/runs/$RUN_ID"
+        run: bash .github/scripts/comment-release-failure.sh
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}

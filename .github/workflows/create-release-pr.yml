@@ -11,6 +11,10 @@ on:
           - patch
           - minor
           - major
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
 
 jobs:
   create-release-pr:
@@ -27,12 +31,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Install pnpm
-        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
-        id: pnpm-install
-        with:
-          version: 10.29.3
-          run_install: false
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
@@ -41,55 +39,13 @@ jobs:
       # No need to install dependencies - pnpm version works without them
       - name: Version bump
         id: version
-        run: |
-          pnpm version "$VERSION_TYPE" --no-git-tag-version
-          VERSION=$(jq -r '.version' package.json)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        run: bash .github/scripts/version-bump.sh
         env:
           VERSION_TYPE: ${{ github.event.inputs.version }}
 
       - name: Get release notes
         id: release-notes
-        run: |
-          # Get the default branch
-          DEFAULT_BRANCH=$(gh api "repos/$GITHUB_REPOSITORY" --jq '.default_branch')
-
-          # Get the latest release tag using GitHub API
-          # Use the exit code to determine if a release exists
-          if LAST_TAG=$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq '.tag_name' 2>/dev/null); then
-            echo "Previous release found: $LAST_TAG"
-          else
-            LAST_TAG=""
-            echo "No previous releases found - this will be the first release"
-          fi
-
-          # Generate release notes - only include previous_tag_name if we have a valid previous tag
-          echo "Generating release notes for tag: v$VERSION"
-          if [ -n "$LAST_TAG" ]; then
-            echo "Using previous tag: $LAST_TAG"
-            RELEASE_NOTES=$(gh api \
-              --method POST \
-              -H "Accept: application/vnd.github+json" \
-              "/repos/$GITHUB_REPOSITORY/releases/generate-notes" \
-              -f "tag_name=v$VERSION" \
-              -f "target_commitish=$DEFAULT_BRANCH" \
-              -f "previous_tag_name=$LAST_TAG" \
-              --jq '.body')
-          else
-            echo "Generating notes from all commits"
-            RELEASE_NOTES=$(gh api \
-              --method POST \
-              -H "Accept: application/vnd.github+json" \
-              "/repos/$GITHUB_REPOSITORY/releases/generate-notes" \
-              -f "tag_name=v$VERSION" \
-              -f "target_commitish=$DEFAULT_BRANCH" \
-              --jq '.body')
-          fi
-
-          # Set release notes as environment variable
-          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
-          echo "$RELEASE_NOTES" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+        run: bash .github/scripts/generate-release-notes.sh
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
