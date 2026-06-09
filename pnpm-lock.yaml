@@ -15,9 +15,6 @@ importers:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.4.1(jiti@2.6.1))
-      '@secretlint/secretlint-rule-preset-recommend':
-        specifier: ^13.0.0
-        version: 13.0.2
       '@types/node':
         specifier: ^24.10.13
         version: 24.10.15
@@ -1089,10 +1086,6 @@ packages:
 
   '@secretlint/resolver@13.0.2':
     resolution: {integrity: sha512-Ko50V0P3YAtEO20xBTczOzguBVk6+taSqkoAPHoOSdsTsSq1gzeYggY1UC8vVEHPGyRp/mb2QOuwIShdJZ8JFg==}
-
-  '@secretlint/secretlint-rule-preset-recommend@13.0.2':
-    resolution: {integrity: sha512-D03Kw51qOgffj9zNlJFZUarVmP8zGcCZNi7A14+vZtHskbbBPEsS/f09idb48rrlMSaRMBN29IkqfbmPyL9xtw==}
-    engines: {node: '>=22.0.0'}
 
   '@secretlint/source-creator@13.0.2':
     resolution: {integrity: sha512-tSooHad8QL+lqHP88zH9F8GMoR7bHUqPja5M/QnNHGnvOq/8OT1V8t1uigm6jlD03oJWNLwwF8QeHIedWKJ13g==}
@@ -3282,8 +3275,6 @@ snapshots:
   '@secretlint/profiler@13.0.2': {}
 
   '@secretlint/resolver@13.0.2': {}
-
-  '@secretlint/secretlint-rule-preset-recommend@13.0.2': {}
 
   '@secretlint/source-creator@13.0.2':
     dependencies:
