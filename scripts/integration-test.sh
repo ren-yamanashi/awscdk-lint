@@ -26,7 +26,7 @@ check_oxlint_output() {
   EXPECTED_ERRORS=1
   echo "RUNNING: $command"
   output=$($command 2>&1) || true
-  count=$(echo "$output" | grep -c ": error ")
+  count=$(echo "$output" | grep -c "\[Error/" || true)
   if [ "$count" -ne "$EXPECTED_ERRORS" ]; then
     echo "ERROR: Expected $EXPECTED_ERRORS errors but found $count!"
     echo "ACTUAL OUTPUT:"

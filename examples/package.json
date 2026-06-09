@@ -6,7 +6,7 @@
     "lint": "pnpm run eslint:esm & pnpm run eslint:cjs && pnpm run oxlint",
     "eslint:esm": "eslint --config eslint.config.ts",
     "eslint:cjs": "eslint --config eslint.config.cts",
-    "oxlint": "oxlint"
+    "oxlint": "oxlint --format=unix"
   },
   "dependencies": {
     "aws-cdk-lib": "latest",
