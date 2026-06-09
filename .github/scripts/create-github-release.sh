@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 PRERELEASE_FLAG=""
 if [ "$IS_PRERELEASE" = "true" ]; then

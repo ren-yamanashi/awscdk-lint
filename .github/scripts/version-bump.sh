@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 if [[ "$VERSION_TYPE" == pre* ]]; then
   npm version "$VERSION_TYPE" --preid=alpha --no-git-tag-version

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 gh pr comment "$PR_NUMBER" \
   --body "✅ **Release v$VERSION completed successfully!**

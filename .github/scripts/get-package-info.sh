@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 VERSION=$(jq -r '.version' package.json)
 PACKAGE_NAME=$(jq -r '.name' package.json)

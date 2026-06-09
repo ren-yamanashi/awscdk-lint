@@ -36,7 +36,6 @@ jobs:
         with:
           node-version: 24.14.1
 
-      # No need to install dependencies - pnpm version works without them
       - name: Version bump
         id: version
         run: bash .github/scripts/version-bump.sh
