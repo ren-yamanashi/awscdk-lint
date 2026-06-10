@@ -39,9 +39,6 @@ export default defineConfig({
     clean: true,
     format: ["esm", "cjs"],
     dts: true,
-    banner: {
-      js: 'import { fileURLToPath as __vp_fileURLToPath } from "node:url"; import { dirname as __vp_dirname } from "node:path"; const __filename = __vp_fileURLToPath(import.meta.url); const __dirname = __vp_dirname(__filename);',
-    },
     outputOptions: {
       exports: "named",
     },

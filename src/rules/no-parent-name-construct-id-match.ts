@@ -1,5 +1,5 @@
-import type { Context, ESTree } from "@oxlint/plugins";
-import type { ParserServices } from "corsa-oxlint";
+import type { ESTree } from "@oxlint/plugins";
+import type { ParserServices, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -21,7 +21,7 @@ type ConstructorFn = ESTree.MethodDefinition["value"];
 type ValidateStatementArgs<T extends ESTree.Statement> = {
   statement: T;
   parentClassName: string;
-  context: Context;
+  context: RuleContext;
   parserServices: ParserServices;
   option: Option;
 };
@@ -29,7 +29,7 @@ type ValidateStatementArgs<T extends ESTree.Statement> = {
 type ValidateExpressionArgs<T extends ESTree.Expression | ConstructorFn> = {
   expression: T;
   parentClassName: string;
-  context: Context;
+  context: RuleContext;
   parserServices: ParserServices;
   option: Option;
 };

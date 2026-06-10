@@ -1,6 +1,8 @@
-import type { Context, SourceCode } from "@oxlint/plugins";
+import type { RuleContext } from "corsa-oxlint";
 
 import { ESLintUtils } from "corsa-oxlint";
+
+type SourceCode = RuleContext["sourceCode"];
 
 import {
   findPublicPropertiesInClass,
@@ -55,7 +57,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
 
 const validatePublicProperty = (args: {
   publicProperty: PublicProperty;
-  context: Context;
+  context: RuleContext;
   sourceCode: SourceCode;
 }) => {
   const { publicProperty, context, sourceCode } = args;

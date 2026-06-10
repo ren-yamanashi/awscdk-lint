@@ -1,8 +1,10 @@
-import type { ESTree } from "@oxlint/plugins";
+import type { ESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { findConstructor } from "./constructor";
+
+type Class = ESTree.ClassDeclaration | ESTree.ClassExpression;
 
 export type PublicProperty = {
   /**
@@ -15,52 +17,43 @@ export type PublicProperty = {
   node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
 };
 
-export const findPublicPropertiesInClass = (node: ESTree.Class): PublicProperty[] => {
+export const findPublicPropertiesInClass = (node: Class): PublicProperty[] => {
   const constructorProperties = findPropertiesInConstructor(node);
   const classElementProperties = findPropertiesInClassElement(node);
   return [...constructorProperties, ...classElementProperties];
 };
 
-const findPropertiesInConstructor = (node: ESTree.Class) => {
+const findPropertiesInConstructor = (node: Class) => {
   const constructor = findConstructor(node);
   if (!constructor) return [];
   return constructor.value.params.flatMap((property) => findPublicProperty(property) ?? []);
 };
 
-const findPropertiesInClassElement = (node: ESTree.Class): PublicProperty[] => {
+const findPropertiesInClassElement = (node: Class): PublicProperty[] => {
   return node.body.body.flatMap((property) => findPublicProperty(property) ?? []);
 };
 
-const findPublicProperty = (
-  property: ESTree.ParamPattern | ESTree.ClassElement,
-): PublicProperty | undefined => {
+const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined => {
   switch (property.type) {
     // NOTE: get from constructor
     case AST_NODE_TYPES.TSParameterProperty: {
-      if (property.parameter.type !== AST_NODE_TYPES.Identifier) {
-        return;
-      }
-      if (["private", "protected"].includes(property.accessibility ?? "")) {
-        return;
-      }
+      if (property.parameter.type !== AST_NODE_TYPES.Identifier) return;
+      if (["private", "protected"].includes(property.accessibility ?? "")) return;
       if (!property.parameter.typeAnnotation) return;
       return {
         name: property.parameter.name,
         node: property,
       };
     }
-    // NOTE: get from class element
+    // NOTE: get from class element. `as` narrows oxlint's wider `type` discriminator
+    //       ("PropertyDefinition" | "TSAbstractPropertyDefinition") to the corsa-narrowed node.
     case AST_NODE_TYPES.PropertyDefinition: {
-      if (property.key.type !== AST_NODE_TYPES.Identifier) {
-        return;
-      }
-      if (["private", "protected"].includes(property.accessibility ?? "")) {
-        return;
-      }
+      if (property.key.type !== AST_NODE_TYPES.Identifier) return;
+      if (["private", "protected"].includes(property.accessibility ?? "")) return;
       if (!property.typeAnnotation) return;
       return {
         name: property.key.name,
-        node: property,
+        node: property as ESTree.PropertyDefinition,
       };
     }
   }

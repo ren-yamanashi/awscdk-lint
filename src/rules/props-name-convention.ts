@@ -1,5 +1,4 @@
-import type { ESTree } from "@oxlint/plugins";
-import type { ESTree as CorsaESTree } from "corsa-oxlint";
+import type { ESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -8,8 +7,12 @@ import { isConstructType } from "../core/cdk-construct/type-checker/is-construct
 import { createRule } from "../shared/create-rule";
 
 type ConstructorParam =
-  | Exclude<ESTree.MethodDefinition["value"]["params"][number], { type: "Identifier" }>
-  | CorsaESTree["BindingIdentifier"];
+  | ESTree.BindingIdentifier
+  | ESTree.ObjectPattern
+  | ESTree.ArrayPattern
+  | ESTree.AssignmentPattern
+  | ESTree.RestElement
+  | ESTree.TSParameterProperty;
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes

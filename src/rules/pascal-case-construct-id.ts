@@ -1,4 +1,4 @@
-import type { Context, ESTree } from "@oxlint/plugins";
+import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -66,7 +66,7 @@ const isPascalCase = (str: string) => {
 /**
  * Check the construct ID is PascalCase
  */
-const validateConstructId = (node: ESTree.NewExpression, context: Context) => {
+const validateConstructId = (node: ESTree.NewExpression, context: RuleContext) => {
   if (node.arguments.length < 2) return;
 
   // NOTE: Treat the second argument as ID

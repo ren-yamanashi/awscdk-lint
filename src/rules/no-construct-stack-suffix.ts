@@ -1,4 +1,4 @@
-import type { Context, ESTree } from "@oxlint/plugins";
+import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -83,7 +83,7 @@ export const noConstructStackSuffix = createRule({
  */
 const validateConstructId = (
   node: ESTree.NewExpression,
-  context: Context,
+  context: RuleContext,
   options: Option,
 ): void => {
   // NOTE: Treat the second argument as ID

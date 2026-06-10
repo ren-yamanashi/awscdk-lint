@@ -1,5 +1,4 @@
-import type { Context, ESTree } from "@oxlint/plugins";
-import type { CorsaType, ParserServices } from "corsa-oxlint";
+import type { CorsaType, ESTree, ParserServices, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -147,7 +146,7 @@ const isPropsUsedInSuperCall = (
 const reportUnusedProperties = (
   tracker: IPropsUsageTracker,
   propsParam: PropsParamNode,
-  context: Context,
+  context: RuleContext,
 ): void => {
   for (const propName of tracker.getUnusedProperties()) {
     context.report({

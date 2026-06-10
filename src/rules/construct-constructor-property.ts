@@ -1,5 +1,4 @@
-import type { Context, ESTree } from "@oxlint/plugins";
-import type { ESTree as CorsaESTree, ParserServices } from "corsa-oxlint";
+import type { ESTree, ParserServices, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -8,8 +7,12 @@ import { isConstructType } from "../core/cdk-construct/type-checker/is-construct
 import { createRule } from "../shared/create-rule";
 
 type ConstructorParam =
-  | Exclude<ESTree.MethodDefinition["value"]["params"][number], { type: "Identifier" }>
-  | CorsaESTree["BindingIdentifier"];
+  | ESTree.BindingIdentifier
+  | ESTree.ObjectPattern
+  | ESTree.ArrayPattern
+  | ESTree.AssignmentPattern
+  | ESTree.RestElement
+  | ESTree.TSParameterProperty;
 
 type ConstructorProperties = [ConstructorParam, ConstructorParam, ConstructorParam | undefined];
 
@@ -65,7 +68,7 @@ export const constructConstructorProperty = createRule({
  */
 const checkNumOfConstructorProperty = (
   constructor: ESTree.MethodDefinition,
-  context: Context,
+  context: RuleContext,
 ): ConstructorProperties | undefined => {
   const params = constructor.value.params;
   if (params.length < 2) {
@@ -83,7 +86,7 @@ const checkNumOfConstructorProperty = (
  */
 const checkFirstParamIsScope = (
   firstParam: ConstructorProperties[0],
-  context: Context,
+  context: RuleContext,
   parserServices: ParserServices,
 ) => {
   if (firstParam.type !== AST_NODE_TYPES.Identifier || firstParam.name !== "scope") {
@@ -107,7 +110,7 @@ const checkFirstParamIsScope = (
 /**
  * Checks if the second parameter is named "id" and of type string
  */
-const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Context) => {
+const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: RuleContext) => {
   if (secondParam.type !== AST_NODE_TYPES.Identifier || secondParam.name !== "id") {
     context.report({
       node: secondParam,
@@ -124,7 +127,7 @@ const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Co
 /**
  * Checks if the third parameter is named "props"
  */
-const checkThirdParamIsProps = (thirdParam: ConstructorProperties[2], context: Context) => {
+const checkThirdParamIsProps = (thirdParam: ConstructorProperties[2], context: RuleContext) => {
   if (!thirdParam) return;
   if (thirdParam.type !== AST_NODE_TYPES.Identifier || thirdParam.name !== "props") {
     context.report({

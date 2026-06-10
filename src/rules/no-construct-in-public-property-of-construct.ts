@@ -1,5 +1,4 @@
-import type { Context } from "@oxlint/plugins";
-import type { ParserServices } from "corsa-oxlint";
+import type { ParserServices, RuleContext } from "corsa-oxlint";
 
 import { ESLintUtils } from "corsa-oxlint";
 
@@ -49,7 +48,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
 
 const validatePublicProperty = (
   publicProperty: PublicProperty,
-  context: Context,
+  context: RuleContext,
   parserServices: ParserServices,
 ) => {
   const checker = parserServices.program.getTypeChecker();

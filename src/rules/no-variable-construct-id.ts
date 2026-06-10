@@ -1,4 +1,4 @@
-import type { Context, ESTree } from "@oxlint/plugins";
+import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -56,7 +56,7 @@ export const noVariableConstructId = createRule({
 /**
  * Check if the construct ID is a literal string
  */
-const validateConstructId = (node: ESTree.NewExpression, context: Context) => {
+const validateConstructId = (node: ESTree.NewExpression, context: RuleContext) => {
   if (node.arguments.length < 2 || shouldSkipIdValidation(node)) return;
 
   // NOTE: Treat the second argument as ID
