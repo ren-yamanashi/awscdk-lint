@@ -1,16 +1,8 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
 import { noMutablePublicPropertyOfConstruct } from "../rules/no-mutable-public-property-of-construct";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropertyOfConstruct, {
   valid: [

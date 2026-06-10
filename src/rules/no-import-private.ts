@@ -3,7 +3,7 @@ import * as path from "path";
 
 /**
  * Disallow importing modules from private directories at different levels of the hierarchy.
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noImportPrivate: Rule.RuleModule = {

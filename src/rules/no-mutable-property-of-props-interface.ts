@@ -4,7 +4,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Disallow mutable properties of Construct Props (interface)
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noMutablePropertyOfPropsInterface = createRule({

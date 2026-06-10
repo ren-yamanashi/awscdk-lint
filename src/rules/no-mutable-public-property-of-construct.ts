@@ -1,4 +1,4 @@
-import { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
+import { ESLintUtils, RuleContext } from "corsa-oxlint";
 
 import {
   findPublicPropertiesInClass,
@@ -7,11 +7,9 @@ import {
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { createRule } from "../shared/create-rule";
 
-type Context = TSESLint.RuleContext<"invalidPublicPropertyOfConstruct", []>;
-
 /**
  * Disallow mutable public properties of Construct
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noMutablePublicPropertyOfConstruct = createRule({
@@ -20,6 +18,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
     type: "problem",
     docs: {
       description: "Disallow mutable public properties of Construct",
+      requiresTypeChecking: true,
     },
     fixable: "code",
     messages: {
@@ -31,12 +30,13 @@ export const noMutablePublicPropertyOfConstruct = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
 
     return {
       ClassDeclaration(node) {
         const sourceCode = context.sourceCode;
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type)) return;
+        if (!isConstructOrStackType(type, checker)) return;
 
         const publicProperties = findPublicPropertiesInClass(node);
         for (const property of publicProperties) {
@@ -53,8 +53,8 @@ export const noMutablePublicPropertyOfConstruct = createRule({
 
 const validatePublicProperty = (args: {
   publicProperty: PublicProperty;
-  context: Context;
-  sourceCode: Readonly<TSESLint.SourceCode>;
+  context: RuleContext;
+  sourceCode: RuleContext["sourceCode"];
 }) => {
   const { publicProperty, context, sourceCode } = args;
   if (publicProperty.node.readonly) return;
