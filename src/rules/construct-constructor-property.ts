@@ -1,24 +1,27 @@
 import {
   AST_NODE_TYPES,
   ESLintUtils,
-  ParserServicesWithTypeInformation,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+  ESTree,
+  ParserServices,
+  RuleContext,
+} from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
-type Context = TSESLint.RuleContext<
-  "invalidConstructorProperty" | "invalidConstructorType" | "invalidConstructorIdType",
-  []
->;
+type ConstructorParam =
+  | ESTree.BindingIdentifier
+  | ESTree.ObjectPattern
+  | ESTree.ArrayPattern
+  | ESTree.AssignmentPattern
+  | ESTree.RestElement
+  | ESTree.TSParameterProperty;
 
 type ConstructorProperties = [
-  TSESTree.Parameter,
-  TSESTree.Parameter,
-  TSESTree.Parameter | undefined,
+  ConstructorParam,
+  ConstructorParam,
+  ConstructorParam | undefined,
 ];
 
 /**
@@ -33,6 +36,7 @@ export const constructConstructorProperty = createRule({
     docs: {
       description:
         "Enforces that constructors of classes extending Construct have the property names 'scope, id' or 'scope, id, props'",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructorProperty:
@@ -47,10 +51,11 @@ export const constructConstructorProperty = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructType(type)) return;
+        if (!isConstructType(type, checker)) return;
 
         const constructor = findConstructor(node);
         if (!constructor) return;
@@ -70,8 +75,8 @@ export const constructConstructorProperty = createRule({
  * Checks if the number of constructor properties is valid (at least 2)
  */
 const checkNumOfConstructorProperty = (
-  constructor: TSESTree.MethodDefinition,
-  context: Context,
+  constructor: ESTree.MethodDefinition,
+  context: RuleContext,
 ): ConstructorProperties | undefined => {
   const params = constructor.value.params;
   if (params.length < 2) {
@@ -89,15 +94,23 @@ const checkNumOfConstructorProperty = (
  */
 const checkFirstParamIsScope = (
   firstParam: ConstructorProperties[0],
-  context: Context,
-  parserServices: ParserServicesWithTypeInformation,
+  context: RuleContext,
+  parserServices: ParserServices,
 ) => {
-  if (firstParam.type !== AST_NODE_TYPES.Identifier || firstParam.name !== "scope") {
+  if (
+    firstParam.type !== AST_NODE_TYPES.Identifier ||
+    firstParam.name !== "scope"
+  ) {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (!isConstructType(parserServices.getTypeAtLocation(firstParam))) {
+  } else if (
+    !isConstructType(
+      parserServices.getTypeAtLocation(firstParam),
+      parserServices.program.getTypeChecker(),
+    )
+  ) {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorType",
@@ -108,13 +121,22 @@ const checkFirstParamIsScope = (
 /**
  * Checks if the second parameter is named "id" and of type string
  */
-const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Context) => {
-  if (secondParam.type !== AST_NODE_TYPES.Identifier || secondParam.name !== "id") {
+const checkSecondParamIsId = (
+  secondParam: ConstructorProperties[1],
+  context: RuleContext,
+) => {
+  if (
+    secondParam.type !== AST_NODE_TYPES.Identifier ||
+    secondParam.name !== "id"
+  ) {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (secondParam.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSStringKeyword) {
+  } else if (
+    secondParam.typeAnnotation?.typeAnnotation.type !==
+    AST_NODE_TYPES.TSStringKeyword
+  ) {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorIdType",
@@ -125,9 +147,15 @@ const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Co
 /**
  * Checks if the third parameter is named "props"
  */
-const checkThirdParamIsProps = (thirdParam: ConstructorProperties[2], context: Context) => {
+const checkThirdParamIsProps = (
+  thirdParam: ConstructorProperties[2],
+  context: RuleContext,
+) => {
   if (!thirdParam) return;
-  if (thirdParam.type !== AST_NODE_TYPES.Identifier || thirdParam.name !== "props") {
+  if (
+    thirdParam.type !== AST_NODE_TYPES.Identifier ||
+    thirdParam.name !== "props"
+  ) {
     context.report({
       node: thirdParam,
       messageId: "invalidConstructorProperty",

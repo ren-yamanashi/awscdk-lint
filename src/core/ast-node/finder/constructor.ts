@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 /**
  * Finds the constructor method in a class declaration
@@ -6,10 +6,11 @@ import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
  * @returns The constructor method definition or undefined if not found
  */
 export const findConstructor = (
-  node: TSESTree.ClassDeclaration,
-): TSESTree.MethodDefinition | undefined => {
+  node: ESTree.ClassDeclaration | ESTree.ClassExpression,
+): ESTree.MethodDefinition | undefined => {
   return node.body.body.find(
-    (member): member is TSESTree.MethodDefinition =>
-      member.type === AST_NODE_TYPES.MethodDefinition && member.kind === "constructor",
+    (member): member is ESTree.MethodDefinition =>
+      member.type === AST_NODE_TYPES.MethodDefinition &&
+      member.kind === "constructor",
   );
 };
