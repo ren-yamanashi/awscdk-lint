@@ -1,16 +1,8 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
 import { noConstructStackSuffix } from "../rules/no-construct-stack-suffix";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-construct-stack-suffix", noConstructStackSuffix, {
   valid: [

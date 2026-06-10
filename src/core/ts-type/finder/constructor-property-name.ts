@@ -1,18 +1,18 @@
-import { isClassDeclaration, isConstructorDeclaration, Type } from "typescript";
+import { CorsaType, CorsaTypeCheckerShape, SignatureKind } from "corsa-oxlint";
 
 /**
  * Parses type to get the property names of the class constructor.
  * @returns The property names of the class constructor.
+ * @param type - The type to parse
+ * @param checker - The type checker
  */
-export const findConstructorPropertyNames = (type: Type): string[] => {
-  const declarations = type.symbol?.declarations;
-  if (!declarations?.length) return [];
+export const findConstructorPropertyNames = (
+  type: CorsaType | undefined,
+  checker: CorsaTypeCheckerShape,
+): string[] => {
+  if (!type) return [];
+  const signatures = checker.getSignaturesOfType(type, SignatureKind.Construct)[0];
+  if (!signatures?.parameterSymbols) return [];
 
-  const classDeclaration = declarations[0];
-  if (!isClassDeclaration(classDeclaration)) return [];
-
-  const constructor = classDeclaration.members.find((member) => isConstructorDeclaration(member));
-  if (!constructor?.parameters.length) return [];
-
-  return constructor.parameters.map((param) => param.name.getText());
+  return signatures.parameterSymbols.map((symbol) => symbol.name);
 };

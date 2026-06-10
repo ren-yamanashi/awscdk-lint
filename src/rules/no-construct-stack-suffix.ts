@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, ESTree, RuleContext } from "corsa-oxlint";
 
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
@@ -20,11 +20,9 @@ const defaultOption: Option = {
   disallowedSuffixes: [SUFFIX_TYPE.CONSTRUCT, SUFFIX_TYPE.STACK],
 };
 
-type Context = TSESLint.RuleContext<"invalidConstructId", Option[]>;
-
 /**
  * Enforces that Construct IDs do not end with 'Construct' or 'Stack' suffix
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noConstructStackSuffix = createRule({
@@ -33,6 +31,7 @@ export const noConstructStackSuffix = createRule({
     type: "problem",
     docs: {
       description: "Effort to avoid using 'Construct' and 'Stack' suffix in construct id.",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructId: "{{ classType }} ID '{{ id }}' should not include {{ suffix }} suffix.",
@@ -57,15 +56,16 @@ export const noConstructStackSuffix = createRule({
   defaultOptions: [defaultOption],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
-
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type) || node.arguments.length < 2) {
+        if (!isConstructOrStackType(type, checker) || node.arguments.length < 2) {
           return;
         }
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructId(node, context);
@@ -77,8 +77,8 @@ export const noConstructStackSuffix = createRule({
 /**
  * Validate that construct ID does not end with "Construct" or "Stack"
  */
-const validateConstructId = (node: TSESTree.NewExpression, context: Context): void => {
-  const options = context.options[0] ?? defaultOption;
+const validateConstructId = (node: ESTree.NewExpression, context: RuleContext): void => {
+  const options: Option = context.options[0] ?? defaultOption;
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
