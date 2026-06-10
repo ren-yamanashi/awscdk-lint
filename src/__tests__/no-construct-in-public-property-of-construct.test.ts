@@ -1,16 +1,8 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
+import { RuleTester } from "corsa-oxlint";
 
 import { noConstructInPublicPropertyOfConstruct } from "../rules/no-construct-in-public-property-of-construct";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run(
   "no-construct-in-public-property-of-construct",

@@ -1,25 +1,16 @@
-import {
-  ESLintUtils,
-  ParserServicesWithTypeInformation,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import { ESLintUtils, ParserServices, RuleContext } from "corsa-oxlint";
 
-import { findPublicPropertiesInClass } from "../core/ast-node/finder/public-property";
+import {
+  findPublicPropertiesInClass,
+  PublicProperty,
+} from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
-type Context = TSESLint.RuleContext<"invalidPublicPropertyOfConstruct", []>;
-
-type PublicProperty = {
-  name: string;
-  node: TSESTree.Parameter | TSESTree.ClassElement;
-};
-
 /**
  * Disallow Construct types in public property of Construct
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noConstructInPublicPropertyOfConstruct = createRule({
@@ -28,6 +19,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
     type: "problem",
     docs: {
       description: "Disallow Construct types in public property of Construct",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidPublicPropertyOfConstruct:
@@ -38,10 +30,11 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type)) return;
+        if (!isConstructOrStackType(type, checker)) return;
         const publicProperties = findPublicPropertiesInClass(node);
         for (const publicProperty of publicProperties) {
           validatePublicProperty(publicProperty, context, parserServices);
@@ -53,18 +46,19 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
 
 const validatePublicProperty = (
   publicProperty: PublicProperty,
-  context: Context,
-  parserServices: ParserServicesWithTypeInformation,
+  context: RuleContext,
+  parserServices: ParserServices,
 ) => {
+  const checker = parserServices.program.getTypeChecker();
   const type = parserServices.getTypeAtLocation(publicProperty.node);
-  const constructType = findTypeOfCdkConstruct(type);
+  const constructType = findTypeOfCdkConstruct(type, checker);
   if (constructType) {
     context.report({
       node: publicProperty.node,
       messageId: "invalidPublicPropertyOfConstruct",
       data: {
         propertyName: publicProperty.name,
-        typeName: constructType.symbol.name,
+        typeName: checker.getSymbolOfType(constructType)?.name ?? "",
       },
     });
   }

@@ -1,4 +1,4 @@
-import { Type } from "typescript";
+import { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
 import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-target-super-class";
 
@@ -9,9 +9,14 @@ import { isExtendsFromTargetSuperClass } from "../../ts-type/checker/is-extends-
  * @returns True if the type extends Construct or Stack, otherwise false
  */
 export const isConstructOrStackType = (
-  type: Type,
+  type: CorsaType | undefined,
+  checker: CorsaTypeCheckerShape,
   ignoredClasses: readonly string[] = ["App", "Stage", "CfnOutput"] as const,
 ): boolean => {
-  if (ignoredClasses.includes(type.symbol?.name ?? "")) return false;
-  return isExtendsFromTargetSuperClass(type, ["Construct", "Stack"], isConstructOrStackType);
+  return isExtendsFromTargetSuperClass({
+    type,
+    checker,
+    targetSuperClasses: ["Construct", "Stack"],
+    ignoredClasses,
+  });
 };

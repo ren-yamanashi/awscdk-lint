@@ -1,4 +1,5 @@
 import { RuleTester } from "corsa-oxlint";
+
 import { noConstructInInterface } from "../rules/no-construct-in-interface";
 
 const ruleTester = new RuleTester();

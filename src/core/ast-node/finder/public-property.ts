@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 import { findConstructor } from "./constructor";
 
@@ -10,58 +10,49 @@ export type PublicProperty = {
   /**
    * AST node representing the public property
    */
-  node:
-    | TSESTree.PropertyDefinitionComputedName
-    | TSESTree.PropertyDefinitionNonComputedName
-    | TSESTree.TSParameterProperty;
+  node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
 };
 
-export const findPublicPropertiesInClass = (node: TSESTree.ClassDeclaration): PublicProperty[] => {
+export const findPublicPropertiesInClass = (
+  node: ESTree.ClassDeclaration | ESTree.ClassExpression,
+): PublicProperty[] => {
   const constructorProperties = findPropertiesInConstructor(node);
   const classElementProperties = findPropertiesInClassElement(node);
   return [...constructorProperties, ...classElementProperties];
 };
 
-const findPropertiesInConstructor = (node: TSESTree.ClassDeclaration) => {
+const findPropertiesInConstructor = (node: ESTree.ClassDeclaration | ESTree.ClassExpression) => {
   const constructor = findConstructor(node);
   if (!constructor) return [];
   return constructor.value.params.flatMap((property) => findPublicProperty(property) ?? []);
 };
 
-const findPropertiesInClassElement = (node: TSESTree.ClassDeclaration): PublicProperty[] => {
+const findPropertiesInClassElement = (
+  node: ESTree.ClassDeclaration | ESTree.ClassExpression,
+): PublicProperty[] => {
   return node.body.body.flatMap((property) => findPublicProperty(property) ?? []);
 };
 
-const findPublicProperty = (
-  property: TSESTree.Parameter | TSESTree.ClassElement,
-): PublicProperty | undefined => {
+const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined => {
   switch (property.type) {
     // NOTE: get from constructor
     case AST_NODE_TYPES.TSParameterProperty: {
-      if (property.parameter.type !== AST_NODE_TYPES.Identifier) {
-        return;
-      }
-      if (["private", "protected"].includes(property.accessibility ?? "")) {
-        return;
-      }
+      if (property.parameter.type !== AST_NODE_TYPES.Identifier) return;
+      if (["private", "protected"].includes(property.accessibility ?? "")) return;
       if (!property.parameter.typeAnnotation) return;
       return {
         name: property.parameter.name,
-        node: property,
+        node: property as ESTree.TSParameterProperty,
       };
     }
     // NOTE: get from class element
     case AST_NODE_TYPES.PropertyDefinition: {
-      if (property.key.type !== AST_NODE_TYPES.Identifier) {
-        return;
-      }
-      if (["private", "protected"].includes(property.accessibility ?? "")) {
-        return;
-      }
+      if (property.key.type !== AST_NODE_TYPES.Identifier) return;
+      if (["private", "protected"].includes(property.accessibility ?? "")) return;
       if (!property.typeAnnotation) return;
       return {
         name: property.key.name,
-        node: property,
+        node: property as ESTree.PropertyDefinition,
       };
     }
   }
