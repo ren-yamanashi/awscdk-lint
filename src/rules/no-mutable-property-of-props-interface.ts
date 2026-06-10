@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { createRule } from "../shared/create-rule";
 
