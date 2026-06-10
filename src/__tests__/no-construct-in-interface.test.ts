@@ -1,16 +1,7 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
-
+import { RuleTester } from "corsa-oxlint";
 import { noConstructInInterface } from "../rules/no-construct-in-interface";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-construct-in-interface", noConstructInInterface, {
   valid: [

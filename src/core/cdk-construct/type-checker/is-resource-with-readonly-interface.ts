@@ -1,12 +1,5 @@
-import {
-  isClassDeclaration,
-  isIdentifier,
-  isPropertyAccessExpression,
-  SyntaxKind,
-  Type,
-} from "typescript";
+import { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
-import { isClassType } from "../../ts-type/checker/is-class";
 import { isResourceType } from "./is-resource";
 
 /**
@@ -33,33 +26,40 @@ import { isResourceType } from "./is-resource";
  * class CustomResource extends Resource { ... } // No matching interface
  * class EdgeFunction extends Resource implements IVersion { ... } // Interface doesn't match naming pattern
  */
-export const isResourceWithReadonlyInterface = (type: Type): boolean => {
-  if (!isResourceType(type) || !type.symbol?.name) return false;
-  if (isIgnoreClass(type.symbol.name)) return false;
-  return hasMatchingInterfaceInHierarchy(type);
+export const isResourceWithReadonlyInterface = (
+  type: CorsaType | undefined,
+  checker: CorsaTypeCheckerShape,
+): boolean => {
+  if (!type || !isResourceType(type, checker)) return false;
+  const className = checker.getSymbolOfType(type)?.name;
+  if (!className || isIgnoreClass(className)) return false;
+  return hasMatchingInterfaceInHierarchy(type, checker);
 };
 
 /**
  * Checks if a type or any of its base classes implements an interface matching its class name
  * @param type - The TypeScript type to check
+ * @param checker - The type checker to analyze types and their relationships
  * @returns true if any class in the hierarchy implements a matching interface
  * @private
  */
-const hasMatchingInterfaceInHierarchy = (type: Type): boolean => {
+const hasMatchingInterfaceInHierarchy = (
+  type: CorsaType,
+  checker: CorsaTypeCheckerShape,
+): boolean => {
   const processedTypes = new Set<string>();
 
-  const checkTypeAndBases = (currentType: Type): boolean => {
-    const symbol = currentType.getSymbol?.() ?? currentType.symbol;
-    if (!symbol?.name) return false;
+  const checkTypeAndBases = (currentType: CorsaType): boolean => {
+    const currentClassName = checker.getSymbolOfType(currentType)?.name;
+    if (!currentClassName) return false;
 
     // Skip if already processed
-    if (processedTypes.has(symbol.name)) return false;
-    processedTypes.add(symbol.name);
+    if (processedTypes.has(currentClassName)) return false;
+    processedTypes.add(currentClassName);
 
-    const currentClassName = symbol.name;
     if (isIgnoreClass(currentClassName)) return false;
 
-    const directInterfaces = getDirectImplementedInterfaceNames(currentType);
+    const directInterfaces = getImplementedInterfaceNames(currentType, checker);
 
     // NOTE: Check if any interface matches this class name
     if (
@@ -70,8 +70,8 @@ const hasMatchingInterfaceInHierarchy = (type: Type): boolean => {
       return true;
     }
 
-    const baseTypes = currentType.getBaseTypes?.() ?? [];
-    return baseTypes.some((baseType) => isClassType(baseType) && checkTypeAndBases(baseType));
+    const baseTypes = checker.getBaseTypes(currentType);
+    return baseTypes.some((baseType) => checkTypeAndBases(baseType));
   };
 
   return checkTypeAndBases(type);
@@ -90,16 +90,12 @@ const hasMatchingInterfaceInHierarchy = (type: Type): boolean => {
  * @returns boolean - true if the interface name matches the class name patterns, false otherwise
  */
 const checkInterfaceMatchClassName = (interfaceName: string, classname: string) => {
-  const simpleInterfaceName = interfaceName.includes(".")
-    ? (interfaceName.split(".").pop() ?? interfaceName)
-    : interfaceName;
-
   // Pattern 1: Class name with I prefix
-  if (simpleInterfaceName === `I${classname}`) return true;
+  if (interfaceName === `I${classname}`) return true;
 
   // Pattern 2: Class name without Base suffix/prefix with I prefix
   const classNameWithoutBase = classname.replace(/^Base|Base$/g, "");
-  if (classNameWithoutBase && simpleInterfaceName === `I${classNameWithoutBase}`) {
+  if (classNameWithoutBase && interfaceName === `I${classNameWithoutBase}`) {
     return true;
   }
 
@@ -107,46 +103,20 @@ const checkInterfaceMatchClassName = (interfaceName: string, classname: string) 
   const baseVMatch = /^(.+)BaseV(\d+)$/.exec(classname);
   if (!baseVMatch) return false;
   const [, baseName, version] = baseVMatch;
-  return simpleInterfaceName === `I${baseName}V${version}`;
+  return interfaceName === `I${baseName}V${version}`;
 };
 
 /**
- * Retrieves interface names directly implemented by a type (not including inherited interfaces)
- * @param type - The TypeScript type to analyze
- * @returns Array of interface names directly implemented by this type
+ * Retrieves interface names a type implements (inherited interfaces included).
  * @private
  */
-const getDirectImplementedInterfaceNames = (type: Type): string[] => {
-  const symbol = type.getSymbol?.() ?? type.symbol;
-  if (!symbol?.name) return [];
-
-  const declarations = symbol.getDeclarations ? symbol.getDeclarations() : symbol.declarations;
-  if (!declarations?.length) return [];
-
-  return declarations.reduce<string[]>((acc, decl) => {
-    if (!isClassDeclaration(decl)) return acc;
-
-    const heritageClauses = decl.heritageClauses;
-    if (!heritageClauses) return acc;
-
-    return heritageClauses.reduce<string[]>((hcAcc, hc) => {
-      if (hc.token !== SyntaxKind.ImplementsKeyword) return hcAcc;
-
-      return hc.types.reduce<string[]>((typeAcc, type) => {
-        const expression = type.expression;
-        if (!expression) return typeAcc;
-        if (isIdentifier(expression)) return [...typeAcc, expression.text];
-        if (!isPropertyAccessExpression(expression)) return typeAcc;
-
-        const namespace = expression.expression;
-        const interfaceName = expression.name;
-        if (isIdentifier(namespace) && isIdentifier(interfaceName)) {
-          return [...typeAcc, `${namespace.text}.${interfaceName.text}`];
-        }
-
-        return typeAcc;
-      }, []);
-    }, []);
+const getImplementedInterfaceNames = (
+  type: CorsaType,
+  checker: CorsaTypeCheckerShape,
+): string[] => {
+  return checker.getImplementedTypesOfType(type).reduce<string[]>((acc, t) => {
+    const name = checker.getSymbolOfType(t)?.name;
+    return name ? [...acc, name] : acc;
   }, []);
 };
 

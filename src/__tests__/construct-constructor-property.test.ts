@@ -1,4 +1,5 @@
 import { RuleTester } from "corsa-oxlint";
+
 import { constructConstructorProperty } from "../rules/construct-constructor-property";
 
 const ruleTester = new RuleTester();

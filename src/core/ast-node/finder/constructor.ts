@@ -10,7 +10,6 @@ export const findConstructor = (
 ): ESTree.MethodDefinition | undefined => {
   return node.body.body.find(
     (member): member is ESTree.MethodDefinition =>
-      member.type === AST_NODE_TYPES.MethodDefinition &&
-      member.kind === "constructor",
+      member.type === AST_NODE_TYPES.MethodDefinition && member.kind === "constructor",
   );
 };

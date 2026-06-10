@@ -1,11 +1,11 @@
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
 /**
  * Enforces the use of interface types instead of CDK Construct types in interface properties
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noConstructInInterface = createRule({
@@ -14,6 +14,7 @@ export const noConstructInInterface = createRule({
     type: "problem",
     docs: {
       description: "Disallow CDK Construct types in interface properties",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidInterfaceProperty:
@@ -24,6 +25,7 @@ export const noConstructInInterface = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       TSInterfaceDeclaration(node) {
         for (const property of node.body.body) {
@@ -35,7 +37,7 @@ export const noConstructInInterface = createRule({
           }
 
           const type = parserServices.getTypeAtLocation(property);
-          const result = findTypeOfCdkConstruct(type);
+          const result = findTypeOfCdkConstruct(type, checker);
 
           if (result) {
             context.report({
@@ -43,7 +45,7 @@ export const noConstructInInterface = createRule({
               messageId: "invalidInterfaceProperty",
               data: {
                 propertyName: property.key.name,
-                typeName: result.symbol.name,
+                typeName: checker.getSymbolOfType(result)?.name ?? "",
               },
             });
           }
