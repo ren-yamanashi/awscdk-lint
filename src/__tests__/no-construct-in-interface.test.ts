@@ -92,8 +92,8 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       code: `
       class Resource {}
 
-      declare module baseService {
-        interface IService {
+      namespace baseService {
+        export interface IService {
           serviceArn: string;
         }
         export abstract class BaseService extends Resource implements IService {
@@ -104,7 +104,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
         }
       }
 
-      declare module ecs {
+      namespace ecs {
         export interface IFargateService extends baseService.IService {}
         export class FargateService extends baseService.BaseService implements IFargateService {
           readonly serviceArn: string;
@@ -222,7 +222,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       interface IService {
         serviceArn: string;
       }
-      declare module ecs {
+      namespace ecs {
         export interface IFargateService extends IService {}
       }
       export abstract class BaseService extends Resource implements IService {
@@ -258,7 +258,7 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
         }
       }
 
-      declare module ecs {
+      namespace ecs {
         export class FargateService extends BaseService implements IFargateService {
           readonly serviceArn: string;
           constructor() {

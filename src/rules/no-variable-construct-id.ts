@@ -41,7 +41,8 @@ export const noVariableConstructId = createRule({
           : undefined;
         if (enclosingClassType && !isConstructOrStackType(enclosingClassType, checker)) return;
 
-        const constructorPropertyNames = findConstructorPropertyNames(type, checker);
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructId(node, context);

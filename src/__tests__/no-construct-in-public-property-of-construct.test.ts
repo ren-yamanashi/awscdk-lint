@@ -236,7 +236,7 @@ ruleTester.run(
           interface IService {
             serviceArn: string;
           }
-          declare module ecs {
+          namespace ecs {
             export interface IFargateService extends IService {}
           }
           export abstract class BaseService extends Resource implements IService {

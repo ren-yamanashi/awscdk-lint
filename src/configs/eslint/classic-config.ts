@@ -1,11 +1,11 @@
-import { ClassicConfig } from "@typescript-eslint/utils/ts-eslint";
+import type { Linter } from "eslint";
 
 type EslintClassicConfig = {
   plugins: ["awscdk"];
-  rules: ClassicConfig.RulesRecord;
+  rules: Linter.RulesRecord;
 };
 
-const createClassicConfig = (rules: ClassicConfig.RulesRecord): EslintClassicConfig => {
+const createClassicConfig = (rules: Linter.RulesRecord): EslintClassicConfig => {
   return {
     plugins: ["awscdk"],
     rules,

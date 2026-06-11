@@ -5,6 +5,8 @@ packages:
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@^0.1.11
   vitest: npm:@voidzero-dev/vite-plus-test@^0.1.11
+  oxlint-tsgolint: 0.22.0
+  oxlint: 1.66.0
 engineStrict: true
 minimumReleaseAge: 2880
 minimumReleaseAgeExclude:

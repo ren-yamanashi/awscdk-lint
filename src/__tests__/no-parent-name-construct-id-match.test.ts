@@ -61,9 +61,7 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
       code: `
       class Construct {}
       class SampleClass {
-        constructor(scope: Construct, id: string) {
-          super(scope, id);
-        }
+        constructor(scope: Construct, id: string) {}
       }
       class TestConstruct extends Construct {
         constructor(scope: Construct, id: string) {
@@ -83,7 +81,6 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
       }
       class SampleConstruct {
         constructor(scope: Construct, id: string) {
-          super(scope, id);
           new SampleClass(scope, "TestConstruct");
         }
       }`,

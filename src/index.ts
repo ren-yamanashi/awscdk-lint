@@ -1,4 +1,4 @@
-import { ClassicConfig } from "@typescript-eslint/utils/ts-eslint";
+import type { Linter } from "eslint";
 
 import { configs } from "./configs";
 import { EslintFlatConfig } from "./configs/eslint/flat-config";
@@ -11,11 +11,11 @@ export interface EslintCdkPlugin {
   configs: Readonly<{
     classicRecommended: {
       plugins: ["awscdk"];
-      rules: ClassicConfig.RulesRecord;
+      rules: Linter.RulesRecord;
     };
     classicStrict: {
       plugins: ["awscdk"];
-      rules: ClassicConfig.RulesRecord;
+      rules: Linter.RulesRecord;
     };
     recommended: EslintFlatConfig;
     strict: EslintFlatConfig;

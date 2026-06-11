@@ -56,10 +56,10 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   private readonly checker: CorsaTypeCheckerShape;
 
   constructor(propType: CorsaType, checker: CorsaTypeCheckerShape) {
+    this.checker = checker;
     this.propUsageMap = new Map<string, boolean>(
       this.getPropsPropertyNames(propType).map((name) => [name, false]),
     );
-    this.checker = checker;
   }
 
   public getUnusedProperties(): string[] {
