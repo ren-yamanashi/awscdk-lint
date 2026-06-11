@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { noUnusedProps } from "../rules/no-unused-props";
 
 const ruleTester = new RuleTester();

@@ -1,5 +1,8 @@
-import { recommended as classicRecommended, strict as classicStrict } from "./classic-config";
-import { recommended, strict } from "./flat-config";
+import {
+  recommended as classicRecommended,
+  strict as classicStrict,
+} from "./eslint/classic-config";
+import { recommended, strict } from "./eslint/flat-config";
 
 export const configs: Readonly<{
   recommended: typeof recommended;

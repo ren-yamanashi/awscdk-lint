@@ -1,5 +1,4 @@
-import { AST_NODE_TYPES } from "@typescript-eslint/utils";
-import { ESTree } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 /**
  * Find the enclosing ClassDeclaration from a given node

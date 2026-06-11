@@ -1,13 +1,13 @@
 import tsParser from "@typescript-eslint/parser";
-import { FlatConfig as _FlatConfig } from "@typescript-eslint/utils/ts-eslint";
+import { FlatConfig } from "@typescript-eslint/utils/ts-eslint";
 
-import { name, version } from "../../package.json";
-import { rules } from "../rules";
+import { name, version } from "../../../package.json";
+import { rules } from "../../rules";
 
-export type FlatConfig = Record<string, unknown> & {
+export type EslintFlatConfig = Record<string, unknown> & {
   plugins?: Record<string, Record<string, unknown>>;
   languageOptions?: Record<string, unknown>;
-  rules?: _FlatConfig.Rules;
+  rules?: FlatConfig.Rules;
 };
 
 const awscdk = {
@@ -15,7 +15,7 @@ const awscdk = {
   rules,
 };
 
-const createFlatConfig = (rules: _FlatConfig.Rules): FlatConfig => {
+const createFlatConfig = (rules: FlatConfig.Rules): EslintFlatConfig => {
   return {
     plugins: {
       awscdk,
@@ -30,7 +30,7 @@ const createFlatConfig = (rules: _FlatConfig.Rules): FlatConfig => {
   };
 };
 
-export const recommended: FlatConfig = createFlatConfig({
+export const recommended: EslintFlatConfig = createFlatConfig({
   "awscdk/construct-constructor-property": "error",
   "awscdk/no-construct-in-interface": "error",
   "awscdk/no-construct-in-public-property-of-construct": "error",
@@ -45,7 +45,7 @@ export const recommended: FlatConfig = createFlatConfig({
   "awscdk/require-passing-this": ["error", { allowNonThisAndDisallowScope: true }],
 });
 
-export const strict: FlatConfig = createFlatConfig({
+export const strict: EslintFlatConfig = createFlatConfig({
   "awscdk/construct-constructor-property": "error",
   "awscdk/no-construct-in-interface": "error",
   "awscdk/no-construct-in-public-property-of-construct": "error",

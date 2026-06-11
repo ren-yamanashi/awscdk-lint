@@ -1,5 +1,5 @@
-import type { TSESLint } from "@typescript-eslint/utils";
-import type { Rule } from "eslint";
+import type { Rule as OxlintRule } from "corsa-oxlint";
+import type { Rule as EslintRule } from "eslint";
 
 import { constructConstructorProperty } from "./construct-constructor-property";
 import { noConstructInInterface } from "./no-construct-in-interface";
@@ -19,7 +19,7 @@ import { requireJSDoc } from "./require-jsdoc";
 import { requirePassingThis } from "./require-passing-this";
 import { requirePropsDefaultDoc } from "./require-props-default-doc";
 
-type RuleModule = TSESLint.RuleModule<string, readonly unknown[]> | Rule.RuleModule;
+type RuleModule = EslintRule.RuleModule | (OxlintRule & Record<string, unknown>);
 
 export const rules: Record<string, RuleModule> = {
   "construct-constructor-property": constructConstructorProperty,
