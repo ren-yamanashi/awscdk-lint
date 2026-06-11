@@ -18,7 +18,7 @@ type Context = TSESLint.RuleContext<"missingPassingThis", Option[]>;
 
 /**
  * Enforces that `this` is passed to the constructor
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const requirePassingThis = createRule({

@@ -32,7 +32,7 @@ type ValidateExpressionArgs<T extends ESTree.Node> = {
 
 /**
  * Enforce that construct IDs does not match the parent construct name.
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noParentNameConstructIdMatch = createRule({

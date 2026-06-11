@@ -5,7 +5,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Require JSDoc comments for interface properties and public properties in Construct classes
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const requireJSDoc = createRule({
@@ -15,6 +15,7 @@ export const requireJSDoc = createRule({
     docs: {
       description:
         "Require JSDoc comments for interface properties and public properties in Construct classes",
+      requiresTypeChecking: true,
     },
     messages: {
       missingJSDoc: "Property '{{ propertyName }}' should have a JSDoc comment.",

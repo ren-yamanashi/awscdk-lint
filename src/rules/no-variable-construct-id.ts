@@ -8,7 +8,7 @@ import { createRule } from "../shared/create-rule";
 
 /**
  * Enforce using literal strings for Construct ID.
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noVariableConstructId = createRule({

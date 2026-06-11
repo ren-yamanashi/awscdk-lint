@@ -17,7 +17,7 @@ type Context = TSESLint.RuleContext<"unusedProp", []>;
 
 /**
  * Enforces that all properties defined in props type are used within the constructor
- * @param context - The rule context provided by ESLint
+ * @param context - The rule context
  * @returns An object containing the AST visitor functions
  */
 export const noUnusedProps = createRule({
