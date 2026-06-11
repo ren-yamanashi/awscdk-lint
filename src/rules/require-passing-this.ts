@@ -1,5 +1,5 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
@@ -13,8 +13,6 @@ type Option = {
 const defaultOption: Option = {
   allowNonThisAndDisallowScope: true,
 };
-
-type Context = TSESLint.RuleContext<"missingPassingThis", Option[]>;
 
 /**
  * Enforces that `this` is passed to the constructor
@@ -46,20 +44,21 @@ export const requirePassingThis = createRule({
     fixable: "code",
   },
   defaultOptions: [defaultOption],
-  create(context: Context) {
+  create(context) {
     const options = context.options[0] || defaultOption;
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
 
-        if (!isConstructType(type) || !node.arguments.length) return;
+        if (!isConstructType(type, checker) || !node.arguments.length) return;
 
         // NOTE: Only flag when inside a Construct/Stack class where `this` is available
         const enclosingClass = findEnclosingClass(node);
         if (!enclosingClass) return;
         const enclosingClassType = parserServices.getTypeAtLocation(enclosingClass);
-        if (!isConstructOrStackType(enclosingClassType)) return;
+        if (!isConstructOrStackType(enclosingClassType, checker)) return;
 
         const argument = node.arguments[0];
 
@@ -67,7 +66,8 @@ export const requirePassingThis = createRule({
         if (argument.type === AST_NODE_TYPES.ThisExpression) return;
 
         // NOTE: If the first argument is not `scope`, it's valid
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[0] !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases
