@@ -1,11 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  ParserServicesWithTypeInformation,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
-
+import { AST_NODE_TYPES, ESLintUtils, ESTree, ParserServices, RuleContext } from "corsa-oxlint";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -19,21 +12,21 @@ const defaultOption: Option = {
   disallowContainingParentName: false,
 };
 
-type Context = TSESLint.RuleContext<"invalidConstructId", Option[]>;
-
-type ValidateStatementArgs<T extends TSESTree.Statement> = {
+// FIXME: use ESTree.Statement instead of ESTree.Node
+type ValidateStatementArgs<T extends ESTree.Node> = {
   statement: T;
   parentClassName: string;
-  context: Context;
-  parserServices: ParserServicesWithTypeInformation;
+  context: RuleContext;
+  parserServices: ParserServices;
   option: Option;
 };
 
-type ValidateExpressionArgs<T extends TSESTree.Expression> = {
+// FIXME: use ESTree.Expression instead of ESTree.Node
+type ValidateExpressionArgs<T extends ESTree.Node> = {
   expression: T;
   parentClassName: string;
-  context: Context;
-  parserServices: ParserServicesWithTypeInformation;
+  context: RuleContext;
+  parserServices: ParserServices;
   option: Option;
 };
 
@@ -68,14 +61,15 @@ export const noParentNameConstructIdMatch = createRule({
   },
   defaultOptions: [defaultOption],
 
-  create(context: Context) {
+  create(context) {
     const option = context.options[0] || defaultOption;
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       ClassBody(node) {
         const type = parserServices.getTypeAtLocation(node);
 
-        if (!isConstructOrStackType(type)) return;
+        if (!isConstructOrStackType(type, checker)) return;
 
         const parent = node.parent;
         if (parent?.type !== AST_NODE_TYPES.ClassDeclaration) return;
@@ -115,7 +109,8 @@ const validateConstructorBody = ({
   context,
   parserServices,
   option,
-}: ValidateExpressionArgs<TSESTree.FunctionExpression>): void => {
+}: ValidateExpressionArgs<ESTree.MethodDefinition["value"]>): void => {
+  if(!expression.body) return;
   for (const statement of expression.body.body) {
     switch (statement.type) {
       case AST_NODE_TYPES.VariableDeclaration: {
@@ -180,7 +175,7 @@ const traverseStatements = ({
   context,
   parserServices,
   option,
-}: ValidateStatementArgs<TSESTree.Statement>) => {
+}: ValidateStatementArgs<ESTree.Node>) => {
   switch (statement.type) {
     case AST_NODE_TYPES.BlockStatement: {
       for (const body of statement.body) {
@@ -232,7 +227,7 @@ const validateStatement = ({
   context,
   parserServices,
   option,
-}: ValidateStatementArgs<TSESTree.Statement>): void => {
+}: ValidateStatementArgs<ESTree.Node>): void => {
   switch (statement.type) {
     case AST_NODE_TYPES.VariableDeclaration: {
       const newExpression = statement.declarations[0].init;
@@ -291,7 +286,7 @@ const validateIfStatement = ({
   context,
   parserServices,
   option,
-}: ValidateStatementArgs<TSESTree.IfStatement>): void => {
+}: ValidateStatementArgs<ESTree.IfStatement>): void => {
   traverseStatements({
     context,
     parentClassName,
@@ -311,7 +306,7 @@ const validateSwitchStatement = ({
   context,
   parserServices,
   option,
-}: ValidateStatementArgs<TSESTree.SwitchStatement>): void => {
+}: ValidateStatementArgs<ESTree.SwitchStatement>): void => {
   for (const caseStatement of statement.cases) {
     for (const _consequent of caseStatement.consequent) {
       traverseStatements({
@@ -334,7 +329,7 @@ const validateConstructId = ({
   parentClassName,
   parserServices,
   option,
-}: ValidateExpressionArgs<TSESTree.NewExpression>): void => {
+}: ValidateExpressionArgs<ESTree.NewExpression>): void => {
   const type = parserServices.getTypeAtLocation(expression);
 
   if (expression.arguments.length < 2) return;
@@ -348,7 +343,7 @@ const validateConstructId = ({
   const formattedConstructId = toPascalCase(secondArg.value);
   const formattedParentClassName = toPascalCase(parentClassName);
 
-  if (!isConstructType(type)) return;
+  if (!isConstructType(type, parserServices.program.getTypeChecker())) return;
 
   if (
     option.disallowContainingParentName &&

@@ -1,16 +1,8 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
 
+import { RuleTester } from "corsa-oxlint";
 import { noParentNameConstructIdMatch } from "../rules/no-parent-name-construct-id-match";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch, {
   valid: [
