@@ -1,9 +1,19 @@
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
+
+import { AST_NODE_TYPES, ESLintUtils, ESTree } from "corsa-oxlint";
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
+// FIXME: delete this type
+type ConstructorParam =
+  | ESTree.BindingIdentifier
+  | ESTree.ObjectPattern
+  | ESTree.ArrayPattern
+  | ESTree.AssignmentPattern
+  | ESTree.RestElement
+  | ESTree.TSParameterProperty;
+  
 /**
  * Enforces a naming convention for props interfaces in Construct classes
  * @param context - The rule context provided by ESLint
@@ -15,6 +25,7 @@ export const propsNameConvention = createRule({
     type: "problem",
     docs: {
       description: "Enforce props interface name to follow ${ConstructName}Props format",
+      requiresTypeChecking: true,
     },
     schema: [],
     messages: {
@@ -25,18 +36,19 @@ export const propsNameConvention = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       ClassDeclaration(node) {
         if (!node.id || !node.superClass) return;
 
         const type = parserServices.getTypeAtLocation(node.superClass);
-        if (!isConstructType(type)) return;
+        if (!isConstructType(type, checker)) return;
 
         // NOTE: check constructor parameter
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        const propsParam = constructor.value.params?.[2];
+        const propsParam: ConstructorParam | undefined = constructor.value.params?.[2];
         if (propsParam?.type !== AST_NODE_TYPES.Identifier) return;
 
         const typeAnnotation = propsParam.typeAnnotation;
