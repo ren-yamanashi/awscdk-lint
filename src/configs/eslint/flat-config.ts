@@ -1,8 +1,8 @@
 import tsParser from "@typescript-eslint/parser";
+import { Linter } from "eslint";
 
 import { name, version } from "../../../package.json";
 import { rules } from "../../rules";
-import { Linter } from "eslint";
 
 export type EslintFlatConfig = Record<string, unknown> & {
   plugins?: Record<string, Record<string, unknown>>;
