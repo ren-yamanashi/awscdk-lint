@@ -1,5 +1,6 @@
+import type { Linter } from "eslint";
+
 import tsParser from "@typescript-eslint/parser";
-import { FlatConfig as _FlatConfig } from "@typescript-eslint/utils/ts-eslint";
 
 import { name, version } from "../../package.json";
 import { rules } from "../rules";
@@ -7,7 +8,7 @@ import { rules } from "../rules";
 export type FlatConfig = Record<string, unknown> & {
   plugins?: Record<string, Record<string, unknown>>;
   languageOptions?: Record<string, unknown>;
-  rules?: _FlatConfig.Rules;
+  rules?: Linter.RulesRecord;
 };
 
 const awscdk = {
@@ -15,7 +16,7 @@ const awscdk = {
   rules,
 };
 
-const createFlatConfig = (rules: _FlatConfig.Rules): FlatConfig => {
+const createFlatConfig = (rules: Linter.RulesRecord): FlatConfig => {
   return {
     plugins: {
       awscdk,
