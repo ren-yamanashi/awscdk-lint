@@ -1,12 +1,10 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, ESTree, RuleContext } from "corsa-oxlint";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
-
-type Context = TSESLint.RuleContext<"invalidConstructId", []>;
 
 /**
  * Enforce using literal strings for Construct ID.
@@ -19,6 +17,7 @@ export const noVariableConstructId = createRule({
     type: "problem",
     docs: {
       description: `Enforce using literal strings for Construct ID.`,
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructId: "Shouldn't use a parameter as a Construct ID.",
@@ -28,20 +27,21 @@ export const noVariableConstructId = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
 
-        if (!isConstructType(type) || node.arguments.length < 2) return;
+        if (!isConstructType(type, checker) || node.arguments.length < 2) return;
 
         // NOTE: Skip when inside a class that is not Construct/Stack
         const enclosingClass = findEnclosingClass(node);
         const enclosingClassType = enclosingClass
           ? parserServices.getTypeAtLocation(enclosingClass)
           : undefined;
-        if (enclosingClassType && !isConstructOrStackType(enclosingClassType)) return;
+        if (enclosingClassType && !isConstructOrStackType(enclosingClassType, checker)) return;
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const constructorPropertyNames = findConstructorPropertyNames(type, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructId(node, context);
@@ -53,7 +53,7 @@ export const noVariableConstructId = createRule({
 /**
  * Check if the construct ID is a literal string
  */
-const validateConstructId = (node: TSESTree.NewExpression, context: Context) => {
+const validateConstructId = (node: ESTree.NewExpression, context: RuleContext) => {
   if (node.arguments.length < 2 || shouldSkipIdValidation(node)) return;
 
   // NOTE: Treat the second argument as ID
@@ -79,7 +79,7 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context) => 
  * Check if construct ID validation should be skipped for a node.
  * Skip if it is inside a loop statement, non-constructor method, or arrow function.
  */
-const shouldSkipIdValidation = (node: TSESTree.Node): boolean => {
+const shouldSkipIdValidation = (node: ESTree.Node): boolean => {
   let current = node.parent;
   while (current) {
     // Constructs defined in loops require variable IDs
