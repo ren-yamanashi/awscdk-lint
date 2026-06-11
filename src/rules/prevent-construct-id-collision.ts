@@ -1,5 +1,5 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 
+import { AST_NODE_TYPES, ESLintUtils, ESTree, RuleContext } from "corsa-oxlint";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
@@ -15,6 +15,7 @@ export const preventConstructIdCollision = createRule({
     docs: {
       description:
         "Disallow using literal Construct IDs inside loops, which may cause ID collisions.",
+      requiresTypeChecking: true,
     },
     messages: {
       preventConstructIdCollision:
@@ -25,13 +26,15 @@ export const preventConstructIdCollision = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
 
-        if (!isConstructType(type) || node.arguments.length < 2) return;
+        if (!isConstructType(type, checker) || node.arguments.length < 2) return;
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructIdInLoop(node, context);
@@ -44,8 +47,8 @@ export const preventConstructIdCollision = createRule({
  * Validate whether a Construct ID is a literal inside a loop
  */
 const validateConstructIdInLoop = (
-  node: TSESTree.NewExpression,
-  context: Parameters<typeof preventConstructIdCollision.create>[0],
+  node: ESTree.NewExpression,
+  context: RuleContext,
 ) => {
   if (!isInsideLoop(node)) return;
 
@@ -78,7 +81,7 @@ const validateConstructIdInLoop = (
  * Detects for, for...in, for...of, while, do...while statements,
  * and callbacks of iteration methods (forEach, map, etc.)
  */
-const isInsideLoop = (node: TSESTree.Node): boolean => {
+const isInsideLoop = (node: ESTree.Node): boolean => {
   let current = node.parent;
   while (current) {
     // NOTE: Detect loop statements
@@ -96,7 +99,8 @@ const isInsideLoop = (node: TSESTree.Node): boolean => {
     if (
       (current.type === AST_NODE_TYPES.ArrowFunctionExpression ||
         current.type === AST_NODE_TYPES.FunctionExpression) &&
-      isIterationMethodCallback(current)
+        // FIXME: not use `as` assertion
+      isIterationMethodCallback(current as ESTree.ArrowFunctionExpression | ESTree.FunctionExpression)
     ) {
       return true;
     }
@@ -130,7 +134,7 @@ const ITERATION_METHODS = new Set([
  * Check whether an arrow function or function expression is a callback of an iteration method
  */
 const isIterationMethodCallback = (
-  node: TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression,
+  node: ESTree.ArrowFunctionExpression | ESTree.FunctionExpression,
 ): boolean => {
   const parent = node.parent;
   if (parent?.type !== AST_NODE_TYPES.CallExpression) return false;
