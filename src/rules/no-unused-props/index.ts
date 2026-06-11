@@ -1,19 +1,17 @@
 import {
   AST_NODE_TYPES,
+  CorsaType,
   ESLintUtils,
-  ParserServicesWithTypeInformation,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
-import { Type } from "typescript";
+  ESTree,
+  ParserServices,
+  RuleContext,
+} from "corsa-oxlint";
 
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../../shared/create-rule";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
-
-type Context = TSESLint.RuleContext<"unusedProp", []>;
 
 /**
  * Enforces that all properties defined in props type are used within the constructor
@@ -36,13 +34,14 @@ export const noUnusedProps = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
 
     return {
       ClassDeclaration(node) {
         if (node.abstract) return;
 
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructType(type)) return;
+        if (!isConstructType(type, checker)) return;
 
         const constructor = findConstructor(node);
         if (!constructor) return;
@@ -51,7 +50,7 @@ export const noUnusedProps = createRule({
         if (!propsParam) return;
         if (isPropsUsedInSuperCall(constructor, propsParam.node.name)) return;
 
-        const tracker = new PropsUsageTracker(propsParam.type);
+        const tracker = new PropsUsageTracker(propsParam.type, checker);
         const analyzer = new PropsUsageAnalyzer(tracker);
 
         analyzer.analyze(constructor, propsParam.node);
@@ -62,9 +61,9 @@ export const noUnusedProps = createRule({
 });
 
 const getPropsParam = (
-  constructor: TSESTree.MethodDefinition,
-  parserServices: ParserServicesWithTypeInformation,
-): { node: TSESTree.Identifier; type: Type } | null => {
+  constructor: ESTree.MethodDefinition,
+  parserServices: ParserServices,
+): { node: ESTree.BindingIdentifier; type: CorsaType } | null => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
 
@@ -75,9 +74,12 @@ const getPropsParam = (
   // ++++++++++++++++++++++++++++++++++++
   if (propsParam.type !== AST_NODE_TYPES.Identifier) return null;
 
+  const type = parserServices.getTypeAtLocation(propsParam);
+  if (!type) return null;
+
   return {
     node: propsParam,
-    type: parserServices.getTypeAtLocation(propsParam),
+    type,
   };
 };
 
@@ -96,7 +98,7 @@ const getPropsParam = (
  * @returns True if props are used in super call, false otherwise
  */
 const isPropsUsedInSuperCall = (
-  constructor: TSESTree.MethodDefinition,
+  constructor: ESTree.MethodDefinition,
   propsPropertyName: string,
 ): boolean => {
   if (constructor.kind !== "constructor") return false;
@@ -112,7 +114,7 @@ const isPropsUsedInSuperCall = (
       continue;
     }
 
-    const visitNode = (node: TSESTree.Node, propsName: string): boolean => {
+    const visitNode = (node: ESTree.Node, propsName: string): boolean => {
       const nodeValue = node.type === AST_NODE_TYPES.Property ? node.value : node;
       switch (nodeValue.type) {
         case AST_NODE_TYPES.Identifier: {
@@ -144,8 +146,8 @@ const isPropsUsedInSuperCall = (
  */
 const reportUnusedProperties = (
   tracker: IPropsUsageTracker,
-  propsParam: TSESTree.Parameter,
-  context: Context,
+  propsParam: ESTree.BindingIdentifier,
+  context: RuleContext,
 ): void => {
   for (const propName of tracker.getUnusedProperties()) {
     context.report({

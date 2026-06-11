@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
@@ -35,7 +35,7 @@ export class InstanceVariableUsageVisitor implements INodeVisitor {
     private readonly instanceVarName: string,
   ) {}
 
-  visitMemberExpression(node: TSESTree.MemberExpression): void {
+  visitMemberExpression(node: ESTree.MemberExpression): void {
     // ===========================================================================
     // Pattern 1: Property access - this.instanceVarName.propertyName
     // ===========================================================================

@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
@@ -27,7 +27,7 @@ export class PropsAliasVisitor implements INodeVisitor {
     private readonly propsParamName: string,
   ) {}
 
-  visitMemberExpression(node: TSESTree.MemberExpression): void {
+  visitMemberExpression(node: ESTree.MemberExpression): void {
     this.tracker.markAsUsedForMemberExpression(node, this.propsParamName);
     /**
      * NOTE: Check if the object is an alias of props
@@ -45,7 +45,7 @@ export class PropsAliasVisitor implements INodeVisitor {
     }
   }
 
-  visitIdentifier(node: TSESTree.Identifier): void {
+  visitIdentifier(node: ESTree.Identifier): void {
     /**
      * Handles alias registration for props.
      *

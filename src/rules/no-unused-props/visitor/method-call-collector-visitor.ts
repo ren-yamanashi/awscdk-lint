@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 import { INodeVisitor } from "./interface/node-visitor";
 
@@ -32,7 +32,7 @@ export class MethodCallCollectorVisitor implements INodeVisitor {
     this.propsParamName = propsParamName;
   }
 
-  visitCallExpression(node: TSESTree.CallExpression): void {
+  visitCallExpression(node: ESTree.CallExpression): void {
     // NOTE: Check for this.methodName(...) pattern
     if (
       node.callee.type !== AST_NODE_TYPES.MemberExpression ||

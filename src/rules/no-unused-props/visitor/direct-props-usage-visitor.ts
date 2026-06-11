@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
@@ -29,19 +29,19 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
     private readonly propsParamName: string,
   ) {}
 
-  visitMemberExpression(node: TSESTree.MemberExpression): void {
+  visitMemberExpression(node: ESTree.MemberExpression): void {
     this.tracker.markAsUsedForMemberExpression(node, this.propsParamName);
   }
 
-  visitVariableDeclarator(node: TSESTree.VariableDeclarator): void {
+  visitVariableDeclarator(node: ESTree.VariableDeclarator): void {
     this.tracker.markAsUsedForVariableDeclarator(node, this.propsParamName);
   }
 
-  visitAssignmentExpression(node: TSESTree.AssignmentExpression): void {
+  visitAssignmentExpression(node: ESTree.AssignmentExpression): void {
     this.tracker.markAsUsedForAssignmentExpression(node, this.propsParamName);
   }
 
-  visitIdentifier(node: TSESTree.Identifier): void {
+  visitIdentifier(node: ESTree.Identifier): void {
     /**
      * Handles cases where the props identifier is used as a whole value.
      *
@@ -99,7 +99,7 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
     switch (parent.type) {
       // NOTE: Pattern 1: External function call
       case AST_NODE_TYPES.CallExpression: {
-        if (!parent.arguments.includes(node)) return;
+        if (!parent.arguments.some((arg) => arg === node)) return;
         if (
           parent.callee.type === AST_NODE_TYPES.MemberExpression &&
           parent.callee.object.type === AST_NODE_TYPES.ThisExpression
@@ -122,7 +122,7 @@ export class DirectPropsUsageVisitor implements INodeVisitor {
       // NOTE: Pattern 3: Array element
       case AST_NODE_TYPES.ArrayExpression: {
         // NOTE: [props] - props as a whole
-        if (parent.elements.includes(node)) {
+        if (parent.elements.some((el) => el === node)) {
           this.tracker.markAllAsUsed();
         }
         return;

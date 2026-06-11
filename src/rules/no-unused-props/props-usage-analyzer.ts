@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESTree } from "corsa-oxlint";
 
 import { IPropsUsageTracker } from "./props-usage-tracker";
 import {
@@ -10,7 +10,7 @@ import {
 } from "./visitor";
 
 export interface IPropsUsageAnalyzer {
-  analyze(constructor: TSESTree.MethodDefinition, propsParam: TSESTree.Identifier): void;
+  analyze(constructor: ESTree.MethodDefinition, propsParam: ESTree.Identifier): void;
 }
 
 export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
@@ -20,11 +20,12 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     this.tracker = tracker;
   }
 
-  analyze(constructor: TSESTree.MethodDefinition, propsParam: TSESTree.Identifier): void {
+  analyze(constructor: ESTree.MethodDefinition, propsParam: ESTree.Identifier): void {
     const constructorBody = constructor.value.body;
     const classNode = constructor.parent;
     const propsParamName = propsParam.name;
     if (!constructorBody) return;
+    if (!classNode || classNode.type !== AST_NODE_TYPES.ClassBody) return;
 
     this.checkUsageForDirectAccess(constructorBody, propsParamName);
     this.checkUsageForAliasAccess(constructorBody, propsParamName);
@@ -51,7 +52,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    * @param propsParamName - The name of the props parameter (e.g., "props")
    */
   private checkUsageForDirectAccess(
-    constructorBody: TSESTree.BlockStatement,
+    constructorBody: ESTree.BlockStatement,
     propsParamName: string,
   ): void {
     const directVisitor = new DirectPropsUsageVisitor(this.tracker, propsParamName);
@@ -77,7 +78,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    * @param propsParamName - The name of the props parameter (e.g., "props")
    */
   private checkUsageForAliasAccess(
-    constructorBody: TSESTree.BlockStatement,
+    constructorBody: ESTree.BlockStatement,
     propsParamName: string,
   ): void {
     const aliasVisitor = new PropsAliasVisitor(this.tracker, propsParamName);
@@ -111,8 +112,8 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    * @param propsParamName - The name of the props parameter (e.g., "props")
    */
   private checkUsageForInstanceVariable(
-    classBody: TSESTree.ClassBody,
-    constructor: TSESTree.MethodDefinition,
+    classBody: ESTree.ClassBody,
+    constructor: ESTree.MethodDefinition,
     propsParamName: string,
   ) {
     if (!constructor.value.body) return;
@@ -149,8 +150,8 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    * @param propsParamName - The name of the props parameter (e.g., "props")
    */
   private checkUsageForPrivateMethodsCalledFromConstructor(
-    constructorBody: TSESTree.BlockStatement,
-    classBody: TSESTree.ClassBody,
+    constructorBody: ESTree.BlockStatement,
+    classBody: ESTree.ClassBody,
     propsParamName: string,
   ): void {
     // NOTE: Collect method calls in constructor
@@ -192,7 +193,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    * @returns Array of method call info with method names and argument indices where props appears
    */
   private collectMethodCallsWithProps(
-    body: TSESTree.BlockStatement,
+    body: ESTree.BlockStatement,
     propsParamName: string,
   ): { methodName: string; propsArgIndices: number[] }[] {
     const visitor = new MethodCallCollectorVisitor(propsParamName);
@@ -231,7 +232,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    * @returns The instance variable name (e.g., "myProps") or null if not found
    */
   private findPropsInstanceVariable(
-    body: TSESTree.BlockStatement,
+    body: ESTree.BlockStatement,
     propsParamName: string,
   ): string | null {
     for (const statement of body.body) {
@@ -282,16 +283,17 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
    * @returns The MethodDefinition node or null if not found
    */
   private findMethodDefinition(
-    classBody: TSESTree.ClassBody,
+    classBody: ESTree.ClassBody,
     methodName: string,
-  ): TSESTree.MethodDefinition | null {
+  ): ESTree.MethodDefinition | null {
     for (const member of classBody.body) {
       if (
         member.type === AST_NODE_TYPES.MethodDefinition &&
         member.key.type === AST_NODE_TYPES.Identifier &&
         member.key.name === methodName
       ) {
-        return member;
+        // FIXME: not use `as` assertion
+        return member as ESTree.MethodDefinition;
       }
     }
     return null;
