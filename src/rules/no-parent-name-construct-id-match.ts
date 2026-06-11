@@ -1,4 +1,5 @@
 import { AST_NODE_TYPES, ESLintUtils, ESTree, ParserServices, RuleContext } from "corsa-oxlint";
+
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -110,7 +111,7 @@ const validateConstructorBody = ({
   parserServices,
   option,
 }: ValidateExpressionArgs<ESTree.MethodDefinition["value"]>): void => {
-  if(!expression.body) return;
+  if (!expression.body) return;
   for (const statement of expression.body.body) {
     switch (statement.type) {
       case AST_NODE_TYPES.VariableDeclaration: {

@@ -1,6 +1,5 @@
-
-
 import { RuleTester } from "corsa-oxlint";
+
 import { propsNameConvention } from "../rules/props-name-convention";
 
 const ruleTester = new RuleTester();

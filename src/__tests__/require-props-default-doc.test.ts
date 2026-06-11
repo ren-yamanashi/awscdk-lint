@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { requirePropsDefaultDoc } from "../rules/require-props-default-doc";
 
 const ruleTester = new RuleTester();

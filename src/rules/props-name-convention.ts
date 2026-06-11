@@ -1,6 +1,5 @@
-
-
 import { AST_NODE_TYPES, ESLintUtils, ESTree } from "corsa-oxlint";
+
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
@@ -13,7 +12,7 @@ type ConstructorParam =
   | ESTree.AssignmentPattern
   | ESTree.RestElement
   | ESTree.TSParameterProperty;
-  
+
 /**
  * Enforces a naming convention for props interfaces in Construct classes
  * @param context - The rule context

@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { preferGrantsProperty } from "../rules/prefer-grants-property";
 
 const ruleTester = new RuleTester();

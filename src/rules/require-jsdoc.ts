@@ -1,5 +1,5 @@
-
 import { AST_NODE_TYPES, AST_TOKEN_TYPES, ESLintUtils } from "corsa-oxlint";
+
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 

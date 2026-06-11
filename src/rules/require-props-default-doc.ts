@@ -1,5 +1,5 @@
-
 import { AST_NODE_TYPES, AST_TOKEN_TYPES } from "corsa-oxlint";
+
 import { createRule } from "../shared/create-rule";
 
 /**

@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { requirePassingThis } from "../rules/require-passing-this";
 
 const ruleTester = new RuleTester();

@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { preventConstructIdCollision } from "../rules/prevent-construct-id-collision";
 
 const ruleTester = new RuleTester();

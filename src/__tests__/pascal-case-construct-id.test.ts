@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { pascalCaseConstructId } from "../rules/pascal-case-construct-id";
 
 const ruleTester = new RuleTester();

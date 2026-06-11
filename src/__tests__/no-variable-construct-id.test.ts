@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { noVariableConstructId } from "../rules/no-variable-construct-id";
 
 const ruleTester = new RuleTester();

@@ -1,5 +1,5 @@
-
 import { AST_NODE_TYPES, ESLintUtils, ESTree, RuleContext } from "corsa-oxlint";
+
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -11,7 +11,6 @@ const QUOTE_TYPE = {
 } as const;
 
 type QuoteType = (typeof QUOTE_TYPE)[keyof typeof QUOTE_TYPE];
-
 
 /**
 /**

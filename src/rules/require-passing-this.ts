@@ -1,5 +1,5 @@
-
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
+
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";

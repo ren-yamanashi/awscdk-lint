@@ -1,5 +1,5 @@
-
 import { AST_NODE_TYPES, ESLintUtils, ESTree, RuleContext } from "corsa-oxlint";
+
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
@@ -46,10 +46,7 @@ export const preventConstructIdCollision = createRule({
 /**
  * Validate whether a Construct ID is a literal inside a loop
  */
-const validateConstructIdInLoop = (
-  node: ESTree.NewExpression,
-  context: RuleContext,
-) => {
+const validateConstructIdInLoop = (node: ESTree.NewExpression, context: RuleContext) => {
   if (!isInsideLoop(node)) return;
 
   const secondArg = node.arguments[1];
@@ -99,8 +96,10 @@ const isInsideLoop = (node: ESTree.Node): boolean => {
     if (
       (current.type === AST_NODE_TYPES.ArrowFunctionExpression ||
         current.type === AST_NODE_TYPES.FunctionExpression) &&
-        // FIXME: not use `as` assertion
-      isIterationMethodCallback(current as ESTree.ArrowFunctionExpression | ESTree.FunctionExpression)
+      // FIXME: not use `as` assertion
+      isIterationMethodCallback(
+        current as ESTree.ArrowFunctionExpression | ESTree.FunctionExpression,
+      )
     ) {
       return true;
     }

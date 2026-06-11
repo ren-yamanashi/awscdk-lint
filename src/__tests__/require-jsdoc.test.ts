@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { requireJSDoc } from "../rules/require-jsdoc";
 
 const ruleTester = new RuleTester();

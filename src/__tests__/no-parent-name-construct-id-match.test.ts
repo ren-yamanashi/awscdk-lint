@@ -1,5 +1,5 @@
-
 import { RuleTester } from "corsa-oxlint";
+
 import { noParentNameConstructIdMatch } from "../rules/no-parent-name-construct-id-match";
 
 const ruleTester = new RuleTester();
