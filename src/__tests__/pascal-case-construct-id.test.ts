@@ -1,16 +1,8 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
 
+import { RuleTester } from "corsa-oxlint";
 import { pascalCaseConstructId } from "../rules/pascal-case-construct-id";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
   valid: [

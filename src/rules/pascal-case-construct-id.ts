@@ -1,5 +1,5 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
+import { AST_NODE_TYPES, ESLintUtils, ESTree, RuleContext } from "corsa-oxlint";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -12,7 +12,6 @@ const QUOTE_TYPE = {
 
 type QuoteType = (typeof QUOTE_TYPE)[keyof typeof QUOTE_TYPE];
 
-type Context = TSESLint.RuleContext<"invalidConstructId", []>;
 
 /**
 /**
@@ -36,14 +35,15 @@ export const pascalCaseConstructId = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type) || node.arguments.length < 2) {
+        if (!isConstructOrStackType(type, checker) || node.arguments.length < 2) {
           return;
         }
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const constructorPropertyNames = findConstructorPropertyNames(type, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructId(node, context);
@@ -64,7 +64,7 @@ const isPascalCase = (str: string) => {
 /**
  * Check the construct ID is PascalCase
  */
-const validateConstructId = (node: TSESTree.NewExpression, context: Context) => {
+const validateConstructId = (node: ESTree.NewExpression, context: RuleContext) => {
   if (node.arguments.length < 2) return;
 
   // NOTE: Treat the second argument as ID
