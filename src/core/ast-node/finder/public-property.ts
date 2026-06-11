@@ -42,6 +42,7 @@ const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined =
       if (!property.parameter.typeAnnotation) return;
       return {
         name: property.parameter.name,
+        // FIXME: not use `as` assertion
         node: property as ESTree.TSParameterProperty,
       };
     }
@@ -52,6 +53,7 @@ const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined =
       if (!property.typeAnnotation) return;
       return {
         name: property.key.name,
+        // FIXME: not use `as` assertion
         node: property as ESTree.PropertyDefinition,
       };
     }
