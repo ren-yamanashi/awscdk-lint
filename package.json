@@ -55,20 +55,22 @@
     "@secretlint/secretlint-rule-preset-recommend": "^13.0.0",
     "@types/node": "^24.10.13",
     "@typescript-eslint/parser": "^8.58.0",
-    "@typescript-eslint/rule-tester": "^8.58.0",
-    "@typescript-eslint/utils": "^8.58.0",
     "@typescript/native-preview": "7.0.0-dev.20260516.1",
     "@voidzero-dev/vite-plus-core": "^0.1.11",
     "corsa-oxlint": "0.43.0",
     "eslint": "^10.0.0",
     "secretlint": "^13.0.0",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.0",
     "vite-plus": "^0.1.11"
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
     "typescript": ">=4.8.4 <6.1.0"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    }
   },
   "engines": {
     "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
