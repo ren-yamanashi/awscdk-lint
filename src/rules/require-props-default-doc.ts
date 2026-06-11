@@ -1,5 +1,5 @@
-import { AST_NODE_TYPES, AST_TOKEN_TYPES } from "@typescript-eslint/utils";
 
+import { AST_NODE_TYPES, AST_TOKEN_TYPES } from "corsa-oxlint";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -32,7 +32,7 @@ export const requirePropsDefaultDoc = createRule({
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
-        if (parent.type !== AST_NODE_TYPES.TSInterfaceDeclaration) return;
+        if (parent?.type !== AST_NODE_TYPES.TSInterfaceDeclaration) return;
 
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;

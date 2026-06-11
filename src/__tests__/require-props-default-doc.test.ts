@@ -1,16 +1,8 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
 
+import { RuleTester } from "corsa-oxlint";
 import { requirePropsDefaultDoc } from "../rules/require-props-default-doc";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run("require-default-doc-optional-props", requirePropsDefaultDoc, {
   valid: [
