@@ -1,16 +1,8 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
 
+import { RuleTester } from "corsa-oxlint";
 import { preferGrantsProperty } from "../rules/prefer-grants-property";
 
-const ruleTester = new RuleTester({
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: ["*.ts*"],
-      },
-    },
-  },
-});
+const ruleTester = new RuleTester();
 
 ruleTester.run("prefer-grants-property", preferGrantsProperty, {
   valid: [

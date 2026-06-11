@@ -25,6 +25,7 @@ export const pascalCaseConstructId = createRule({
     type: "problem",
     docs: {
       description: "Enforce PascalCase for Construct ID.",
+      requiresTypeChecking: true,
     },
     messages: {
       invalidConstructId: "Construct ID must be PascalCase.",

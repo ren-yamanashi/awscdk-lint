@@ -1,5 +1,4 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESTree } from "@typescript-eslint/utils";
-
+import { AST_NODE_TYPES, ESLintUtils, ESTree } from "corsa-oxlint";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -9,6 +8,7 @@ export const preferGrantsProperty = createRule({
     type: "suggestion",
     docs: {
       description: "Prefer using the grants property over grant* methods when available.",
+      requiresTypeChecking: true,
     },
     messages: {
       useGrantsProperty:
@@ -22,7 +22,7 @@ export const preferGrantsProperty = createRule({
     const checker = parserServices.program.getTypeChecker();
 
     return {
-      CallExpression(node: TSESTree.CallExpression) {
+      CallExpression(node: ESTree.CallExpression) {
         if (
           node.callee.type !== AST_NODE_TYPES.MemberExpression ||
           node.callee.property.type !== AST_NODE_TYPES.Identifier
@@ -36,20 +36,24 @@ export const preferGrantsProperty = createRule({
         const objectNode = node.callee.object;
         const tsNode = parserServices.esTreeNodeToTSNodeMap.get(objectNode);
         const type = checker.getTypeAtLocation(tsNode);
-        if (!isConstructType(type)) return;
+        if (!type || !isConstructType(type, checker)) return;
 
-        const grantsProperty = type.getProperty("grants");
+        const grantsProperty = checker.getPropertiesOfType(type).find((s) => s.name === "grants");
         if (!grantsProperty) return;
 
         const grantsType = checker.getTypeOfSymbolAtLocation(grantsProperty, tsNode);
-        const grantsTypeName = grantsType.symbol?.name;
+        if (!grantsType) return;
+
+        const grantsTypeName = checker.getSymbolOfType(grantsType)?.name;
         if (!grantsTypeName?.endsWith("Grants")) return;
 
         const convertedMethodName = methodName
           .replace(/^grant/, "")
           .replace(/^./, (c) => c.toLowerCase());
 
-        const suggestedMethod = grantsType.getProperty(convertedMethodName);
+        const suggestedMethod = checker
+          .getPropertiesOfType(grantsType)
+          .find((s) => s.name === convertedMethodName);
         if (!suggestedMethod) return;
 
         const objectName =
