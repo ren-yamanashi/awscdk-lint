@@ -1,5 +1,5 @@
-import { AST_NODE_TYPES, AST_TOKEN_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
+import { AST_NODE_TYPES, AST_TOKEN_TYPES, ESLintUtils } from "corsa-oxlint";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -25,13 +25,14 @@ export const requireJSDoc = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       TSPropertySignature(node) {
         if (node.key.type !== AST_NODE_TYPES.Identifier) return;
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
-        if (parent.type !== AST_NODE_TYPES.TSInterfaceDeclaration) return;
+        if (parent?.type !== AST_NODE_TYPES.TSInterfaceDeclaration) return;
 
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;
@@ -73,7 +74,7 @@ export const requireJSDoc = createRule({
         // NOTE: Check if the class extends Construct and the property is public
         const classType = parserServices.getTypeAtLocation(classDeclaration);
         const accessibility = node.accessibility ?? "public";
-        if (!isConstructType(classType) || accessibility !== "public") {
+        if (!isConstructType(classType, checker) || accessibility !== "public") {
           return;
         }
 
