@@ -1,5 +1,5 @@
 packages:
-  - .
+  - packages/*
   - docs
   - examples
 overrides:
@@ -7,6 +7,9 @@ overrides:
   vitest: npm:@voidzero-dev/vite-plus-test@^0.1.11
 engineStrict: true
 minimumReleaseAge: 2880
+minimumReleaseAgeExclude:
+  - corsa-oxlint
+  - "@corsa-bind/*"
 onlyBuiltDependencies:
   - esbuild
 useNodeVersion: 24.14.1

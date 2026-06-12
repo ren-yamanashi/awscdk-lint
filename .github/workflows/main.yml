@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: vp install --frozen-lockfile
       - name: Build package
-        run: vp pack
+        run: vp run pack
       - name: Run Unit Tests
         run: vp test --run
       - name: Run Integration Tests
@@ -46,10 +46,10 @@ jobs:
         with:
           name: packages
           path: |
-            dist/
-            src/
-            !src/__tests__/
-            package.json
+            packages/eslint/dist/
+            packages/eslint/src/
+            !packages/eslint/src/__tests__/
+            packages/eslint/package.json
             README.md
             LICENSE
           retention-days: 1
