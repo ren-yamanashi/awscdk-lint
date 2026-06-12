@@ -29,24 +29,7 @@ export default defineConfig({
     },
   },
   test: {
-    globals: true,
-    root: "./src",
-    include: ["./__tests__/**/*.test.ts"],
-  },
-  pack: {
-    entry: ["src/index.ts"],
-    outDir: "dist",
-    clean: true,
-    format: ["esm", "cjs"],
-    dts: true,
-    outputOptions: {
-      exports: "named",
-    },
-    treeshake: true,
-    fixedExtension: true,
-    deps: {
-      onlyBundle: false,
-    },
+    projects: ["packages/*"],
   },
   run: {
     tasks: {
