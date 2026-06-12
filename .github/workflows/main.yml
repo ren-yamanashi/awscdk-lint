@@ -37,22 +37,8 @@ jobs:
         run: vp test --run
       - name: Run Integration Tests
         run: vp run test:integration
-      - name: Run Script Tests
-        run: vp run test:scripts
       - name: Run Vite+ Checks
         run: vp check
-      - name: Upload package artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: packages
-          path: |
-            packages/eslint/dist/
-            packages/eslint/src/
-            !packages/eslint/src/__tests__/
-            packages/eslint/package.json
-            README.md
-            LICENSE
-          retention-days: 1
       - name: Build docs
         run: vp run -F @eslint-plugin-awscdk/docs build
       - name: Configure custom domain
@@ -65,16 +51,11 @@ jobs:
           path: ./docs/.vitepress/dist
 
   deploy:
-    needs: [integration, release]
+    needs: integration
     if: |
-      always() &&
       github.event_name == 'pull_request' &&
       github.event.pull_request.merged == true &&
-      needs.integration.result == 'success' &&
-      (
-        (contains(github.event.pull_request.labels.*.name, 'Type: Release') && needs.release.result == 'success') ||
-        contains(github.event.pull_request.labels.*.name, 'Docs: Deploy')
-      )
+      contains(github.event.pull_request.labels.*.name, 'Docs: Deploy')
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -87,96 +68,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
-
-  release:
-    needs: integration
-    if: |
-      github.event_name == 'pull_request' &&
-      github.event.action == 'closed' &&
-      github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.labels.*.name, 'Type: Release')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write # OIDC
-      pull-requests: write # PR comment
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-        with:
-          persist-credentials: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version: 24.14.1
-          registry-url: "https://registry.npmjs.org"
-
-      - name: Update npm
-        run: npm install -g npm@latest
-
-      - name: Get package info
-        id: package
-        run: bash .github/scripts/get-package-info.sh
-
-      - name: Check if tag exists
-        id: tag-check
-        run: bash .github/scripts/check-tag.sh
-        env:
-          VERSION: ${{ steps.package.outputs.version }}
-
-      - name: Download package artifacts
-        if: steps.tag-check.outputs.exists == 'false'
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: packages
-          path: .
-
-      - name: Publish to npm with provenance
-        if: steps.tag-check.outputs.exists == 'false'
-        run: npm publish --provenance --access public --tag "$DIST_TAG"
-        env:
-          DIST_TAG: ${{ steps.package.outputs.dist_tag }}
-
-      - name: Create GitHub Release with tag
-        id: create-release
-        if: steps.tag-check.outputs.exists == 'false'
-        run: bash .github/scripts/create-github-release.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.package.outputs.version }}
-          SHA: ${{ github.sha }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-          IS_PRERELEASE: ${{ steps.package.outputs.is_prerelease }}
-
-      - name: Comment on PR - Success
-        if: |
-          always() &&
-          github.event_name == 'pull_request' &&
-          steps.tag-check.outputs.exists == 'false' &&
-          success()
-        run: bash .github/scripts/comment-release-success.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          VERSION: ${{ steps.package.outputs.version }}
-          PACKAGE_NAME: ${{ steps.package.outputs.name }}
-          RELEASE_URL: ${{ steps.create-release.outputs.url }}
-          SERVER_URL: ${{ github.server_url }}
-          REPOSITORY: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
-
-      - name: Comment on PR - Failure
-        if: |
-          always() &&
-          github.event_name == 'pull_request' &&
-          steps.tag-check.outputs.exists == 'false' &&
-          failure()
-        run: bash .github/scripts/comment-release-failure.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          VERSION: ${{ steps.package.outputs.version }}
-          SERVER_URL: ${{ github.server_url }}
-          REPOSITORY: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
