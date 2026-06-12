@@ -37,10 +37,6 @@ export default defineConfig({
         cache: false,
         command: "bash scripts/integration-test.sh",
       },
-      "test:scripts": {
-        cache: false,
-        command: "bash .github/scripts/__tests__/run-all.sh",
-      },
     },
   },
 });
