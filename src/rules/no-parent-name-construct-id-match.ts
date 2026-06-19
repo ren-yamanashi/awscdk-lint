@@ -2,7 +2,6 @@ import type { ESTree, ParserServices, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
-import { asEstreeNode } from "../core/ast-node/as-estree-node";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -144,7 +143,7 @@ const validateConstructorBody = ({
         traverseStatements({
           context,
           parentClassName,
-          statement: asEstreeNode(statement.consequent),
+          statement: statement.consequent,
           parserServices,
           option,
         });
@@ -156,7 +155,7 @@ const validateConstructorBody = ({
             traverseStatements({
               context,
               parentClassName,
-              statement: asEstreeNode(statement),
+              statement: statement,
               parserServices,
               option,
             });
@@ -184,7 +183,7 @@ const traverseStatements = ({
     case AST_NODE_TYPES.BlockStatement: {
       for (const body of statement.body) {
         validateStatement({
-          statement: asEstreeNode(body),
+          statement: body,
           parentClassName,
           context,
           parserServices,
@@ -294,7 +293,7 @@ const validateIfStatement = ({
   traverseStatements({
     context,
     parentClassName,
-    statement: asEstreeNode(statement.consequent),
+    statement: statement.consequent,
     parserServices,
     option,
   });
@@ -316,7 +315,7 @@ const validateSwitchStatement = ({
       traverseStatements({
         context,
         parentClassName,
-        statement: asEstreeNode(_consequent),
+        statement: _consequent,
         parserServices,
         option,
       });

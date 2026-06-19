@@ -2,7 +2,6 @@ import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
-import { asEstreeNode } from "../core/ast-node/as-estree-node";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
@@ -82,7 +81,7 @@ const validateConstructIdInLoop = (node: ESTree.NewExpression, context: RuleCont
  * and callbacks of iteration methods (forEach, map, etc.)
  */
 const isInsideLoop = (node: ESTree.Node): boolean => {
-  let current: ESTree.Node | undefined = node.parent ? asEstreeNode(node.parent) : undefined;
+  let current: ESTree.Node | undefined = node.parent ?? undefined;
   while (current) {
     // NOTE: Detect loop statements
     if (
@@ -109,7 +108,7 @@ const isInsideLoop = (node: ESTree.Node): boolean => {
       return false;
     }
 
-    current = current.parent ? asEstreeNode(current.parent) : undefined;
+    current = current.parent ?? undefined;
   }
   return false;
 };

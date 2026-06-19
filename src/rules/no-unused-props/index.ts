@@ -2,7 +2,6 @@ import type { CorsaType, ESTree, ParserServices, RuleContext } from "corsa-oxlin
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
-import { asEstreeNode } from "../../core/ast-node/as-estree-node";
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../../shared/create-rule";
@@ -112,14 +111,14 @@ const isPropsUsedInSuperCall = (
     }
 
     const visitNode = (node: ESTree.Node, propsName: string): boolean => {
-      const nodeValue = node.type === AST_NODE_TYPES.Property ? asEstreeNode(node.value) : node;
+      const nodeValue = node.type === AST_NODE_TYPES.Property ? node.value : node;
       switch (nodeValue.type) {
         case AST_NODE_TYPES.Identifier: {
           return nodeValue.name === propsName;
         }
         case AST_NODE_TYPES.ObjectExpression: {
           for (const prop of nodeValue.properties) {
-            if (visitNode(asEstreeNode(prop), propsName)) return true;
+            if (visitNode(prop, propsName)) return true;
           }
           break;
         }
@@ -132,7 +131,7 @@ const isPropsUsedInSuperCall = (
 
     // NOTE: Check if the same variable name as props is passed to super()
     for (const arg of expr.expression.arguments) {
-      if (visitNode(asEstreeNode(arg), propsPropertyName)) return true;
+      if (visitNode(arg, propsPropertyName)) return true;
     }
   }
   return false;
