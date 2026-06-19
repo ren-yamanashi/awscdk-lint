@@ -1,8 +1,8 @@
-import type { ESTree } from "@oxlint/plugins";
-import type { RuleContext } from "corsa-oxlint";
+import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
+import { asEstreeNode } from "../core/ast-node/as-estree-node";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
@@ -82,7 +82,7 @@ const validateConstructIdInLoop = (node: ESTree.NewExpression, context: RuleCont
  * and callbacks of iteration methods (forEach, map, etc.)
  */
 const isInsideLoop = (node: ESTree.Node): boolean => {
-  let current = node.parent;
+  let current: ESTree.Node | undefined = node.parent ? asEstreeNode(node.parent) : undefined;
   while (current) {
     // NOTE: Detect loop statements
     if (
@@ -109,7 +109,7 @@ const isInsideLoop = (node: ESTree.Node): boolean => {
       return false;
     }
 
-    current = current.parent;
+    current = current.parent ? asEstreeNode(current.parent) : undefined;
   }
   return false;
 };
@@ -132,9 +132,7 @@ const ITERATION_METHODS = new Set([
 /**
  * Check whether an arrow function or function expression is a callback of an iteration method
  */
-const isIterationMethodCallback = (
-  node: ESTree.ArrowFunctionExpression | ESTree.Function,
-): boolean => {
+const isIterationMethodCallback = (node: ESTree.Node): boolean => {
   const parent = node.parent;
   if (parent?.type !== AST_NODE_TYPES.CallExpression) return false;
 

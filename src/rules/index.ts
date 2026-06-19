@@ -1,4 +1,4 @@
-import type { Rule as OxlintRule } from "@oxlint/plugins";
+import type { Rule as OxlintRule } from "corsa-oxlint";
 import type { Rule } from "eslint";
 
 import { constructConstructorProperty } from "./construct-constructor-property";

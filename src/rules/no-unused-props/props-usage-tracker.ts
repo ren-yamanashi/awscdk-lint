@@ -1,5 +1,4 @@
-import type { ESTree } from "@oxlint/plugins";
-import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape, ESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
@@ -57,9 +56,12 @@ export interface IPropsUsageTracker {
 export class PropsUsageTracker implements IPropsUsageTracker {
   private propUsageMap: Map<string, boolean>;
 
-  constructor(propType: CorsaType, checker: CorsaTypeCheckerShape) {
+  constructor(
+    propType: CorsaType,
+    private readonly checker: CorsaTypeCheckerShape,
+  ) {
     this.propUsageMap = new Map<string, boolean>(
-      this.getPropsPropertyNames(propType, checker).map((name) => [name, false]),
+      this.getPropsPropertyNames(propType).map((name) => [name, false]),
     );
   }
 
@@ -151,13 +153,13 @@ export class PropsUsageTracker implements IPropsUsageTracker {
   /**
    * Gets the property names from the props type
    */
-  private getPropsPropertyNames(propsType: CorsaType, checker: CorsaTypeCheckerShape): string[] {
+  private getPropsPropertyNames(propsType: CorsaType): string[] {
     const isInternalProperty = (propertyName: string): boolean =>
       propertyName.startsWith("_") ||
       propertyName === "constructor" ||
       propertyName === "prototype";
 
-    const typeProperties = checker.getPropertiesOfType(propsType);
+    const typeProperties = this.checker.getPropertiesOfType(propsType);
     return typeProperties.reduce<string[]>(
       (acc, prop) => (!isInternalProperty(prop.name) ? [...acc, prop.name] : acc),
       [],

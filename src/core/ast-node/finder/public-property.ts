@@ -2,6 +2,7 @@ import type { ESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
+import { asEstreeNode } from "../as-estree-node";
 import { findConstructor } from "./constructor";
 
 type Class = ESTree.ClassDeclaration | ESTree.ClassExpression;
@@ -26,11 +27,13 @@ export const findPublicPropertiesInClass = (node: Class): PublicProperty[] => {
 const findPropertiesInConstructor = (node: Class) => {
   const constructor = findConstructor(node);
   if (!constructor) return [];
-  return constructor.value.params.flatMap((property) => findPublicProperty(property) ?? []);
+  return constructor.value.params.flatMap(
+    (property) => findPublicProperty(asEstreeNode(property)) ?? [],
+  );
 };
 
 const findPropertiesInClassElement = (node: Class): PublicProperty[] => {
-  return node.body.body.flatMap((property) => findPublicProperty(property) ?? []);
+  return node.body.body.flatMap((property) => findPublicProperty(asEstreeNode(property)) ?? []);
 };
 
 const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined => {

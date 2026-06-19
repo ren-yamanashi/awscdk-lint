@@ -51,13 +51,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@oxlint/plugins": "1.66.0",
+    "@oxlint/plugins": "1.70.0",
     "@secretlint/secretlint-rule-preset-recommend": "^13.0.0",
     "@types/node": "^24.10.13",
     "@typescript-eslint/parser": "^8.58.0",
     "@typescript/native-preview": "7.0.0-dev.20260516.1",
     "@voidzero-dev/vite-plus-core": "^0.1.11",
-    "corsa-oxlint": "0.43.0",
+    "corsa-oxlint": "0.47.1",
     "eslint": "^10.0.0",
     "secretlint": "^13.0.0",
     "typescript": "^6.0.2",
@@ -75,5 +75,10 @@
   "engines": {
     "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
   },
-  "packageManager": "pnpm@10.29.3"
+  "packageManager": "pnpm@10.29.3",
+  "pnpm": {
+    "overrides": {
+      "oxlint-tsgolint": "^0.23.0"
+    }
+  }
 }

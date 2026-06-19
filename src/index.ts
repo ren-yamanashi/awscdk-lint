@@ -2,6 +2,7 @@ import type { Linter } from "eslint";
 
 import { configs } from "./configs";
 import { FlatConfig } from "./configs/flat-config";
+import { OxlintConfig } from "./configs/oxlint-config";
 import { rules } from "./rules";
 
 export { configs, rules };
@@ -19,6 +20,8 @@ export interface EslintCdkPlugin {
     };
     recommended: FlatConfig;
     strict: FlatConfig;
+    oxlintRecommended: OxlintConfig;
+    oxlintStrict: OxlintConfig;
   }>;
 }
 
@@ -29,6 +32,8 @@ const eslintCdkPlugin: EslintCdkPlugin = {
     classicStrict: configs.classicStrict,
     recommended: configs.recommended,
     strict: configs.strict,
+    oxlintRecommended: configs.oxlintRecommended,
+    oxlintStrict: configs.oxlintStrict,
   },
 };
 

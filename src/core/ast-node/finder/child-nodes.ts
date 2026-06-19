@@ -1,4 +1,4 @@
-import type { ESTree } from "@oxlint/plugins";
+import type { ESTree } from "corsa-oxlint";
 
 /**
  * find child nodes from an ESTree.Node
