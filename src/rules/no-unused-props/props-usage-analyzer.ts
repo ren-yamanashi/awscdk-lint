@@ -1,4 +1,4 @@
-import type { ESTree } from "@oxlint/plugins";
+import type { ESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
@@ -11,13 +11,8 @@ import {
   traverseNodes,
 } from "./visitor";
 
-type PropsParamNode = Extract<
-  ESTree.MethodDefinition["value"]["params"][number],
-  { type: "Identifier" }
->;
-
 export interface IPropsUsageAnalyzer {
-  analyze(constructor: ESTree.MethodDefinition, propsParam: PropsParamNode): void;
+  analyze(constructor: ESTree.MethodDefinition, propsParam: ESTree.BindingIdentifier): void;
 }
 
 export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
@@ -27,7 +22,7 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     this.tracker = tracker;
   }
 
-  analyze(constructor: ESTree.MethodDefinition, propsParam: PropsParamNode): void {
+  analyze(constructor: ESTree.MethodDefinition, propsParam: ESTree.BindingIdentifier): void {
     const constructorBody = constructor.value.body;
     const classNode = constructor.parent;
     const propsParamName = propsParam.name;
