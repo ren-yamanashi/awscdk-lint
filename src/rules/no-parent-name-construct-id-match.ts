@@ -1,8 +1,8 @@
-import type { ESTree } from "@oxlint/plugins";
-import type { ParserServices, RuleContext } from "corsa-oxlint";
+import type { ESTree, ParserServices, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
+import { asEstreeNode } from "../core/ast-node/as-estree-node";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -18,7 +18,7 @@ const defaultOption: Option = {
 
 type ConstructorFn = ESTree.MethodDefinition["value"];
 
-type ValidateStatementArgs<T extends ESTree.Statement> = {
+type ValidateStatementArgs<T extends ESTree.Node> = {
   statement: T;
   parentClassName: string;
   context: RuleContext;
@@ -26,7 +26,7 @@ type ValidateStatementArgs<T extends ESTree.Statement> = {
   option: Option;
 };
 
-type ValidateExpressionArgs<T extends ESTree.Expression | ConstructorFn> = {
+type ValidateExpressionArgs<T extends ESTree.NewExpression | ConstructorFn> = {
   expression: T;
   parentClassName: string;
   context: RuleContext;
@@ -144,7 +144,7 @@ const validateConstructorBody = ({
         traverseStatements({
           context,
           parentClassName,
-          statement: statement.consequent,
+          statement: asEstreeNode(statement.consequent),
           parserServices,
           option,
         });
@@ -156,7 +156,7 @@ const validateConstructorBody = ({
             traverseStatements({
               context,
               parentClassName,
-              statement,
+              statement: asEstreeNode(statement),
               parserServices,
               option,
             });
@@ -179,12 +179,12 @@ const traverseStatements = ({
   context,
   parserServices,
   option,
-}: ValidateStatementArgs<ESTree.Statement>) => {
+}: ValidateStatementArgs<ESTree.Node>) => {
   switch (statement.type) {
     case AST_NODE_TYPES.BlockStatement: {
       for (const body of statement.body) {
         validateStatement({
-          statement: body,
+          statement: asEstreeNode(body),
           parentClassName,
           context,
           parserServices,
@@ -231,7 +231,7 @@ const validateStatement = ({
   context,
   parserServices,
   option,
-}: ValidateStatementArgs<ESTree.Statement>): void => {
+}: ValidateStatementArgs<ESTree.Node>): void => {
   switch (statement.type) {
     case AST_NODE_TYPES.VariableDeclaration: {
       const newExpression = statement.declarations[0].init;
@@ -294,7 +294,7 @@ const validateIfStatement = ({
   traverseStatements({
     context,
     parentClassName,
-    statement: statement.consequent,
+    statement: asEstreeNode(statement.consequent),
     parserServices,
     option,
   });
@@ -316,7 +316,7 @@ const validateSwitchStatement = ({
       traverseStatements({
         context,
         parentClassName,
-        statement: _consequent,
+        statement: asEstreeNode(_consequent),
         parserServices,
         option,
       });
