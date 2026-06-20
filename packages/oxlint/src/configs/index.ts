@@ -13,11 +13,13 @@ export const configs: Readonly<{
   strict: OxlintConfig;
 }> = {
   recommended: createOxlintConfig({
+    "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-mutable-property-of-props-interface": "warn",
     "awscdk/no-mutable-public-property-of-construct": "warn",
     "awscdk/pascal-case-construct-id": "error",
   }),
   strict: createOxlintConfig({
+    "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-import-private": "error",
     "awscdk/no-mutable-property-of-props-interface": "error",
     "awscdk/no-mutable-public-property-of-construct": "error",
