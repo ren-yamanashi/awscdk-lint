@@ -14,10 +14,12 @@ export const configs: Readonly<{
 }> = {
   recommended: createOxlintConfig({
     "awscdk/no-mutable-property-of-props-interface": "warn",
+    "awscdk/no-mutable-public-property-of-construct": "warn",
   }),
   strict: createOxlintConfig({
     "awscdk/no-import-private": "error",
     "awscdk/no-mutable-property-of-props-interface": "error",
+    "awscdk/no-mutable-public-property-of-construct": "error",
     "awscdk/props-name-convention": "error",
     "awscdk/require-jsdoc": "error",
     "awscdk/require-props-default-doc": "error",
