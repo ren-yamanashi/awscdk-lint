@@ -17,6 +17,7 @@ export const configs: Readonly<{
     "awscdk/no-mutable-property-of-props-interface": "warn",
     "awscdk/no-mutable-public-property-of-construct": "warn",
     "awscdk/pascal-case-construct-id": "error",
+    "awscdk/require-passing-this": ["error", { allowNonThisAndDisallowScope: true }],
   }),
   strict: createOxlintConfig({
     "awscdk/no-construct-stack-suffix": "error",
@@ -26,6 +27,7 @@ export const configs: Readonly<{
     "awscdk/pascal-case-construct-id": "error",
     "awscdk/props-name-convention": "error",
     "awscdk/require-jsdoc": "error",
+    "awscdk/require-passing-this": "error",
     "awscdk/require-props-default-doc": "error",
   }),
 };

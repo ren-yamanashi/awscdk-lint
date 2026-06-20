@@ -7,6 +7,7 @@ import { noMutablePublicPropertyOfConstruct } from "./no-mutable-public-property
 import { pascalCaseConstructId } from "./pascal-case-construct-id";
 import { propsNameConvention } from "./props-name-convention";
 import { requireJSDoc } from "./require-jsdoc";
+import { requirePassingThis } from "./require-passing-this";
 import { requirePropsDefaultDoc } from "./require-props-default-doc";
 
 export const rules: Record<string, Rule> = {
@@ -17,5 +18,6 @@ export const rules: Record<string, Rule> = {
   "pascal-case-construct-id": pascalCaseConstructId,
   "props-name-convention": propsNameConvention,
   "require-jsdoc": requireJSDoc,
+  "require-passing-this": requirePassingThis,
   "require-props-default-doc": requirePropsDefaultDoc,
 };
