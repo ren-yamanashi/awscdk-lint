@@ -13,6 +13,7 @@ export const configs: Readonly<{
   strict: OxlintConfig;
 }> = {
   recommended: createOxlintConfig({
+    "awscdk/construct-constructor-property": "error",
     "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-mutable-property-of-props-interface": "warn",
     "awscdk/no-mutable-public-property-of-construct": "warn",
@@ -22,6 +23,7 @@ export const configs: Readonly<{
     "awscdk/require-passing-this": ["error", { allowNonThisAndDisallowScope: true }],
   }),
   strict: createOxlintConfig({
+    "awscdk/construct-constructor-property": "error",
     "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-import-private": "error",
     "awscdk/no-mutable-property-of-props-interface": "error",

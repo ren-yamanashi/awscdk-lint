@@ -1,6 +1,7 @@
 {
   "jsPlugins": ["oxlint-plugin-awscdk"],
   "rules": {
+    "awscdk/construct-constructor-property": "error",
     "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-import-private": "error",
     "awscdk/no-mutable-property-of-props-interface": "error",
