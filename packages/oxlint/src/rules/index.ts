@@ -1,6 +1,7 @@
 import type { Rule } from "corsa-oxlint";
 
 import { constructConstructorProperty } from "./construct-constructor-property";
+import { noConstructInPublicPropertyOfConstruct } from "./no-construct-in-public-property-of-construct";
 import { noConstructStackSuffix } from "./no-construct-stack-suffix";
 import { noImportPrivate } from "./no-import-private";
 import { noMutablePropertyOfPropsInterface } from "./no-mutable-property-of-props-interface";
@@ -16,6 +17,7 @@ import { requirePropsDefaultDoc } from "./require-props-default-doc";
 
 export const rules: Record<string, Rule> = {
   "construct-constructor-property": constructConstructorProperty,
+  "no-construct-in-public-property-of-construct": noConstructInPublicPropertyOfConstruct,
   "no-construct-stack-suffix": noConstructStackSuffix,
   "no-import-private": noImportPrivate,
   "no-mutable-property-of-props-interface": noMutablePropertyOfPropsInterface,
