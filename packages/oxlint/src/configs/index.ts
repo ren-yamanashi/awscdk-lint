@@ -18,6 +18,7 @@ export const configs: Readonly<{
     "awscdk/no-mutable-public-property-of-construct": "warn",
     "awscdk/no-variable-construct-id": "error",
     "awscdk/pascal-case-construct-id": "error",
+    "awscdk/prefer-grants-property": "warn",
     "awscdk/require-passing-this": ["error", { allowNonThisAndDisallowScope: true }],
   }),
   strict: createOxlintConfig({
@@ -27,6 +28,7 @@ export const configs: Readonly<{
     "awscdk/no-mutable-public-property-of-construct": "error",
     "awscdk/no-variable-construct-id": "error",
     "awscdk/pascal-case-construct-id": "error",
+    "awscdk/prefer-grants-property": "error",
     "awscdk/prevent-construct-id-collision": "error",
     "awscdk/props-name-convention": "error",
     "awscdk/require-jsdoc": "error",

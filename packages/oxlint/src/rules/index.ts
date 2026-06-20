@@ -6,6 +6,7 @@ import { noMutablePropertyOfPropsInterface } from "./no-mutable-property-of-prop
 import { noMutablePublicPropertyOfConstruct } from "./no-mutable-public-property-of-construct";
 import { noVariableConstructId } from "./no-variable-construct-id";
 import { pascalCaseConstructId } from "./pascal-case-construct-id";
+import { preferGrantsProperty } from "./prefer-grants-property";
 import { preventConstructIdCollision } from "./prevent-construct-id-collision";
 import { propsNameConvention } from "./props-name-convention";
 import { requireJSDoc } from "./require-jsdoc";
@@ -19,6 +20,7 @@ export const rules: Record<string, Rule> = {
   "no-mutable-public-property-of-construct": noMutablePublicPropertyOfConstruct,
   "no-variable-construct-id": noVariableConstructId,
   "pascal-case-construct-id": pascalCaseConstructId,
+  "prefer-grants-property": preferGrantsProperty,
   "prevent-construct-id-collision": preventConstructIdCollision,
   "props-name-convention": propsNameConvention,
   "require-jsdoc": requireJSDoc,
