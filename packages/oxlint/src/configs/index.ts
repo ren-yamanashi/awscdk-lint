@@ -18,5 +18,6 @@ export const configs: Readonly<{
   strict: createOxlintConfig({
     "awscdk/no-import-private": "error",
     "awscdk/no-mutable-property-of-props-interface": "error",
+    "awscdk/require-props-default-doc": "error",
   }),
 };
