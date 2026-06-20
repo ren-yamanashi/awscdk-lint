@@ -47,17 +47,21 @@
     "pack": "vp pack",
     "test": "vp test --run"
   },
+  "dependencies": {
+    "@typescript/native-preview": "^7.0.0-dev.20260619.1",
+    "corsa-oxlint": "^0.47.1",
+    "oxlint-tsgolint": "^0.23.0"
+  },
   "devDependencies": {
+    "@oxlint/plugins": "^1.70.0",
     "@types/node": "^24.10.13",
     "@voidzero-dev/vite-plus-core": "^0.1.11",
-    "corsa-oxlint": "^0.47.1",
     "oxlint": "^1.70.0",
     "secretlint": "^13.0.0",
     "typescript": "^6.0.2",
     "vite-plus": "^0.1.11"
   },
   "peerDependencies": {
-    "corsa-oxlint": "^0.47.1",
     "oxlint": "^1.70.0"
   },
   "engines": {

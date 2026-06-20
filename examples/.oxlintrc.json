@@ -3,6 +3,8 @@
   "rules": {
     "awscdk/no-import-private": "error",
     "awscdk/no-mutable-property-of-props-interface": "error",
+    "awscdk/props-name-convention": "error",
+    "awscdk/require-jsdoc": "error",
     "awscdk/require-props-default-doc": "error"
   }
 }
