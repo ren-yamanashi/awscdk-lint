@@ -14,6 +14,7 @@ export const configs: Readonly<{
 }> = {
   recommended: createOxlintConfig({
     "awscdk/construct-constructor-property": "error",
+    "awscdk/no-construct-in-interface": "error",
     "awscdk/no-construct-in-public-property-of-construct": "error",
     "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-mutable-property-of-props-interface": "warn",
@@ -25,6 +26,7 @@ export const configs: Readonly<{
   }),
   strict: createOxlintConfig({
     "awscdk/construct-constructor-property": "error",
+    "awscdk/no-construct-in-interface": "error",
     "awscdk/no-construct-in-public-property-of-construct": "error",
     "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-import-private": "error",

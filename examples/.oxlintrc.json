@@ -2,6 +2,7 @@
   "jsPlugins": ["oxlint-plugin-awscdk"],
   "rules": {
     "awscdk/construct-constructor-property": "error",
+    "awscdk/no-construct-in-interface": "error",
     "awscdk/no-construct-in-public-property-of-construct": "error",
     "awscdk/no-construct-stack-suffix": "error",
     "awscdk/no-import-private": "error",
