@@ -1,0 +1,67 @@
+{
+  "name": "oxlint-plugin-awscdk",
+  "version": "0.0.0",
+  "description": "oxlint plugin for AWS CDK projects",
+  "keywords": [
+    "aws",
+    "aws-cdk",
+    "oxlint",
+    "oxlint-plugin",
+    "oxlint-plugin-awscdk",
+    "typescript"
+  ],
+  "homepage": "https://eslint-plugin-awscdk.dev/",
+  "license": "MIT",
+  "author": {
+    "name": "ren-yamanashi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ren-yamanashi/eslint-plugin-awscdk.git"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/__tests__",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    "types": "./dist/index.d.mts",
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "pack": "vp pack",
+    "test": "vp test --run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.13",
+    "@voidzero-dev/vite-plus-core": "^0.1.11",
+    "corsa-oxlint": "^0.47.1",
+    "oxlint": "^1.70.0",
+    "secretlint": "^13.0.0",
+    "typescript": "^6.0.2",
+    "vite-plus": "^0.1.11"
+  },
+  "peerDependencies": {
+    "corsa-oxlint": "^0.47.1",
+    "oxlint": "^1.70.0"
+  },
+  "engines": {
+    "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+  },
+  "packageManager": "pnpm@10.29.3"
+}
