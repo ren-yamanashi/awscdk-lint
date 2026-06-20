@@ -6,6 +6,7 @@ import { noMutablePropertyOfPropsInterface } from "./no-mutable-property-of-prop
 import { noMutablePublicPropertyOfConstruct } from "./no-mutable-public-property-of-construct";
 import { noVariableConstructId } from "./no-variable-construct-id";
 import { pascalCaseConstructId } from "./pascal-case-construct-id";
+import { preventConstructIdCollision } from "./prevent-construct-id-collision";
 import { propsNameConvention } from "./props-name-convention";
 import { requireJSDoc } from "./require-jsdoc";
 import { requirePassingThis } from "./require-passing-this";
@@ -18,6 +19,7 @@ export const rules: Record<string, Rule> = {
   "no-mutable-public-property-of-construct": noMutablePublicPropertyOfConstruct,
   "no-variable-construct-id": noVariableConstructId,
   "pascal-case-construct-id": pascalCaseConstructId,
+  "prevent-construct-id-collision": preventConstructIdCollision,
   "props-name-convention": propsNameConvention,
   "require-jsdoc": requireJSDoc,
   "require-passing-this": requirePassingThis,

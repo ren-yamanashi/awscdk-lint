@@ -27,6 +27,7 @@ export const configs: Readonly<{
     "awscdk/no-mutable-public-property-of-construct": "error",
     "awscdk/no-variable-construct-id": "error",
     "awscdk/pascal-case-construct-id": "error",
+    "awscdk/prevent-construct-id-collision": "error",
     "awscdk/props-name-convention": "error",
     "awscdk/require-jsdoc": "error",
     "awscdk/require-passing-this": "error",
