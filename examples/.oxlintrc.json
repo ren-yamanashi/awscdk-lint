@@ -8,6 +8,7 @@
     "awscdk/no-import-private": "error",
     "awscdk/no-mutable-property-of-props-interface": "error",
     "awscdk/no-mutable-public-property-of-construct": "error",
+    "awscdk/no-parent-name-construct-id-match": ["error", { "disallowContainingParentName": true }],
     "awscdk/no-variable-construct-id": "error",
     "awscdk/pascal-case-construct-id": "error",
     "awscdk/prefer-grants-property": "error",
