@@ -200,9 +200,7 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
       code: `
       class Construct {}
       class TargetConstruct {
-        constructor(scope: Construct, id: string) {
-          super(scope, id);
-        }
+        constructor(scope: Construct, id: string) {}
       }
       class SampleConstruct extends Construct {
         constructor(scope: Construct, id: string) {
