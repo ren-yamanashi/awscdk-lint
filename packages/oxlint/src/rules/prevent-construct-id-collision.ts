@@ -1,4 +1,4 @@
-import type { ESTree } from "corsa-oxlint";
+import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -50,7 +50,7 @@ export const preventConstructIdCollision = createRule({
  */
 const validateConstructIdInLoop = (
   node: ESTree.NewExpression,
-  context: Parameters<typeof preventConstructIdCollision.create>[0],
+  context: RuleContext<"preventConstructIdCollision">,
 ) => {
   if (!isInsideLoop(node)) return;
 

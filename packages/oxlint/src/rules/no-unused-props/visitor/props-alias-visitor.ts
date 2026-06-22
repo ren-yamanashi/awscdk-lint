@@ -47,7 +47,7 @@ export class PropsAliasVisitor implements INodeVisitor {
     }
   }
 
-  visitIdentifier(node: ESTree.BindingIdentifier): void {
+  visitIdentifier(node: ESTree.Identifier): void {
     /**
      * Handles alias registration for props.
      *

@@ -4,6 +4,6 @@ export interface INodeVisitor {
   visitMemberExpression?(node: ESTree.MemberExpression): void;
   visitVariableDeclarator?(node: ESTree.VariableDeclarator): void;
   visitAssignmentExpression?(node: ESTree.AssignmentExpression): void;
-  visitIdentifier?(node: ESTree.BindingIdentifier): void;
+  visitIdentifier?(node: ESTree.Identifier): void;
   visitCallExpression?(node: ESTree.CallExpression): void;
 }
