@@ -57,7 +57,7 @@
     "@typescript-eslint/parser": "^8.58.0",
     "@typescript/native-preview": "7.0.0-dev.20260516.1",
     "@voidzero-dev/vite-plus-core": "^0.1.11",
-    "corsa-oxlint": "0.47.1",
+    "corsa-oxlint": "0.49.0",
     "eslint": "^10.0.0",
     "secretlint": "^13.0.0",
     "typescript": "^6.0.2",
