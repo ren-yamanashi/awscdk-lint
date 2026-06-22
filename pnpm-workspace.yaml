@@ -14,4 +14,7 @@ minimumReleaseAgeExclude:
   - "@typescript/native-preview-*"
 onlyBuiltDependencies:
   - esbuild
+publicHoistPattern:
+  - "@typescript/native-preview"
+  - "@typescript/native-preview-*"
 useNodeVersion: 24.14.1
