@@ -1,3 +1,6 @@
-import oxlintPluginAwscdk from "oxlint-plugin-awscdk";
+import { defineConfig } from "oxlint";
+import cdkPlugin from "oxlint-plugin-awscdk";
 
-export default oxlintPluginAwscdk.configs.strict;
+export default defineConfig({
+  extends: [cdkPlugin.configs.strict],
+});

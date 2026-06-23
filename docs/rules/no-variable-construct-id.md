@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-variable-construct-id
+title: awscdk-lint - no-variable-construct-id
 titleTemplate: ":title"
 ---
 
@@ -25,17 +25,29 @@ Using variables for Construct IDs is not appropriate because it may cause the fo
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-variable-construct-id": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-variable-construct-id": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-variable-construct-id": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

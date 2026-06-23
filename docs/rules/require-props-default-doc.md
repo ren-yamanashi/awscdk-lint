@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - require-props-default-doc
+title: awscdk-lint - require-props-default-doc
 titleTemplate: ":title"
 ---
 
@@ -21,17 +21,29 @@ Note: This rule does not apply to regular class properties or properties within 
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/require-props-default-doc": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-props-default-doc": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-props-default-doc": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

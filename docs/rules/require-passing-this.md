@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - require-passing-this
+title: awscdk-lint - require-passing-this
 titleTemplate: ":title"
 ---
 
@@ -28,17 +28,29 @@ Passing other values as the scope (especially the `scope` variable received by t
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/require-passing-this": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-passing-this": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-passing-this": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

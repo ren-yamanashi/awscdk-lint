@@ -1,9 +1,12 @@
+type RuleSeverity = "allow" | "off" | "warn" | "error" | "deny" | number;
+type RuleEntry = RuleSeverity | [RuleSeverity, ...unknown[]];
+
 export type OxlintConfig = {
   jsPlugins: ["oxlint-plugin-awscdk"];
-  rules: Record<string, unknown>;
+  rules: Record<string, RuleEntry>;
 };
 
-const createOxlintConfig = (rules: Record<string, unknown>): OxlintConfig => ({
+const createOxlintConfig = (rules: Record<string, RuleEntry>): OxlintConfig => ({
   jsPlugins: ["oxlint-plugin-awscdk"],
   rules,
 });
