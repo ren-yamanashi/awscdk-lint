@@ -2,11 +2,13 @@
   "name": "@eslint-plugin-awscdk/example-eslint",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "lint": "pnpm run eslint:esm & pnpm run eslint:cjs && pnpm run oxlint",
     "eslint:esm": "eslint --config eslint.config.ts",
     "eslint:cjs": "eslint --config eslint.config.cts",
-    "oxlint": "oxlint --format=unix"
+    "oxlint": "oxlint --format=unix -c .oxlintrc.json",
+    "oxlint:ts": "oxlint --format=unix -c oxlint.config.ts"
   },
   "dependencies": {
     "aws-cdk-lib": "latest",
@@ -18,6 +20,7 @@
     "eslint": "^10.0.0",
     "eslint-plugin-awscdk": "workspace:*",
     "oxlint": "^1.69.0",
+    "oxlint-plugin-awscdk": "workspace:*",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.61.0"
   }

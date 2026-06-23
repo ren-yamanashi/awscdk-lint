@@ -22,8 +22,6 @@ check_oxlint_output() {
   local command="$1"
   local output
   local count
-  # FIXME
-  EXPECTED_ERRORS=1
   echo "RUNNING: $command"
   output=$($command 2>&1) || true
   count=$(echo "$output" | grep -c "\[Error/" || true)
