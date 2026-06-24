@@ -27,8 +27,6 @@ pnpm install -D eslint-plugin-awscdk
 
 ## eslint の設定
 
-`eslint.config.mjs` を以下のように記述します。
-
 <div class="info-item">
   🚨 このプラグインは typescript の型情報を使う為
   <a href="https://typescript-eslint.io/getting-started">

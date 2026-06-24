@@ -27,8 +27,6 @@ pnpm install -D oxlint oxlint-plugin-awscdk
 
 ## oxlint の設定
 
-`oxlint.config.ts` または `.oxlintrc.json` を以下のように記述します。
-
 ### `oxlint.config.ts`
 
 ```ts
