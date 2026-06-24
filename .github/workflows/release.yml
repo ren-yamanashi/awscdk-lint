@@ -32,11 +32,11 @@ jobs:
       NPM_CONFIG_PROVENANCE: "true"
     steps:
       - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@1a916ede142442883954e67ca1adb93be96045d3 # v1
+        uses: voidzero-dev/setup-vp@0452b83a3d3b623343a020cf6ee59c7f0c8e1d0e # v1
         with:
           node-version: "24.14.1"
           cache: true
@@ -71,11 +71,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@1a916ede142442883954e67ca1adb93be96045d3 # v1
+        uses: voidzero-dev/setup-vp@0452b83a3d3b623343a020cf6ee59c7f0c8e1d0e # v1
         with:
           node-version: "24.14.1"
           cache: true
