@@ -6,8 +6,8 @@ import defaultConfig from "./sharedConfig.mjs";
 export default defineConfig({
   ...defaultConfig,
   base: "/",
-  title: "eslint-plugin-awscdk",
-  description: "ESLint plugin for AWS CDK",
+  title: "awscdk-lint",
+  description: "Lint plugins for AWS CDK projects (Oxlint and ESLint)",
   head: [
     [
       "link",
@@ -19,43 +19,43 @@ export default defineConfig({
     ],
     // setting OGP
     ["meta", { property: "og:type", content: "website" }],
-    ["meta", { property: "og:title", content: "eslint-plugin-awscdk" }],
+    ["meta", { property: "og:title", content: "awscdk-lint" }],
     [
       "meta",
       {
         property: "og:description",
-        content: "ESLint plugin for AWS CDK",
+        content: "Lint plugins for AWS CDK projects (Oxlint and ESLint)",
       },
     ],
     [
       "meta",
       {
         property: "og:url",
-        content: "https://eslint-plugin-awscdk.dev/",
+        content: "https://awscdk-lint.dev/",
       },
     ],
     [
       "meta",
       {
         property: "og:image",
-        content: "https://eslint-plugin-awscdk.dev/img/ogp.png",
+        content: "https://awscdk-lint.dev/img/ogp.png",
       },
     ],
     // Twitter Card
     ["meta", { name: "twitter:card", content: "summary_large_image" }],
-    ["meta", { name: "twitter:title", content: "eslint-plugin-awscdk" }],
+    ["meta", { name: "twitter:title", content: "awscdk-lint" }],
     [
       "meta",
       {
         name: "twitter:description",
-        content: "ESLint plugin for AWS CDK",
+        content: "Lint plugins for AWS CDK projects (Oxlint and ESLint)",
       },
     ],
     [
       "meta",
       {
         name: "twitter:image",
-        content: "https://eslint-plugin-awscdk.dev/img/ogp.png",
+        content: "https://awscdk-lint.dev/img/ogp.png",
       },
     ],
     // Other meta tags
@@ -64,7 +64,7 @@ export default defineConfig({
       "meta",
       {
         name: "keywords",
-        content: "eslint, aws, cdk, typescript, best-practices",
+        content: "eslint, oxlint, aws, cdk, typescript, best-practices",
       },
     ],
   ],
@@ -101,6 +101,10 @@ export default defineConfig({
               text: "Getting Started",
               collapsed: true,
               link: "/getting-started/",
+              items: [
+                { text: "Oxlint", link: "/getting-started/oxlint/" },
+                { text: "ESLint", link: "/getting-started/eslint/" },
+              ],
             },
             {
               text: "Rules",
@@ -199,7 +203,7 @@ export default defineConfig({
       label: "Japanese",
       lang: "ja",
       link: "/ja/",
-      title: "eslint-plugin-awscdk",
+      title: "awscdk-lint",
       themeConfig: {
         ...defaultConfig.themeConfig,
         logo: "/img/logo.png",
@@ -229,6 +233,10 @@ export default defineConfig({
               text: "Getting Started",
               collapsed: true,
               link: "/ja/getting-started/",
+              items: [
+                { text: "Oxlint", link: "/ja/getting-started/oxlint/" },
+                { text: "ESLint", link: "/ja/getting-started/eslint/" },
+              ],
             },
             {
               text: "Rules",
