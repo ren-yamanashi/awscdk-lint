@@ -7,8 +7,6 @@ titleTemplate: ":title"
 
 ## インストール
 
-以下のコマンドを実行してインストールします。
-
 ::: code-group
 
 ```sh [npm]

@@ -7,8 +7,6 @@ titleTemplate: ":title"
 
 ## Install
 
-Just run this:
-
 ::: code-group
 
 ```sh [npm]
@@ -26,8 +24,6 @@ pnpm install -D oxlint oxlint-plugin-awscdk
 :::
 
 ## Setting oxlint config
-
-Write `oxlint.config.ts` or `.oxlintrc.json` as follows:
 
 ### `oxlint.config.ts`
 

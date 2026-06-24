@@ -7,8 +7,6 @@ titleTemplate: ":title"
 
 ## Install
 
-Just run this:
-
 ::: code-group
 
 ```sh [npm]
@@ -26,8 +24,6 @@ pnpm install -D eslint-plugin-awscdk
 :::
 
 ## Setting eslint config
-
-Write `eslint.config.mjs` as follows:
 
 <div class="info-item">
   🚨 This plugin uses typescript type information and must be used in conjunction with
