@@ -64,14 +64,14 @@ export default defineConfig({
     "awscdk/no-mutable-public-property-of-construct": "warn",
     "awscdk/no-parent-name-construct-id-match": [
       "error",
-      { "disallowContainingParentName": false }
+      { "disallowContainingParentName": false },
     ],
     "awscdk/no-unused-props": "error",
     "awscdk/no-variable-construct-id": "error",
     "awscdk/pascal-case-construct-id": "error",
     "awscdk/prefer-grants-property": "warn",
-    "awscdk/require-passing-this": ["error", { "allowNonThisAndDisallowScope": true }]
-  }
+    "awscdk/require-passing-this": ["error", { "allowNonThisAndDisallowScope": true }],
+  },
 }
 ```
 

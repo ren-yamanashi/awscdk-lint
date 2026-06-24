@@ -9,4 +9,3 @@ titleTemplate: ":title"
 
 - [**Oxlint setup**](./oxlint/)
 - [**ESLint setup**](./eslint/)
-
