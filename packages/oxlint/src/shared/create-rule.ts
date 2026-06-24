@@ -11,7 +11,7 @@ export const createRule = <MessageId extends string, const Options extends reado
       ...rule.meta,
       docs: {
         ...rule.meta?.docs,
-        url: `https://eslint-plugin-awscdk.dev/rules/${rule.name}`,
+        url: `https://awscdk-lint.dev/rules/${rule.name}`,
       },
     },
   });
