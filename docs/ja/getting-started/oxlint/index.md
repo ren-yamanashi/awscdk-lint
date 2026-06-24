@@ -46,7 +46,7 @@ export default defineConfig({
 
 ### `.oxlintrc.json`
 
-```json
+```jsonc
 // .oxlintrc.json
 {
   // ✅ Add plugins

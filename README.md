@@ -54,7 +54,7 @@ export default defineConfig({
 
 #### `.oxlintrc.json`
 
-```json
+```jsonc
 {
   // ✅ Add plugins
   "jsPlugins": ["oxlint-plugin-awscdk"],
