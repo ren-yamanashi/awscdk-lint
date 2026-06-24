@@ -1,7 +1,7 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
-title: awscdk-lint - Lint plugins for AWS CDK projects (Oxlint and ESLint)
+title: awscdk-lint - Lint plugins for AWS CDK projects
 titleTemplate: ":title"
 hero:
   name: "awscdk-lint"
