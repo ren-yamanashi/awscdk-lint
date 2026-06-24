@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - props-name-convention
+title: awscdk-lint - props-name-convention
 titleTemplate: ":title"
 ---
 
@@ -21,17 +21,29 @@ CDK Construct クラスの `Props` (interface) 名が `${ConstructName}Props` �
 
 #### 🔧 使用方法
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/props-name-convention": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/props-name-convention": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/props-name-convention": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

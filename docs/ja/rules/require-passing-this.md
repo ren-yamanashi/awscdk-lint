@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - require-passing-this
+title: awscdk-lint - require-passing-this
 titleTemplate: ":title"
 ---
 
@@ -29,17 +29,29 @@ Construct のコンストラクタの第一引数へ `this` 以外の値 (特に
 
 #### 🔧 使用方法
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/require-passing-this": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-passing-this": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-passing-this": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

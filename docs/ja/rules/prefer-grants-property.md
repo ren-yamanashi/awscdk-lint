@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - prefer-grants-property
+title: awscdk-lint - prefer-grants-property
 titleTemplate: ":title"
 ---
 
@@ -24,17 +24,29 @@ import Playground from '../../components/Playground.vue'
 
 #### 🔧 使用方法
 
-```ts
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/prefer-grants-property": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/prefer-grants-property": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/prefer-grants-property": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

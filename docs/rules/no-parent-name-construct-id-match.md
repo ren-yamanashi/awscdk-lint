@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-parent-name-construct-id-match
+title: awscdk-lint - no-parent-name-construct-id-match
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ It is not recommended to specify a string that matches (or includes) the parent 
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-parent-name-construct-id-match": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-parent-name-construct-id-match": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-parent-name-construct-id-match": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

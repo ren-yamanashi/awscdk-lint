@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-construct-in-public-property-of-construct
+title: awscdk-lint - no-construct-in-public-property-of-construct
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ When AWS resource Constructs (e.g. `Bucket`) implement interfaces for read-only 
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-construct-in-public-property-of-construct": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-public-property-of-construct": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-public-property-of-construct": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

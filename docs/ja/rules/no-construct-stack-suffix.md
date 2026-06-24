@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-construct-stack-suffix
+title: awscdk-lint - no-construct-stack-suffix
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ Construct ID に "Construct" という文字列が含まれていると、CDK �
 
 #### 🔧 使用方法
 
-```ts
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-construct-stack-suffix": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-stack-suffix": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-stack-suffix": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

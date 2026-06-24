@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-import-private
+title: awscdk-lint - no-import-private
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ By disallowing imports from a different hierarchy, it promotes proper modulariza
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-import-private": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-import-private": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-import-private": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

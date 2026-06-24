@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - Rules
+title: awscdk-lint - Rules
 titleTemplate: ":title"
 ---
 
@@ -208,49 +208,63 @@ We currently support the following rules:
 The `recommended` rules are suggested for maintaining correct code.  
 To use these rules, configure as follows:
 
-```js
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+import { defineConfig } from "oxlint";
+import cdkPlugin from "oxlint-plugin-awscdk";
+
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.recommended],
+  // ... some configs
+});
+```
+
+```js [ESLint]
 // eslint.config.mjs
-import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
-import tseslint from "typescript-eslint";
 import cdkPlugin from "eslint-plugin-awscdk";
 
-export default defineConfig([
-  {
-    files: ["lib/**/*.ts", "bin/*.ts"],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      // ✅ Add plugins
-      cdkPlugin.configs.recommended,
-    ],
-    // ... some configs
-  },
-]);
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.recommended],
+  // ... some configs
+});
 ```
+
+:::
 
 ## Strict Rules
 
 The `strict` rules provide all available rules.
 To use these rules, configure as follows:
 
-```js
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+import { defineConfig } from "oxlint";
+import cdkPlugin from "oxlint-plugin-awscdk";
+
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.strict],
+  // ... some configs
+});
+```
+
+```js [ESLint]
 // eslint.config.mjs
-import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
-import tseslint from "typescript-eslint";
 import cdkPlugin from "eslint-plugin-awscdk";
 
-export default defineConfig([
-  {
-    files: ["lib/**/*.ts", "bin/*.ts"],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      // ✅ Add plugins
-      cdkPlugin.configs.strict,
-    ],
-    // ... some configs
-  },
-]);
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.strict],
+  // ... some configs
+});
 ```
+
+:::

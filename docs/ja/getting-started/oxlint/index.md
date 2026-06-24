@@ -1,33 +1,33 @@
-<p align="center">
-  <img width="160px" height="160px" src="https://raw.githubusercontent.com/ren-yamanashi/eslint-plugin-awscdk/main/assets/logo.png" alt="oxlint-plugin-awscdk logo">
-</p>
+---
+title: awscdk-lint - Getting Started (Oxlint)
+titleTemplate: ":title"
+---
 
-<h1 align="center">oxlint-plugin-awscdk</h1>
-<p align="center">Oxlint plugin for AWS CDK — part of <a href="https://awscdk-lint.dev/">awscdk-lint</a></p>
-<p align="center">
-  <a href="https://www.npmjs.com/package/oxlint-plugin-awscdk">
-    <img src="https://img.shields.io/npm/v/oxlint-plugin-awscdk.svg" alt="NPM">
-  </a>
-</p>
+# Oxlint (`oxlint-plugin-awscdk`)
 
-## 📔 Documentation
+## インストール
 
-https://awscdk-lint.dev/getting-started/oxlint/
+以下のコマンドを実行してインストールします。
 
-## 📦 Installation
+::: code-group
 
-```bash
-# npm
+```sh [npm]
 npm install -D oxlint oxlint-plugin-awscdk
+```
 
-# yarn
+```sh [yarn]
 yarn add -D oxlint oxlint-plugin-awscdk
+```
 
-# pnpm
+```sh [pnpm]
 pnpm install -D oxlint oxlint-plugin-awscdk
 ```
 
-## 🚀 Usage
+:::
+
+## oxlint の設定
+
+`oxlint.config.ts` または `.oxlintrc.json` を以下のように記述します。
 
 ### `oxlint.config.ts`
 
@@ -51,6 +51,7 @@ export default defineConfig({
 ### `.oxlintrc.json`
 
 ```json
+// .oxlintrc.json
 {
   // ✅ Add plugins
   "jsPlugins": ["oxlint-plugin-awscdk"],
@@ -74,23 +75,3 @@ export default defineConfig({
   }
 }
 ```
-
-## 📝 Rules
-
-https://awscdk-lint.dev/rules/
-
-## ❗ Issue
-
-If you have any questions or suggestions, please open an [issue](https://github.com/ren-yamanashi/eslint-plugin-awscdk/issues).
-
-## 💪 Contribution
-
-Contributions are welcome! Please see [Contribution Guide](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/CONTRIBUTING.md) for more details.
-
-## ⚓ Versioning Policy
-
-Please see [Versioning Policy](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/VERSIONING_POLICY.md).
-
-## ©️ License
-
-[MIT](http://opensource.org/licenses/MIT)

@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-parent-name-construct-id-match
+title: awscdk-lint - no-parent-name-construct-id-match
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ Construct ID に、親クラス名と一致する (または含む) 文字列を
 
 #### 🔧 使用方法
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-parent-name-construct-id-match": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-parent-name-construct-id-match": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-parent-name-construct-id-match": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-mutable-public-property-of-construct
+title: awscdk-lint - no-mutable-public-property-of-construct
 titleTemplate: ":title"
 ---
 
@@ -27,17 +27,29 @@ Therefore, it is recommended to specify the `readonly` modifier for `public` pro
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-mutable-public-property-of-construct": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-mutable-public-property-of-construct": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-mutable-public-property-of-construct": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

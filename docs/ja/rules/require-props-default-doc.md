@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - require-props-default-doc
+title: awscdk-lint - require-props-default-doc
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ import Playground from '../../components/Playground.vue'
 
 #### 🔧 使用方法
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/require-props-default-doc": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-props-default-doc": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-props-default-doc": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 正しい例
 
