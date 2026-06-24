@@ -10,4 +10,3 @@ titleTemplate: ":title"
 - [**Oxlint setup**](./oxlint/)
 - [**ESLint setup**](./eslint/)
 
-Both packages expose the same rules under the `awscdk/` namespace. After setup, see the [Rules reference](../rules/) for what each rule does.
