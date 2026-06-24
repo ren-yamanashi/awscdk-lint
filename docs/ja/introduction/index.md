@@ -5,7 +5,7 @@ titleTemplate: ":title"
 
 # Introduction
 
-`awscdk-lint` は [AWS Cloud Development Kit (AWS CDK)](https://aws.amazon.com/cdk/) 向けの Lint プラグインを **Oxlint** と **ESLint** の両方に提供するプロジェクトです。
+`awscdk-lint` は [AWS Cloud Development Kit (AWS CDK)](https://aws.amazon.com/cdk/) 向けの **Oxlint** および **ESLint** プラグインを提供するプロジェクトです。
 
 同じ CDK 向けルールセットを 2 つのパッケージで提供します。
 
@@ -21,6 +21,7 @@ titleTemplate: ":title"
 
 - [VSCode Oxc (Oxlint) 拡張機能](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
 - [VSCode ESLint 拡張機能](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Zed Oxc (Oxlint) 拡張機能](https://zed.dev/extensions/oxc)
 
 ## 🚥 Versioning policy
 

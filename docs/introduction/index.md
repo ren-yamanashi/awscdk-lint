@@ -5,7 +5,7 @@ titleTemplate: ":title"
 
 # Introduction
 
-`awscdk-lint` provides lint plugins for the [AWS Cloud Development Kit (AWS CDK)](https://aws.amazon.com/cdk/), available for both **Oxlint** and **ESLint**.
+`awscdk-lint` provides **Oxlint** and **ESLint** plugins for the [AWS Cloud Development Kit (AWS CDK)](https://aws.amazon.com/cdk/).
 
 The same set of CDK rules is offered through two packages:
 
@@ -21,6 +21,7 @@ Integrating either linter with your editor is also convenient for checking code 
 
 - [VSCode Oxc (Oxlint) Extension](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
 - [VSCode ESLint Extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Zed Oxc (Oxlint) Extension](https://zed.dev/extensions/oxc)
 
 ## 🚥 Versioning policy
 
