@@ -21,13 +21,13 @@ https://awscdk-lint.dev/getting-started/oxlint/
 
 ```bash
 # npm
-npm install -D oxlint oxlint-plugin-awscdk
+npm install -D oxlint-plugin-awscdk
 
 # yarn
-yarn add -D oxlint oxlint-plugin-awscdk
+yarn add -D oxlint-plugin-awscdk
 
 # pnpm
-pnpm install -D oxlint oxlint-plugin-awscdk
+pnpm install -D oxlint-plugin-awscdk
 ```
 
 ## 🚀 Usage
