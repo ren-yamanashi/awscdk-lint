@@ -10,6 +10,9 @@
   </a>
 </p>
 
+> [!WARNING]
+> **Experimental.** `oxlint-plugin-awscdk` is in an early, experimental stage. The public API, rule set, preset contents, and config shape may change without notice prior to the first stable (`1.0.0`) release. It also depends on [`corsa-oxlint`](https://www.npmjs.com/package/corsa-oxlint), which has not yet reached a stable release.
+
 ## 📔 Documentation
 
 https://awscdk-lint.dev/getting-started/oxlint/
