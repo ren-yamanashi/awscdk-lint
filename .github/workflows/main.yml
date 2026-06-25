@@ -42,7 +42,7 @@ jobs:
       - name: Run Vite+ Checks
         run: vp check
       - name: Build docs
-        run: vp run -F @eslint-plugin-awscdk/docs build
+        run: vp run -F @awscdk-lint/docs build
       - name: Configure custom domain
         run: |
           echo "awscdk-lint.dev" > docs/.vitepress/dist/CNAME
