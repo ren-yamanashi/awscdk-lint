@@ -4,9 +4,18 @@
   "include-component-in-tag": true,
   "include-v-in-tag": false,
   "tag-separator": "@",
+  "separate-pull-requests": true,
   "packages": {
     "packages/eslint": {
-      "release-type": "node"
+      "release-type": "node",
+      "component": "eslint-plugin-awscdk",
+      "package-name": "eslint-plugin-awscdk"
+    },
+    "packages/oxlint": {
+      "release-type": "node",
+      "component": "oxlint-plugin-awscdk",
+      "package-name": "oxlint-plugin-awscdk",
+      "bump-minor-pre-major": true
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "oxlint-plugin-awscdk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "oxlint plugin for AWS CDK projects",
   "keywords": [
     "aws",
