@@ -10,15 +10,15 @@ titleTemplate: ":title"
 ::: code-group
 
 ```sh [npm]
-npm install -D oxlint oxlint-plugin-awscdk
+npm install -D oxlint-plugin-awscdk
 ```
 
 ```sh [yarn]
-yarn add -D oxlint oxlint-plugin-awscdk
+yarn add -D oxlint-plugin-awscdk
 ```
 
 ```sh [pnpm]
-pnpm install -D oxlint oxlint-plugin-awscdk
+pnpm install -D oxlint-plugin-awscdk
 ```
 
 :::
