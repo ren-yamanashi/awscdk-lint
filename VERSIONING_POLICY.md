@@ -1,6 +1,6 @@
 ## Semantic Versioning Policy
 
-`awscdk-lint` ships two packages (`eslint-plugin-awscdk` and `oxlint-plugin-awscdk`) from a single monorepo. Each package is versioned independently — releases are managed by [release-please](https://github.com/googleapis/release-please) and tags are published as `<package-name>@<version>`. Both packages follow the same semantic versioning policy described below.
+`awscdk-lint` ships two packages (`eslint-plugin-awscdk` and `oxlint-plugin-awscdk`). Each package is versioned independently — releases are managed by [release-please](https://github.com/googleapis/release-please) and tags are published as `<package-name>@<version>`. Both packages follow the same semantic versioning policy described below.
 
 To clarify when a minor or major version bump occurs, we've defined the following semantic versioning policy:
 
