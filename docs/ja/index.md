@@ -1,10 +1,10 @@
 ---
 layout: home
-title: awscdk-lint - Lint plugins for AWS CDK projects
+title: awscdk-lint - Lint plugins for AWS CDK
 titleTemplate: ":title"
 hero:
   name: "awscdk-lint"
-  text: "Lint plugins for AWS CDK projects"
+  text: "Lint plugins for AWS CDK"
   tagline: Provide Oxlint and ESLint plugins for AWS CDK projects
   image: /img/logo.png
   actions:
