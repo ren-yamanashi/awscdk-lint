@@ -15,7 +15,7 @@
     "test": "vp test --run",
     "check": "vp check",
     "pack": "vp run -r pack",
-    "docs": "vp run -F @eslint-plugin-awscdk/docs"
+    "docs": "vp run -F @awscdk-lint/docs"
   },
   "devDependencies": {
     "@voidzero-dev/vite-plus-core": "^0.1.11",

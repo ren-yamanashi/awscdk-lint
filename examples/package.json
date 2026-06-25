@@ -1,5 +1,5 @@
 {
-  "name": "@eslint-plugin-awscdk/example-eslint",
+  "name": "@awscdk-lint/examples",
   "version": "0.1.0",
   "private": true,
   "type": "module",
