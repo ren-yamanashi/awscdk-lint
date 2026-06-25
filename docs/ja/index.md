@@ -5,7 +5,7 @@ titleTemplate: ":title"
 hero:
   name: "awscdk-lint"
   text: "Lint plugins for AWS CDK"
-  tagline: Provide Oxlint and ESLint plugins for AWS CDK projects
+  tagline: Provide Oxlint and ESLint plugins for AWS CDK
   image: /img/logo.png
   actions:
     - theme: brand

@@ -7,7 +7,7 @@ export default defineConfig({
   ...defaultConfig,
   base: "/",
   title: "awscdk-lint",
-  description: "Lint plugins for AWS CDK projects (Oxlint and ESLint)",
+  description: "Lint plugins for AWS CDK (Oxlint and ESLint)",
   head: [
     [
       "link",
@@ -24,7 +24,7 @@ export default defineConfig({
       "meta",
       {
         property: "og:description",
-        content: "Lint plugins for AWS CDK projects (Oxlint and ESLint)",
+        content: "Lint plugins for AWS CDK (Oxlint and ESLint)",
       },
     ],
     [
@@ -48,7 +48,7 @@ export default defineConfig({
       "meta",
       {
         name: "twitter:description",
-        content: "Lint plugins for AWS CDK projects (Oxlint and ESLint)",
+        content: "Lint plugins for AWS CDK (Oxlint and ESLint)",
       },
     ],
     [
