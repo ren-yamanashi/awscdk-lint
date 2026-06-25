@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - props-name-convention
+title: awscdk-lint - props-name-convention
 titleTemplate: ":title"
 ---
 
@@ -23,17 +23,29 @@ Following a consistent naming pattern clarifies the relationship between Constru
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/props-name-convention": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/props-name-convention": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/props-name-convention": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

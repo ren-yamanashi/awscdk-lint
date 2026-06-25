@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-construct-in-interface
+title: awscdk-lint - no-construct-in-interface
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ When AWS resource Constructs (e.g. `Bucket`) implement interfaces for read-only 
 
 #### 🔧 How to use
 
-```ts
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-construct-in-interface": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-interface": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-interface": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

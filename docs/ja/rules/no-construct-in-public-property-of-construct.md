@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-construct-in-public-property-of-construct
+title: awscdk-lint - no-construct-in-public-property-of-construct
 titleTemplate: ":title"
 ---
 
@@ -21,17 +21,29 @@ AWS リソースを表す Construct (例: `Bucket`) が、読み取り専用リ�
 
 #### 🔧 使用方法
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-construct-in-public-property-of-construct": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-public-property-of-construct": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-public-property-of-construct": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

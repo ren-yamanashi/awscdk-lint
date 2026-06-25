@@ -1,21 +1,27 @@
 ---
-title: eslint-plugin-awscdk - Introduction
+title: awscdk-lint - Introduction
 titleTemplate: ":title"
 ---
 
 # Introduction
 
-This is an ESLint plugin for the [AWS Cloud Development Kit (AWS CDK)](https://aws.amazon.com/cdk/).
+`awscdk-lint` provides **Oxlint** and **ESLint** plugins for the [AWS Cloud Development Kit (AWS CDK)](https://aws.amazon.com/cdk/).
 
-This plugin allows you to check your AWS CDK code with ESLint.  
-For example, it can check for the following:
+The same set of CDK rules is offered through two packages:
+
+- [`oxlint-plugin-awscdk`](https://www.npmjs.com/package/oxlint-plugin-awscdk) — for projects using Oxlint
+- [`eslint-plugin-awscdk`](https://www.npmjs.com/package/eslint-plugin-awscdk) — for projects using ESLint
+
+Pick whichever linter your project already uses. The rules detect the same issues:
 
 - Syntax errors
 - Violations of AWS CDK best practices
 
-Integrating ESLint with your editor is also convenient for checking code in real-time.
+Integrating either linter with your editor is also convenient for checking code in real-time.
 
-[VSCode ESLint Extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [VSCode Oxc (Oxlint) Extension](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
+- [VSCode ESLint Extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Zed Oxc (Oxlint) Extension](https://zed.dev/extensions/oxc)
 
 ## 🚥 Versioning policy
 

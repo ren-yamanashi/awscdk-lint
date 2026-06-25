@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">eslint-plugin-awscdk</h1>
-<p align="center">ESLint plugin for AWS CDK — part of <a href="https://awscdk-lint.dev/">awscdk-lint</a></p>
+<p align="center">ESLint plugin for AWS CDK</p>
 <p align="center">
   <a href="https://www.npmjs.com/package/eslint-plugin-awscdk">
     <img src="https://img.shields.io/npm/v/eslint-plugin-awscdk.svg" alt="NPM">

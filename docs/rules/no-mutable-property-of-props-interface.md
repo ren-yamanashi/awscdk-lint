@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-mutable-property-of-props-interface
+title: awscdk-lint - no-mutable-property-of-props-interface
 titleTemplate: ":title"
 ---
 
@@ -23,17 +23,29 @@ Specifying mutable properties in `Props` interfaces is not recommended as it can
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-mutable-property-of-props-interface": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-mutable-property-of-props-interface": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-mutable-property-of-props-interface": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

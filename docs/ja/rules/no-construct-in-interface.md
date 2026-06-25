@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-construct-in-interface
+title: awscdk-lint - no-construct-in-interface
 titleTemplate: ":title"
 ---
 
@@ -21,17 +21,29 @@ AWS リソースを表す Construct (例: `Bucket`) が、読み取り専用リ�
 
 #### 🔧 使用方法
 
-```ts
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-construct-in-interface": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-interface": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-in-interface": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

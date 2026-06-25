@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - require-jsdoc
+title: awscdk-lint - require-jsdoc
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ Adding JSDoc comments to properties clarifies what each property represents, imp
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/require-jsdoc": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-jsdoc": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/require-jsdoc": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

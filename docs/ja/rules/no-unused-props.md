@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-unused-props
+title: awscdk-lint - no-unused-props
 titleTemplate: ":title"
 ---
 
@@ -22,17 +22,29 @@ CDK Construct の開発では、複数のプロパティを持つ `Props` (inter
 
 #### 🔧 使用方法
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-unused-props": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-unused-props": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-unused-props": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

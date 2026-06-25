@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - pascal-case-construct-id
+title: awscdk-lint - pascal-case-construct-id
 titleTemplate: ":title"
 ---
 
@@ -22,17 +22,29 @@ Enforcing a consistent naming convention helps developers manage logical IDs mor
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/pascal-case-construct-id": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/pascal-case-construct-id": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/pascal-case-construct-id": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

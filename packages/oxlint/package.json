@@ -10,7 +10,7 @@
     "oxlint-plugin-awscdk",
     "typescript"
   ],
-  "homepage": "https://eslint-plugin-awscdk.dev/",
+  "homepage": "https://awscdk-lint.dev/",
   "license": "MIT",
   "author": {
     "name": "ren-yamanashi"

@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - prevent-construct-id-collision
+title: awscdk-lint - prevent-construct-id-collision
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ If you specify a literal string for the IDs of a Construct instantiated within a
 
 #### 🔧 How to use
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/prevent-construct-id-collision": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/prevent-construct-id-collision": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/prevent-construct-id-collision": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

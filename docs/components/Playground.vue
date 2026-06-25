@@ -6,7 +6,7 @@ const props = defineProps({
   },
   text: {
     type: String,
-    default: "View on Playground",
+    default: "View on Playground (ESLint)",
   },
 });
 </script>

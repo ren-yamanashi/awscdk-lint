@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-variable-construct-id
+title: awscdk-lint - no-variable-construct-id
 titleTemplate: ":title"
 ---
 
@@ -25,17 +25,29 @@ Construct ID に変数を使用することは、以下の問題を引き起こ�
 
 #### 🔧 使用方法
 
-```js
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-variable-construct-id": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-variable-construct-id": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-variable-construct-id": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ 適切な例
 

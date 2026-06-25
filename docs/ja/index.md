@@ -1,19 +1,19 @@
 ---
 layout: home
-title: eslint-plugin-awscdk - ESLint plugin for AWS CDK
+title: awscdk-lint - Lint plugins for AWS CDK
 titleTemplate: ":title"
 hero:
-  name: "eslint-plugin-awscdk"
-  text: "ESLint plugin for AWS CDK"
-  tagline: AWS CDK のセオリー・ベストプラクティスを強制する ESLint Plugin
+  name: "awscdk-lint"
+  text: "Lint plugins for AWS CDK"
+  tagline: Provide Oxlint and ESLint plugins for AWS CDK
   image: /img/logo.png
   actions:
     - theme: brand
-      text: Getting Started
-      link: /ja/getting-started/
-    - theme: alt
-      text: View on GitHub
-      link: https://github.com/ren-yamanashi/eslint-plugin-awscdk
+      text: Getting Started (for Oxlint)
+      link: /ja/getting-started/oxlint/
+    - theme: brand
+      text: Getting Started (for ESLint)
+      link: /ja/getting-started/eslint/
 features:
   - title: Ease of use
     details: インストール後、推奨設定を使用してすぐに使用することができます。
@@ -21,7 +21,7 @@ features:
     link: /ja/getting-started/
     linkText: Getting Started
   - title: Extensive Rules
-    details: AWS CDK 開発のための幅広い ESLint ルールを提供します。
+    details: AWS CDK 開発のための幅広い Lint ルールを提供します。
     link: /ja/rules/
     linkText: ルールを見る
     icon: 📚

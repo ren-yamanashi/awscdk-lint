@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - no-construct-stack-suffix
+title: awscdk-lint - no-construct-stack-suffix
 titleTemplate: ":title"
 ---
 
@@ -20,17 +20,29 @@ Including "Construct" in a Construct ID (and similarly for "Stack" in a Stack ID
 
 #### 🔧 How to use
 
-```ts
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/no-construct-stack-suffix": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-stack-suffix": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/no-construct-stack-suffix": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

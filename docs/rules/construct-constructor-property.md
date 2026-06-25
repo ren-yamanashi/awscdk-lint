@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - construct-constructor-property
+title: awscdk-lint - construct-constructor-property
 titleTemplate: ":title"
 ---
 
@@ -29,17 +29,29 @@ Note: Additional parameters are allowed after the first three, as long as the in
 
 #### 🔧 How to use
 
-```ts
-// eslint.config.mjs
-export default defineConfig([
-  {
-    // ... some configs
-    rules: {
-      "awscdk/construct-constructor-property": "error",
-    },
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/construct-constructor-property": "error",
   },
-]);
+});
 ```
+
+```js [ESLint]
+// eslint.config.mjs
+export default defineConfig({
+  // ... some configs
+  rules: {
+    "awscdk/construct-constructor-property": "error",
+  },
+});
+```
+
+:::
 
 #### ✅ Correct Example
 

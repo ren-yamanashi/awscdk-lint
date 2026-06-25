@@ -1,7 +1,14 @@
-# Contributing to eslint-plugin-awscdk
+# Contributing to awscdk-lint
 
-Thank you for your interest in contributing to eslint-plugin-awscdk!  
+Thank you for your interest in contributing to awscdk-lint!  
 This document provides guidelines and steps for contributing.
+
+`awscdk-lint` is the umbrella project that ships two npm packages from a single monorepo:
+
+- [`eslint-plugin-awscdk`](./packages/eslint) — ESLint plugin
+- [`oxlint-plugin-awscdk`](./packages/oxlint) — Oxlint plugin
+
+Both packages share the same rule set, so changes to a rule usually need to be reflected in both.
 
 ## Issues
 
@@ -36,31 +43,45 @@ vp pack                        # build
 ### Project Structure
 
 ```text
-src/
-├── rules/           # Rule implementations (one file per rule)
-├── __tests__/       # Unit tests for each rule
-├── configs/         # Preset configurations (recommended, strict)
-├── core/            # Core logic shared across rules
-│   ├── cdk-construct/   # Core logic related to CDK constructs
-│   ├── ts-type/         # TypeScript type utilities (class check, base type traversal, etc.)
-│   └── ast-node/        # ESTree AST node utilities (find constructor, public properties, etc.)
-├── shared/          # Shared utilities
-└── index.ts         # Plugin entry point (exports rules and configs)
+packages/
+├── eslint/                 # eslint-plugin-awscdk
+│   └── src/
+│       ├── rules/          # Rule implementations (one file per rule)
+│       ├── __tests__/      # Unit tests for each rule
+│       ├── configs/        # Preset configurations (flat-config, classic-config)
+│       ├── core/           # Core logic shared across rules
+│       │   ├── cdk-construct/   # Core logic related to CDK constructs
+│       │   ├── ts-type/         # TypeScript type utilities (class check, base type traversal, etc.)
+│       │   └── ast-node/        # ESTree AST node utilities (find constructor, public properties, etc.)
+│       ├── shared/         # Shared utilities (createRule, etc.)
+│       └── index.ts        # Plugin entry point (exports rules and configs)
+└── oxlint/                 # oxlint-plugin-awscdk
+    └── src/
+        ├── rules/          # Rule implementations (one file per rule)
+        ├── __tests__/      # Unit tests for each rule
+        ├── configs/        # Preset configurations (recommended, strict)
+        ├── core/           # Core logic shared across rules
+        ├── shared/         # Shared utilities (createRule, etc.)
+        └── index.ts        # Plugin entry point (exports rules and configs)
 
-docs/                # VitePress documentation site (EN and JA)
-examples/            # examples
+docs/                       # VitePress documentation site (EN and JA)
+examples/                   # examples
 ```
 
 ### Creating a New Rule
 
-When adding a new rule, the following files need to be created or updated.
+When adding a new rule, the following files need to be created or updated. Each rule must be implemented in **both** `packages/eslint` and `packages/oxlint` so the two plugins stay in sync.
 
 #### 1. Implement the rule and tests
+
+For each of `packages/eslint` and `packages/oxlint`:
 
 - `src/rules/<rule-name>.ts` — Rule implementation (file name must match the rule name)
 - `src/__tests__/<rule-name>.test.ts` — Unit tests
 
 #### 2. Register the rule
+
+##### `packages/eslint`
 
 - `src/rules/index.ts` — Import and add the rule to the `rules` record
 - `src/configs/flat-config.ts` — Add the rule to the flat config preset (`recommended` and/or `strict`)
@@ -70,12 +91,20 @@ When adding a new rule, the following files need to be created or updated.
 
 **_flat-config and classic-config_**
 
-This plugin supports two ESLint configuration formats. Both config files must define the same rule entries with the same severity and options.
+The ESLint plugin supports two ESLint configuration formats. Both config files must define the same rule entries with the same severity and options.
 
 |             | Flat config                      | Classic config                        |
 | ----------- | -------------------------------- | ------------------------------------- |
 | Config file | `eslint.config.mjs` (ESLint v9+) | `.eslintrc.*` (ESLint v8 and earlier) |
 | Source      | `src/configs/flat-config.ts`     | `src/configs/classic-config.ts`       |
+
+##### `packages/oxlint`
+
+- `src/rules/index.ts` — Import and add the rule to the `rules` record
+- `src/configs/index.ts` — Add the rule to the `recommended` and/or `strict` preset
+  - keep the rules in alphabetical order for readability
+
+Severity and options for a given rule must match between the eslint and oxlint presets.
 
 #### 3. Documentation (optional)
 

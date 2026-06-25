@@ -6,8 +6,8 @@ import defaultConfig from "./sharedConfig.mjs";
 export default defineConfig({
   ...defaultConfig,
   base: "/",
-  title: "eslint-plugin-awscdk",
-  description: "ESLint plugin for AWS CDK",
+  title: "awscdk-lint",
+  description: "Lint plugins for AWS CDK (Oxlint and ESLint)",
   head: [
     [
       "link",
@@ -19,43 +19,43 @@ export default defineConfig({
     ],
     // setting OGP
     ["meta", { property: "og:type", content: "website" }],
-    ["meta", { property: "og:title", content: "eslint-plugin-awscdk" }],
+    ["meta", { property: "og:title", content: "awscdk-lint" }],
     [
       "meta",
       {
         property: "og:description",
-        content: "ESLint plugin for AWS CDK",
+        content: "Lint plugins for AWS CDK (Oxlint and ESLint)",
       },
     ],
     [
       "meta",
       {
         property: "og:url",
-        content: "https://eslint-plugin-awscdk.dev/",
+        content: "https://awscdk-lint.dev/",
       },
     ],
     [
       "meta",
       {
         property: "og:image",
-        content: "https://eslint-plugin-awscdk.dev/img/ogp.png",
+        content: "https://awscdk-lint.dev/img/ogp.png",
       },
     ],
     // Twitter Card
     ["meta", { name: "twitter:card", content: "summary_large_image" }],
-    ["meta", { name: "twitter:title", content: "eslint-plugin-awscdk" }],
+    ["meta", { name: "twitter:title", content: "awscdk-lint" }],
     [
       "meta",
       {
         name: "twitter:description",
-        content: "ESLint plugin for AWS CDK",
+        content: "Lint plugins for AWS CDK (Oxlint and ESLint)",
       },
     ],
     [
       "meta",
       {
         name: "twitter:image",
-        content: "https://eslint-plugin-awscdk.dev/img/ogp.png",
+        content: "https://awscdk-lint.dev/img/ogp.png",
       },
     ],
     // Other meta tags
@@ -64,7 +64,7 @@ export default defineConfig({
       "meta",
       {
         name: "keywords",
-        content: "eslint, aws, cdk, typescript, best-practices",
+        content: "eslint, oxlint, aws, cdk, typescript, best-practices",
       },
     ],
   ],
@@ -81,13 +81,9 @@ export default defineConfig({
             link: "/getting-started/",
           },
           {
-            text: "Playground",
+            text: "Playground (ESLint)",
             target: "_blank",
             link: "https://eslint-online-playground.netlify.app/#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",
-          },
-          {
-            text: "Blog",
-            link: "/blog/2025-10-21.renamed-npm-package",
           },
         ],
         sidebar: {
@@ -101,6 +97,10 @@ export default defineConfig({
               text: "Getting Started",
               collapsed: true,
               link: "/getting-started/",
+              items: [
+                { text: "Oxlint", link: "/getting-started/oxlint/" },
+                { text: "ESLint", link: "/getting-started/eslint/" },
+              ],
             },
             {
               text: "Rules",
@@ -178,12 +178,6 @@ export default defineConfig({
               ],
             },
           ],
-          "/blog/": [
-            {
-              text: "Renamed npm package to eslint-plugin-awscdk",
-              link: "/blog/2025-10-21.renamed-npm-package",
-            },
-          ],
         },
         socialLinks: [
           {
@@ -199,7 +193,7 @@ export default defineConfig({
       label: "Japanese",
       lang: "ja",
       link: "/ja/",
-      title: "eslint-plugin-awscdk",
+      title: "awscdk-lint",
       themeConfig: {
         ...defaultConfig.themeConfig,
         logo: "/img/logo.png",
@@ -209,13 +203,9 @@ export default defineConfig({
             link: "/ja/getting-started/",
           },
           {
-            text: "Playground",
+            text: "Playground (ESLint)",
             target: "_blank",
             link: "https://eslint-online-playground.netlify.app/#eNrNWV9v2zYQ/yqEMaBOYTlD9+atw7qkA/LQNmi67qEualqiHDYypYlUEiPI4972EbYvt0+yuyMlUrb8L02aBkFii8e74+9+d0dSNz1dxocF1zHPophrEcW50qasYhPJZGh0b9ST8yIvDbthv1bxhTDslqVlPmfjHr/SUZxcRJmcHuJn/cO49+NYjdXhIfvvn7/YEVes0oKdkvoj0D5WSlw5PX1zLvUA1Lxa2Afj3kEz+9+/2dl5XmWJemJIR8znYr2K+S4qtOIX4hMuco2OT9PtSi7ElE8JqTVKIq+kN+gZDXimcjb8rHMFWN6MFQOxOJ8XMhPlm8JIwHvcGzEawTHDyxnOH8Hnl2fPvn/2bNwb1IMANY58cEMA+MdmbJ4nVSbqia/FNShZGnwrdJ5VaNOKTSuVgBuBHMRexmQdSCCax2Wem2MJgjgLKONm3MLf27GChSKNSvFnJUsRAZ20VLMIQVmi0FHNLs+ihnAAA+C+P9vENc2IMzDLXi28CUBAqEQHRgnkxmBe9iE8hRh5iQGTyYghCGp2UMdEV4Vwojhu2YEDjue/42rZBJc7YVwzkmRSM55d8QX+y/IrkQztpA7WnPF5kYk2hWv9Kww054IVvBTKPNFsQrYm7JKXkk+zOmAwEX5QPboh1SXPZMLEpVDs6hz+kEevc/UOJF6o5FhqenJWO46xX3XXIdDlL1CBmEBZ8w48THNUiLiIa5JGtdYN8mCyyYUJCk/QiQnrA6BS0apLAXkzh5CKhGlhDsBDiiXT1sJzcjZgwBLA1lUXtImdhAYUGNCGq1iwPGXcs+HABpGi1wQWrIaYkBa0cXQus8SlPWaDyqM6KpuK6gNmhFRGlCmHZQWYnJZ5oS2zS8GTXGULJtSlLHMF0Bo9Ym8B5jL5ySbBwCXDzxTkZgbANYO8sWMwRKF/qEQcsAKdHq0sY+cMPSM9LJMACM80dBPFpgLTKVmblN3pCMreu6i21ADhy2B9J8eaXUlQpViW50WTn9pqQuG+5e6HC7H4iLx7M/0sYjOEGJRS6D4tGb75yBw0y+3wd/LdDSi6tc8mNiUpKVuVBDMzQB0LiEwmBK8ozQIXpHKDa9KFiGUqYWEJlPTYQMzRaUzDcJVr0FsOAZj2qPWJvrS+Acsro2VCiYdAQUi9D2tw7VdUb42AzOMGXKXg6oM1vgAyFkvibBshLFo+XW1VjRRsNVoZG825ic8foZPR/6/VxerdGoeIp6lAKBhCYb32XcdbXps6yzu6wMofWPwTV+zBYcOlAi9PSfVrNAclN4UcFayfiJRXGZR3YQyuZOBNExHgm5veco9QI893SfOgpqxtwCH/mKZuzJCj0NooM4gf3T5ssotCYfv0TPTsA9LGF5Gu0lRePzgDG/kztNop/q3suV64rixTwh3ab8PKHuMqwaaPi4BvFjwGkaGg8aKgLcTe7G12YqSm3oq1LVtbW3pKMGGHvZ5zv1mPV04PAredwGZCSQW/bl+wRKgT697g3jcaLmZvYfcQ0fahmQDVXAxnQzZxtidU/8OkbbYctHm0UqPaVYfeSpqaReFVN5qDzA27i+t+0HRb9tyuubbYGAxQnVeGtndFNc1kHNVtNMpTD/jdk9at8QFOQC4e1m2/Yg8EJYvb+OKEZUl7xg3DcKcNoIub0x6Yd5GCKNUmAy86jHeEJIgFtf9trL93tu8A6x7cRv1OCewpxz2yBwUnyKRu0JZovBQx5ysewlgJFwQsyUGTK5PgmMlDC9TzVIINFze33o1ObE6azwTL+rD54hS0iSaCeyfQXU5A1jncfywfaurdkfesXnvTnCAMzQ4aez7Ukcfoj60zOHLmN1nCAQO2JOAT4IA7K4wguoj9kSZj7OrWA+c+aJxr5XGhjTAwptwgSykX8MIC8WlPJOYLug5oYTFfnAQHw/mCorn1aOg02en16QhN5ZkYZvkMBOy0La3zQSv9/o1334p/pw68vfjfdw9etuguZoMmDHeS95Y19qJsaG24S6SNW8JmivNrtzk2OT2vKoWrt83pK5wtIT7PN/8Eta7EIz97aW/udpv7ZaW2dRmFDfy9KDVcU8PoiE1zyFKuvv1rJjiUWB3LPX/LCbQmysBf8IQoWYr4J+6Sl7FLC5KAJdTXRW3snOTtSnvYiQqQzidww/pFZAhL/n2zIRCzyYQGGjX+zgt6U9OfsU/BPXjpQrJKqH171E6MWkFhO6UemyhQqITOIJDD5g2WL1F2pK45v9ivh5+XahPc30glYOEw3VcoJ2y1hhOMbqulBhKXsjCRHQiFocadZtUM9sIttVFBDyMofSDRbpb1dVLoVv8Drre1UD0M3jMQLsMh1OctMi4eKbzVg3jD+7mnTw+fwjT/gs5xCQYb37u0WXF8sfaRXiUUcKaHe8ulF4iIjX0ZV7/1o2njXiIujwVdcKgYu2nrzeIqoKgBL1F1+K7Qy60R6MZ6g+iawZA4nQKti6dOibAvhgINjW//B8cT4yM=",
-          },
-          {
-            text: "Blog",
-            link: "/ja/blog/2025-10-21.renamed-npm-package",
           },
         ],
         sidebar: {
@@ -229,6 +219,10 @@ export default defineConfig({
               text: "Getting Started",
               collapsed: true,
               link: "/ja/getting-started/",
+              items: [
+                { text: "Oxlint", link: "/ja/getting-started/oxlint/" },
+                { text: "ESLint", link: "/ja/getting-started/eslint/" },
+              ],
             },
             {
               text: "Rules",
@@ -304,13 +298,6 @@ export default defineConfig({
                   link: "/ja/rules/require-props-default-doc",
                 },
               ],
-            },
-          ],
-          "/ja/blog/": [
-            {
-              text: "npm パッケージ名を eslint-plugin-awscdk に変更しました",
-              collapsed: true,
-              link: "/ja/blog/2025-10-21.renamed-npm-package",
             },
           ],
         },

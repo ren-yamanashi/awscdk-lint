@@ -34,22 +34,25 @@ body:
     validations:
       required: false
 
-  - type: input
-    id: plugin-version
+  - type: dropdown
+    id: plugin
     attributes:
-      label: eslint-plugin-awscdk Version
-      description: Which version of eslint-plugin-awscdk are you using?
-      placeholder: "1.0.0"
+      label: Plugin
+      description: Which package are you using?
+      options:
+        - eslint-plugin-awscdk
+        - oxlint-plugin-awscdk
     validations:
       required: true
 
   - type: input
-    id: eslint-version
+    id: plugin-version
     attributes:
-      label: ESLint Version
-      description: E.g. 10.0.0
+      label: Plugin Version
+      description: Which version of the plugin selected above are you using?
+      placeholder: "1.0.0"
     validations:
-      required: false
+      required: true
 
   - type: input
     id: language-version

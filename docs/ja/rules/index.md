@@ -1,5 +1,5 @@
 ---
-title: eslint-plugin-awscdk - Rules
+title: awscdk-lint - Rules
 titleTemplate: ":title"
 ---
 
@@ -207,49 +207,63 @@ import RuleItem from '../../components/RuleItem.vue'
 `recommended` ルールは、コードを正しく保つための推奨ルールです。  
 このルールを使用する場合は、以下のように設定します。
 
-```js
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+import { defineConfig } from "oxlint";
+import cdkPlugin from "oxlint-plugin-awscdk";
+
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.recommended],
+  // ... some configs
+});
+```
+
+```js [ESLint]
 // eslint.config.mjs
-import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
-import tseslint from "typescript-eslint";
 import cdkPlugin from "eslint-plugin-awscdk";
 
-export default defineConfig([
-  {
-    files: ["lib/**/*.ts", "bin/*.ts"],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      // ✅ Add plugins
-      cdkPlugin.configs.recommended,
-    ],
-    // ... some configs
-  },
-]);
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.recommended],
+  // ... some configs
+});
 ```
+
+:::
 
 ## Strict Rules
 
 `strict` ルールは、利用可能なすべてのルールを提供します。  
 このルールを使用する場合は、以下のように設定します。
 
-```js
+::: code-group
+
+```ts [Oxlint]
+// oxlint.config.ts
+import { defineConfig } from "oxlint";
+import cdkPlugin from "oxlint-plugin-awscdk";
+
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.strict],
+  // ... some configs
+});
+```
+
+```js [ESLint]
 // eslint.config.mjs
-import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
-import tseslint from "typescript-eslint";
 import cdkPlugin from "eslint-plugin-awscdk";
 
-export default defineConfig([
-  {
-    files: ["lib/**/*.ts", "bin/*.ts"],
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      // ✅ Add plugins
-      cdkPlugin.configs.strict,
-    ],
-    // ... some configs
-  },
-]);
+export default defineConfig({
+  // ✅ Add plugins
+  extends: [cdkPlugin.configs.strict],
+  // ... some configs
+});
 ```
+
+:::
