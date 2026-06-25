@@ -10,15 +10,17 @@ on:
       - opened
       - synchronize
       - reopened
-      - closed
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   integration:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.deploy-gate.outputs.deploy }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -49,13 +51,23 @@ jobs:
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ./docs/.vitepress/dist
+      - name: Check Docs Deploy label
+        id: deploy-gate
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          has_label=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" \
+            --jq '[.[].labels[].name] | index("Docs: Deploy") != null')
+          echo "Docs: Deploy label present: $has_label"
+          echo "deploy=$has_label" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: integration
     if: |
-      github.event_name == 'pull_request' &&
-      github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.labels.*.name, 'Docs: Deploy')
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.integration.outputs.should-deploy == 'true'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
