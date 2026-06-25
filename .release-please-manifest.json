@@ -1,3 +1,4 @@
 {
-  "packages/eslint": "4.3.3"
+  "packages/eslint": "4.3.3",
+  "packages/oxlint": "0.1.0"
 }
