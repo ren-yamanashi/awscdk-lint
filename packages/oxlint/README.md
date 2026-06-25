@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">oxlint-plugin-awscdk</h1>
-<p align="center">Oxlint plugin for AWS CDK — part of <a href="https://awscdk-lint.dev/">awscdk-lint</a></p>
+<p align="center">Oxlint plugin for AWS CDK</p>
 <p align="center">
   <a href="https://www.npmjs.com/package/oxlint-plugin-awscdk">
     <img src="https://img.shields.io/npm/v/oxlint-plugin-awscdk.svg" alt="NPM">
