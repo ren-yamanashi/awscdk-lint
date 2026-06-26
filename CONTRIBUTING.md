@@ -61,10 +61,10 @@ packages/
         ├── rules/          # Rule implementations (one file per rule)
         ├── __tests__/      # Unit tests for each rule
         ├── configs/        # Preset configurations
-│       ├── core/           # Core logic shared across rules
-│       │   ├── cdk-construct/   # Core logic related to CDK constructs
-│       │   ├── ts-type/         # TypeScript type utilities (class check, base type traversal, etc.)
-│       │   └── ast-node/        # ESTree AST node utilities (find constructor, public properties, etc.)
+        ├── core/           # Core logic shared across rules
+        │   ├── cdk-construct/   # Core logic related to CDK constructs
+        │   ├── ts-type/         # TypeScript type utilities (class check, base type traversal, etc.)
+        │   └── ast-node/        # ESTree AST node utilities (find constructor, public properties, etc.)
         ├── shared/         # Shared utilities (createRule, etc.)
         └── index.ts        # Plugin entry point (exports rules and configs)
 
