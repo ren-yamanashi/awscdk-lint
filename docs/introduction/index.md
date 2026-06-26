@@ -9,13 +9,13 @@ titleTemplate: ":title"
 
 The same set of CDK rules is offered through two packages:
 
-- [`oxlint-plugin-awscdk`](https://www.npmjs.com/package/oxlint-plugin-awscdk) — for projects using Oxlint
-- [`eslint-plugin-awscdk`](https://www.npmjs.com/package/eslint-plugin-awscdk) — for projects using ESLint
+- [`oxlint-plugin-awscdk`](https://www.npmjs.com/package/oxlint-plugin-awscdk) — for using Oxlint
+- [`eslint-plugin-awscdk`](https://www.npmjs.com/package/eslint-plugin-awscdk) — for using ESLint
 
 Pick whichever linter your project already uses. The rules detect the same issues:
 
 - Syntax errors
-- Violations of AWS CDK best practices
+- Violations of AWS CDK theory
 
 Integrating either linter with your editor is also convenient for checking code in real-time.
 
@@ -25,12 +25,12 @@ Integrating either linter with your editor is also convenient for checking code 
 
 ## 🚥 Versioning policy
 
-Please see [Versioning Policy](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/VERSIONING_POLICY.md).
+Please see [Versioning Policy](https://github.com/ren-yamanashi/awscdk-lint/blob/main/VERSIONING_POLICY.md).
 
 ## 📰 Changelog
 
-We are using [GitHub Releases](https://github.com/ren-yamanashi/eslint-plugin-awscdk/releases).
+We are using [GitHub Releases](https://github.com/ren-yamanashi/awscdk-lint/releases).
 
 ## 🔒 License
 
-See the [LICENSE](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/LICENSE) file for license rights and limitations (MIT).
+See the [LICENSE](https://github.com/ren-yamanashi/awscdk-lint/blob/main/LICENSE) file for license rights and limitations (MIT).

@@ -1,7 +1,7 @@
 {
   "name": "eslint-plugin-awscdk",
   "version": "4.3.3",
-  "description": "eslint plugin for AWS CDK projects",
+  "description": "ESLint plugin for AWS CDK",
   "keywords": [
     "aws",
     "aws-cdk",

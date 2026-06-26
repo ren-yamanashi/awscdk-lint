@@ -26,7 +26,7 @@ features:
     linkText: ルールを見る
     icon: 📚
   - title: Purpose driven
-    details: AWS CDK のセオリー・ベストプラクティスに基づくルールを提供し、可読性・保守性が高く、再利用可能なコードを書く手助けをします。
+    details: AWS CDK のセオリーに基づくルールを提供し、可読性・保守性が高く、再利用可能なコードを書く手助けをします。
     icon: 🎯
   - title: Type Safety
     details: TypeScript の型システムを利用したルールを提供し、より安全な CDK コードを書く手助けをします。

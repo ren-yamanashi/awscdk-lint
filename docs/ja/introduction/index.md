@@ -15,7 +15,7 @@ titleTemplate: ":title"
 普段使用している linter に合わせて選択してください。どちらのルールも、以下のような問題を検出します。
 
 - 構文エラー
-- AWS CDK のベストプラクティス違反
+- AWS CDK のセオリー違反
 
 また、それぞれの linter をエディタと統合することで、リアルタイムにコードをチェックできて便利です。
 
@@ -25,12 +25,12 @@ titleTemplate: ":title"
 
 ## 🚥 Versioning policy
 
-[Versioning Policy](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/VERSIONING_POLICY.md) をご覧ください。
+[Versioning Policy](https://github.com/ren-yamanashi/awscdk-lint/blob/main/VERSIONING_POLICY.md) をご覧ください。
 
 ## 📰 Changelog
 
-[GitHub Releases](https://github.com/ren-yamanashi/eslint-plugin-awscdk/releases) を使用しています。
+[GitHub Releases](https://github.com/ren-yamanashi/awscdk-lint/releases) を使用しています。
 
 ## 🔒 License
 
-ライセンスの権利と制限 (MIT) については、[LICENSE](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/LICENSE)ファイルを参照してください。
+ライセンスの権利と制限 (MIT) については、[LICENSE](https://github.com/ren-yamanashi/awscdk-lint/blob/main/LICENSE)ファイルを参照してください。
