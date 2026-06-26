@@ -15,7 +15,7 @@ The same set of CDK rules is offered through two packages:
 Pick whichever linter your project already uses. The rules detect the same issues:
 
 - Syntax errors
-- Violations of AWS CDK best practices
+- Violations of AWS CDK theory
 
 Integrating either linter with your editor is also convenient for checking code in real-time.
 

@@ -64,7 +64,7 @@ export default defineConfig({
       "meta",
       {
         name: "keywords",
-        content: "eslint, oxlint, aws, cdk, typescript, best-practices",
+        content: "eslint, oxlint, aws, cdk, typescript",
       },
     ],
   ],

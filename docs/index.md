@@ -27,7 +27,7 @@ features:
     linkText: see rules
     icon: 📚
   - title: Purpose driven
-    details: It provides theory and best practice rules for the AWS CDK to help you write readable, maintainable, and reusable code.
+    details: It provides theory based rules for the AWS CDK to help you write readable, maintainable, and reusable code.
     icon: 🎯
   - title: Type Safety
     details: Robust rules leveraging TypeScript's type system to help you write safer CDK code.
