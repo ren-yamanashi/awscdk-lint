@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">awscdk-lint</h1>
-<p align="center">Lint plugins for AWS CDK projects (Oxlint and ESLint)</p>
+<p align="center">Lint plugins for AWS CDK (Oxlint and ESLint)</p>
 
 This repository ships the same set of AWS CDK lint rules as two packages. Pick the one matching the linter your project uses:
 

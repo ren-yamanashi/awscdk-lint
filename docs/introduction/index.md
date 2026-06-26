@@ -9,8 +9,8 @@ titleTemplate: ":title"
 
 The same set of CDK rules is offered through two packages:
 
-- [`oxlint-plugin-awscdk`](https://www.npmjs.com/package/oxlint-plugin-awscdk) — for projects using Oxlint
-- [`eslint-plugin-awscdk`](https://www.npmjs.com/package/eslint-plugin-awscdk) — for projects using ESLint
+- [`oxlint-plugin-awscdk`](https://www.npmjs.com/package/oxlint-plugin-awscdk) — for using Oxlint
+- [`eslint-plugin-awscdk`](https://www.npmjs.com/package/eslint-plugin-awscdk) — for using ESLint
 
 Pick whichever linter your project already uses. The rules detect the same issues:
 
