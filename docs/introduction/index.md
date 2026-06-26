@@ -25,12 +25,12 @@ Integrating either linter with your editor is also convenient for checking code 
 
 ## 🚥 Versioning policy
 
-Please see [Versioning Policy](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/VERSIONING_POLICY.md).
+Please see [Versioning Policy](https://github.com/ren-yamanashi/awscdk-lint/blob/main/VERSIONING_POLICY.md).
 
 ## 📰 Changelog
 
-We are using [GitHub Releases](https://github.com/ren-yamanashi/eslint-plugin-awscdk/releases).
+We are using [GitHub Releases](https://github.com/ren-yamanashi/awscdk-lint/releases).
 
 ## 🔒 License
 
-See the [LICENSE](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/LICENSE) file for license rights and limitations (MIT).
+See the [LICENSE](https://github.com/ren-yamanashi/awscdk-lint/blob/main/LICENSE) file for license rights and limitations (MIT).

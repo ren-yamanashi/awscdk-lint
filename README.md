@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="160px" height="160px" src="https://raw.githubusercontent.com/ren-yamanashi/eslint-plugin-awscdk/main/assets/logo.png" alt="awscdk-lint logo">
+  <img width="160px" height="160px" src="https://raw.githubusercontent.com/ren-yamanashi/awscdk-lint/main/assets/logo.png" alt="awscdk-lint logo">
 </p>
 
 <h1 align="center">awscdk-lint</h1>
@@ -156,15 +156,15 @@ https://awscdk-lint.dev/rules/
 
 ## ❗ Issue
 
-If you have any questions or suggestions, please open an [issue](https://github.com/ren-yamanashi/eslint-plugin-awscdk/issues).
+If you have any questions or suggestions, please open an [issue](https://github.com/ren-yamanashi/awscdk-lint/issues).
 
 ## 💪 Contribution
 
-Contributions are welcome! Please see [Contribution Guide](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/CONTRIBUTING.md) for more details.
+Contributions are welcome! Please see [Contribution Guide](https://github.com/ren-yamanashi/awscdk-lint/blob/main/CONTRIBUTING.md) for more details.
 
 ## ⚓ Versioning Policy
 
-Please see [Versioning Policy](https://github.com/ren-yamanashi/eslint-plugin-awscdk/blob/main/VERSIONING_POLICY.md).
+Please see [Versioning Policy](https://github.com/ren-yamanashi/awscdk-lint/blob/main/VERSIONING_POLICY.md).
 
 ## ©️ License
 
