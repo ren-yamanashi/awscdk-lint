@@ -21,9 +21,7 @@ const bundledTsgo = resolveBundledTsgo();
 
 const createOxlintConfig = (rules: Record<string, RuleEntry>): OxlintConfig => ({
   jsPlugins: ["oxlint-plugin-awscdk"],
-  ...(bundledTsgo
-    ? { settings: { corsaOxlint: { corsa: { executable: bundledTsgo } } } }
-    : {}),
+  ...(bundledTsgo ? { settings: { corsaOxlint: { corsa: { executable: bundledTsgo } } } } : {}),
   rules,
 });
 
