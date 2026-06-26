@@ -1,5 +1,6 @@
 {
   "name": "awscdk-lint",
+  "private": true,
   "description": "Lint plugins for AWS CDK (Oxlint and ESLint)",
   "license": "MIT",
   "author": {
