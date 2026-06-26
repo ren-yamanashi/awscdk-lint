@@ -1,13 +1,29 @@
+import { resolveBundledTsgo } from "../shared/native-preview";
+
 type RuleSeverity = "allow" | "off" | "warn" | "error" | "deny" | number;
 type RuleEntry = RuleSeverity | [RuleSeverity, ...unknown[]];
 
+type CorsaOxlintSettings = {
+  corsa?: {
+    executable?: string;
+  };
+};
+
 export type OxlintConfig = {
   jsPlugins: ["oxlint-plugin-awscdk"];
+  settings?: { corsaOxlint?: CorsaOxlintSettings };
   rules: Record<string, RuleEntry>;
 };
 
+// TODO: Drop once corsa-oxlint can resolve `@typescript/native-preview` from the calling plugin's module location.
+// https://github.com/ubugeeei-prod/corsa-bind/issues/363
+const bundledTsgo = resolveBundledTsgo();
+
 const createOxlintConfig = (rules: Record<string, RuleEntry>): OxlintConfig => ({
   jsPlugins: ["oxlint-plugin-awscdk"],
+  ...(bundledTsgo
+    ? { settings: { corsaOxlint: { corsa: { executable: bundledTsgo } } } }
+    : {}),
   rules,
 });
 
