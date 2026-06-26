@@ -24,7 +24,7 @@ See each issue templates
 
 ```bash
 # Clone your fork
-https://github.com/ren-yamanashi/eslint-plugin-awscdk.git
+https://github.com/ren-yamanashi/awscdk-lint.git
 
 
 # When using pnpm
@@ -55,6 +55,7 @@ packages/
 │       │   └── ast-node/        # ESTree AST node utilities (find constructor, public properties, etc.)
 │       ├── shared/         # Shared utilities (createRule, etc.)
 │       └── index.ts        # Plugin entry point (exports rules and configs)
+|
 └── oxlint/                 # oxlint-plugin-awscdk
     └── src/
         ├── rules/          # Rule implementations (one file per rule)
