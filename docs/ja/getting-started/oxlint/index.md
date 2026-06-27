@@ -12,6 +12,10 @@ head:
 
 # Oxlint (`oxlint-plugin-awscdk`)
 
+::: warning ⚠️ Experimental
+`oxlint-plugin-awscdk` は実験的な段階にあります。最初の安定版 (`1.0.0`) リリースまで、公開 API、ルールセット、プリセットの内容、設定の形は予告なく変更される可能性があります。また、まだ安定版に達していない [`corsa-oxlint`](https://www.npmjs.com/package/corsa-oxlint) に依存しています。
+:::
+
 ## インストール
 
 ::: code-group
