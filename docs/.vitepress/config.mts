@@ -38,7 +38,7 @@ export default defineConfig({
       "meta",
       {
         property: "og:image",
-        content: "https://awscdk-lint.dev/img/ogp.png",
+        content: "https://awscdk-lint.dev/img/ogp/main.png",
       },
     ],
     // Twitter Card
@@ -55,7 +55,7 @@ export default defineConfig({
       "meta",
       {
         name: "twitter:image",
-        content: "https://awscdk-lint.dev/img/ogp.png",
+        content: "https://awscdk-lint.dev/img/ogp/main.png",
       },
     ],
     // Other meta tags
