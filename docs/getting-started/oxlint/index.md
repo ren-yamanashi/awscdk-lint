@@ -1,6 +1,13 @@
 ---
 title: awscdk-lint - Getting Started (Oxlint)
 titleTemplate: ":title"
+head:
+  - - meta
+    - property: og:image
+      content: https://awscdk-lint.dev/img/ogp-oxlint-plugin.png
+  - - meta
+    - name: twitter:image
+      content: https://awscdk-lint.dev/img/ogp-oxlint-plugin.png
 ---
 
 # Oxlint (`oxlint-plugin-awscdk`)
