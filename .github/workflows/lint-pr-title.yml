@@ -21,4 +21,4 @@ jobs:
       - name: Validate PR title follows Conventional Commits
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
-        run: scripts/lint-pr-title.sh
+        run: .github/scripts/lint-pr-title.sh
