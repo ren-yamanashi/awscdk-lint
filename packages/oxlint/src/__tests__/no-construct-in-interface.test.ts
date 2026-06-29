@@ -90,6 +90,26 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       `,
     },
     {
+      name: "property type is Partial utility type wrapping a plain interface (regression for #492)",
+      code: `
+      interface AlarmProps {
+        readonly alarmName: string;
+        readonly threshold: number;
+      }
+      interface MyConstructProps {
+        readonly alarmProps?: Partial<AlarmProps>;
+      }
+      `,
+    },
+    {
+      name: "property type is Record utility type with primitive key/value (regression for #492)",
+      code: `
+      interface MyConstructProps {
+        readonly someMap?: Record<string, string>;
+      }
+      `,
+    },
+    {
       name: `property type is interface (not construct class) even if there is a class implementing it in module`,
       code: `
       class Resource {}

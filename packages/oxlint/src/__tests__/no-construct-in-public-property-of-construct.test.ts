@@ -131,6 +131,28 @@ ruleTester.run(
         `,
       },
       {
+        name: "field type is Partial utility type wrapping a plain interface (regression for #492)",
+        code: `
+          class Construct {}
+          interface AlarmProps {
+            readonly alarmName: string;
+            readonly threshold: number;
+          }
+          class TestClass extends Construct {
+            public readonly alarmProps?: Partial<AlarmProps>;
+          }
+        `,
+      },
+      {
+        name: "field type is Record utility type with primitive key/value (regression for #492)",
+        code: `
+          class Construct {}
+          class TestClass extends Construct {
+            public readonly someMap?: Record<string, string>;
+          }
+        `,
+      },
+      {
         name: "class extends Resource but only implements IResource interface",
         code: `
           class Construct {}
