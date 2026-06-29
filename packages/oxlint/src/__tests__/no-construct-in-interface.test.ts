@@ -110,6 +110,30 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       `,
     },
     {
+      name: "property type is Pick utility type wrapping a plain interface (regression for #492)",
+      code: `
+      interface AlarmProps {
+        readonly alarmName: string;
+        readonly threshold: number;
+      }
+      interface MyConstructProps {
+        readonly alarmProps?: Pick<AlarmProps, "alarmName">;
+      }
+      `,
+    },
+    {
+      name: "property type is Omit utility type wrapping a plain interface (regression for #492)",
+      code: `
+      interface AlarmProps {
+        readonly alarmName: string;
+        readonly threshold: number;
+      }
+      interface MyConstructProps {
+        readonly alarmProps?: Omit<AlarmProps, "alarmName">;
+      }
+      `,
+    },
+    {
       name: `property type is interface (not construct class) even if there is a class implementing it in module`,
       code: `
       class Resource {}
