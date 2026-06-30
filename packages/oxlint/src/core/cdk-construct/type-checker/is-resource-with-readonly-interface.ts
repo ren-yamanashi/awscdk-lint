@@ -1,6 +1,5 @@
 import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
-import { safeGetSymbolOfType } from "../../ts-type/checker/safe-get-symbol-of-type";
 import { isResourceType } from "./is-resource";
 
 /**
@@ -84,7 +83,7 @@ const getImplementedInterfaceNames = (
 };
 
 const getSimpleTypeName = (type: CorsaType, checker: CorsaTypeCheckerShape): string | undefined => {
-  return safeGetSymbolOfType(type, checker)?.name;
+  return checker.getSymbolOfType(type)?.name;
 };
 
 const isIgnoreClass = (className: string): boolean => {
