@@ -8,7 +8,6 @@ import {
 } from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
-import { safeGetSymbolOfType } from "../core/ts-type/checker/safe-get-symbol-of-type";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -54,7 +53,7 @@ const validatePublicProperty = (
   const checker = parserServices.program.getTypeChecker();
   const constructType = findTypeOfCdkConstruct(type, checker);
   if (constructType) {
-    const typeName = safeGetSymbolOfType(constructType, checker)?.name ?? "";
+    const typeName = checker.getSymbolOfType(constructType)?.name ?? "";
     context.report({
       node: publicProperty.node,
       messageId: "invalidPublicPropertyOfConstruct",

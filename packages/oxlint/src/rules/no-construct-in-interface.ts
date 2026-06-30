@@ -1,7 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
-import { safeGetSymbolOfType } from "../core/ts-type/checker/safe-get-symbol-of-type";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -44,7 +43,7 @@ export const noConstructInInterface = createRule({
               messageId: "invalidInterfaceProperty",
               data: {
                 propertyName: property.key.name,
-                typeName: safeGetSymbolOfType(result, checker)?.name ?? "",
+                typeName: checker.getSymbolOfType(result)?.name ?? "",
               },
             });
           }
