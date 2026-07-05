@@ -48,20 +48,20 @@
     "test": "vp test --run"
   },
   "dependencies": {
-    "@typescript/native-preview": "7.0.0-dev.20260516.1",
-    "corsa-oxlint": "^0.50.0",
-    "oxlint-tsgolint": "^0.23.0"
+    "@typescript/native-preview": "7.0.0-dev.20260705.1",
+    "corsa-oxlint": "^0.52.0",
+    "oxlint-tsgolint": "^0.24.0"
   },
   "devDependencies": {
-    "@oxlint/plugins": "^1.71.0",
+    "@oxlint/plugins": "^1.72.0",
     "@types/node": "^24.10.13",
-    "@voidzero-dev/vite-plus-core": "^0.1.11",
-    "oxlint": "^1.71.0",
+    "@voidzero-dev/vite-plus-core": "^0.2.2",
+    "oxlint": "^1.72.0",
     "typescript": "^6.0.2",
-    "vite-plus": "^0.1.11"
+    "vite-plus": "^0.2.2"
   },
   "peerDependencies": {
-    "oxlint": "^1.71.0"
+    "oxlint": "^1.72.0"
   },
   "engines": {
     "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
