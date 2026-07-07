@@ -15,8 +15,10 @@ export type OxlintConfig = {
   rules: Record<string, RuleEntry>;
 };
 
-// TODO: Drop once corsa-oxlint can resolve `@typescript/native-preview` from the calling plugin's module location.
-// https://github.com/ubugeeei-prod/corsa-bind/issues/363
+// Emitted alongside the CORSA_EXECUTABLE override in `../index.ts` so that
+// consumers spreading `configs.recommended`/`configs.strict` still get the
+// plugin-bundled `native-preview` even when the plugin entry has not been
+// side-effect imported (e.g. when only the config is referenced by string).
 const bundledTsgo = resolveBundledTsgo();
 
 const createOxlintConfig = (rules: Record<string, RuleEntry>): OxlintConfig => ({
