@@ -25,16 +25,15 @@ export interface OxlintCdkPlugin {
   }>;
 }
 
-const defined = definePlugin({
-  meta: { name: "awscdk" },
-  resolveFrom: import.meta.url,
-  rules,
-  configs,
-});
-
 const oxlintCdkPlugin: OxlintCdkPlugin = {
-  ...(defined as unknown as OxlintCdkPlugin),
   meta: { name: "awscdk", version },
+  rules: definePlugin({
+    meta: { name: "awscdk" },
+    resolveFrom: import.meta.url,
+    rules,
+    configs,
+  }).rules as typeof rules,
+  configs,
 };
 
 export default oxlintCdkPlugin;
