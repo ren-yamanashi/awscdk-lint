@@ -50,7 +50,7 @@
   "dependencies": {
     "@typescript/native-preview": "7.0.0-dev.20260516.1",
     "corsa-oxlint": "^0.52.0",
-    "oxlint-tsgolint": "^0.23.0"
+    "oxlint-tsgolint": "^0.24.0"
   },
   "devDependencies": {
     "@oxlint/plugins": "^1.71.0",
