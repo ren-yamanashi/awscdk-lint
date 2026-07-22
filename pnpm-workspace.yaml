@@ -17,4 +17,4 @@ onlyBuiltDependencies:
 publicHoistPattern:
   - "@typescript/native-preview"
   - "@typescript/native-preview-*"
-useNodeVersion: 24.14.1
+useNodeVersion: 24.18.0
