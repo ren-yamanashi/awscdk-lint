@@ -21,8 +21,5 @@
     "@voidzero-dev/vite-plus-core": "^0.1.11",
     "vite-plus": "^0.1.11"
   },
-  "engines": {
-    "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
-  },
   "packageManager": "pnpm@10.29.3"
 }
