@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "oxc-minify": "^0.137.0",
-    "vitepress": "^2.0.0-alpha.17",
-    "vitepress-plugin-llms": "^1.13.2"
+    "vitepress": "^2.0.0-alpha.18",
+    "vitepress-plugin-llms": "^1.13.3"
   }
 }
