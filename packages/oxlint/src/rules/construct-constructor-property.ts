@@ -80,6 +80,12 @@ const checkNumOfConstructorProperty = (
 };
 
 /**
+ * Unwraps a parameter with a default value (e.g. `props: MyConstructProps = {}`) to its binding
+ */
+const unwrapDefaultValue = (param: ConstructorParam) =>
+  param.type === AST_NODE_TYPES.AssignmentPattern ? param.left : param;
+
+/**
  * Checks if the first parameter is named "scope" and of type Construct
  */
 const checkFirstParamIsScope = (
@@ -87,14 +93,15 @@ const checkFirstParamIsScope = (
   context: RuleContext,
   parserServices: ParserServices,
 ) => {
-  if (firstParam.type !== AST_NODE_TYPES.Identifier || firstParam.name !== "scope") {
+  const binding = unwrapDefaultValue(firstParam);
+  if (binding.type !== AST_NODE_TYPES.Identifier || binding.name !== "scope") {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorProperty",
     });
   } else if (
     !isConstructType(
-      parserServices.getTypeAtLocation(firstParam),
+      parserServices.getTypeAtLocation(binding),
       parserServices.program.getTypeChecker(),
     )
   ) {
@@ -109,12 +116,13 @@ const checkFirstParamIsScope = (
  * Checks if the second parameter is named "id" and of type string
  */
 const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: RuleContext) => {
-  if (secondParam.type !== AST_NODE_TYPES.Identifier || secondParam.name !== "id") {
+  const binding = unwrapDefaultValue(secondParam);
+  if (binding.type !== AST_NODE_TYPES.Identifier || binding.name !== "id") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (secondParam.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSStringKeyword) {
+  } else if (binding.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSStringKeyword) {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorIdType",
@@ -127,7 +135,8 @@ const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Ru
  */
 const checkThirdParamIsProps = (thirdParam: ConstructorProperties[2], context: RuleContext) => {
   if (!thirdParam) return;
-  if (thirdParam.type !== AST_NODE_TYPES.Identifier || thirdParam.name !== "props") {
+  const binding = unwrapDefaultValue(thirdParam);
+  if (binding.type !== AST_NODE_TYPES.Identifier || binding.name !== "props") {
     context.report({
       node: thirdParam,
       messageId: "invalidConstructorProperty",

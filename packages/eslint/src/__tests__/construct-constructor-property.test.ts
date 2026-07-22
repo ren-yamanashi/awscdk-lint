@@ -54,6 +54,43 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       `,
     },
     {
+      name: 'constructor has "scope, id, props" signature with default value props',
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps = {}) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      name: 'constructor has "scope, id" signature with default value id',
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string = "resource") {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      name: 'constructor has "scope, id" signature with default value scope',
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct = new Construct(), id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
       name: 'constructor has more than 3 parameters but first three are "scope, id, props"',
       code: `
       class Construct {}
@@ -163,6 +200,36 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       
       export class MyConstruct extends Construct {
         constructor(scope: Construct, id: string, myProps: MyConstructProps, resourceName: string) { 
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorProperty" }],
+    },
+    {
+      name: 'constructor has 3 parameters but third with default value is not named "props"',
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, myProps: MyConstructProps = {}) {
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorProperty" }],
+    },
+    {
+      name: "constructor has 3 parameters but third with default value is destructured",
+      code: `
+      class Construct {}
+      interface MyConstructProps {
+        readonly bucketName?: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, { bucketName }: MyConstructProps = {}) {
           super(scope, id);
         }
       }
