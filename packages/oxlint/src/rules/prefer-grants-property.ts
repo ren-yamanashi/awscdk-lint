@@ -1,6 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { safeGetSymbolOfType } from "../core/ts-type/checker/safe-get-symbol-of-type";
 import { createRule } from "../shared/create-rule";
 
 export const preferGrantsProperty = createRule({
@@ -44,7 +45,7 @@ export const preferGrantsProperty = createRule({
         const grantsType = checker.getTypeOfSymbol(grantsProperty);
         if (!grantsType) return;
 
-        const grantsTypeName = checker.getSymbolOfType(grantsType)?.name;
+        const grantsTypeName = safeGetSymbolOfType(grantsType, checker)?.name;
         if (!grantsTypeName?.endsWith("Grants")) return;
 
         const convertedMethodName = methodName

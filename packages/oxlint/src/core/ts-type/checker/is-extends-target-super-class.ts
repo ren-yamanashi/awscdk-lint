@@ -1,5 +1,7 @@
 import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
 
+import { safeGetSymbolOfType } from "./safe-get-symbol-of-type";
+
 /**
  * Check if the type extends one of the target super classes (recursively walking the base type chain).
  * @param type - The type to check
@@ -14,8 +16,8 @@ export const isExtendsFromTargetSuperClass = (
   targetSuperClasses: readonly string[],
   ignoredClasses: readonly string[],
 ): boolean => {
-  if (!type) return false;
-  const name = checker.getSymbolOfType(type)?.name ?? "";
+  if (!type || !type.id) return false;
+  const name = safeGetSymbolOfType(type, checker)?.name ?? "";
 
   if (ignoredClasses.includes(name)) return false;
   if (targetSuperClasses.includes(name)) return true;

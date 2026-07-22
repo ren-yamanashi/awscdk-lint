@@ -12,6 +12,8 @@ minimumReleaseAgeExclude:
   - "@corsa-bind/*"
   - "@typescript/native-preview"
   - "@typescript/native-preview-*"
+  - typescript
+  - "@typescript/typescript-*"
 onlyBuiltDependencies:
   - esbuild
 publicHoistPattern:
