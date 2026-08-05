@@ -62,7 +62,7 @@ jobs:
           echo "Docs: Deploy label present: $has_label"
           echo "deploy=$has_label" >> "$GITHUB_OUTPUT"
 
-  windows-test:
+  windows-integration:
     timeout-minutes: 60
     runs-on: windows-latest
     steps:
@@ -84,7 +84,7 @@ jobs:
         run: vp run test:integration
 
   deploy:
-    needs: [integration, windows-test]
+    needs: [integration, windows-integration]
     if: |
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
