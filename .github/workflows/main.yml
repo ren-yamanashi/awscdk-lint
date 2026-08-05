@@ -79,8 +79,9 @@ jobs:
         run: vp install --frozen-lockfile
       - name: Build package
         run: vp run pack
-      - name: Run Unit Tests
-        run: vp test --run
+      - name: Run Integration Tests
+        shell: bash
+        run: vp run test:integration
 
   deploy:
     needs: [integration, windows-test]
