@@ -62,8 +62,29 @@ jobs:
           echo "Docs: Deploy label present: $has_label"
           echo "deploy=$has_label" >> "$GITHUB_OUTPUT"
 
+  windows-integration:
+    timeout-minutes: 60
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb # v1
+        with:
+          node-version: "24.18.0"
+          cache: true
+      - name: Install dependencies
+        run: vp install --frozen-lockfile
+      - name: Build package
+        run: vp run pack
+      - name: Run Integration Tests
+        shell: bash
+        run: vp run test:integration
+
   deploy:
-    needs: integration
+    needs: [integration, windows-integration]
     if: |
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
