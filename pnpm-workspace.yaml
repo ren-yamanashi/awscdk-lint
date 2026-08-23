@@ -3,8 +3,8 @@ packages:
   - docs
   - examples
 overrides:
-  vite: npm:@voidzero-dev/vite-plus-core@^0.1.11
-  vitest: npm:@voidzero-dev/vite-plus-test@^0.1.11
+  vite: npm:@voidzero-dev/vite-plus-core@^0.2.9
+  vitest: 4.1.10
 engineStrict: true
 minimumReleaseAge: 2880
 minimumReleaseAgeExclude:
