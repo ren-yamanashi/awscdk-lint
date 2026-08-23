@@ -54,7 +54,7 @@ importers:
         version: link:../packages/eslint
       oxlint:
         specifier: ^1.79.0
-        version: 1.79.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1))
+        version: 1.79.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1))
       oxlint-plugin-awscdk:
         specifier: workspace:*
         version: link:../packages/oxlint
@@ -62,11 +62,11 @@ importers:
         specifier: ^7.0.2001
         version: 7.0.2001
       typescript:
-        specifier: ^6.0.2
-        version: 6.0.3
+        specifier: ^7.0.2
+        version: 7.0.2
       typescript-eslint:
         specifier: ^8.67.0
-        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
 
   packages/eslint:
     devDependencies:
@@ -78,28 +78,28 @@ importers:
         version: 24.10.15
       '@typescript-eslint/parser':
         specifier: ^8.67.0
-        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       '@typescript-eslint/rule-tester':
         specifier: ^8.67.0
-        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       '@typescript-eslint/utils':
         specifier: ^8.67.0
-        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       '@voidzero-dev/vite-plus-core':
         specifier: ^0.2.9
-        version: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(yaml@2.8.1)
+        version: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(yaml@2.8.1)
       eslint:
         specifier: ^10.8.1
         version: 10.8.1(jiti@2.6.1)
       typescript:
-        specifier: ^6.0.2
-        version: 6.0.3
+        specifier: ^7.0.2
+        version: 7.0.2
       typescript-eslint:
         specifier: ^8.67.0
-        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+        version: 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       vite-plus:
         specifier: ^0.2.9
-        version: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)
+        version: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)
 
   packages/oxlint:
     dependencies:
@@ -2655,11 +2655,6 @@ packages:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  typescript@6.0.3:
-    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@7.0.2:
     resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
     engines: {node: '>=16.20.0'}
@@ -3536,54 +3531,54 @@ snapshots:
 
   '@types/web-bluetooth@0.0.21': {}
 
-  '@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3))(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)':
+  '@typescript-eslint/eslint-plugin@8.67.0(@typescript-eslint/parser@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2))(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/parser': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       '@typescript-eslint/scope-manager': 8.67.0
-      '@typescript-eslint/type-utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/type-utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
+      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       '@typescript-eslint/visitor-keys': 8.67.0
       eslint: 10.8.1(jiti@2.6.1)
       ignore: 7.0.6
       natural-compare: 1.4.0
-      ts-api-utils: 2.5.0(typescript@6.0.3)
-      typescript: 6.0.3
+      ts-api-utils: 2.5.0(typescript@7.0.2)
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)':
+  '@typescript-eslint/parser@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.67.0
       '@typescript-eslint/types': 8.67.0
-      '@typescript-eslint/typescript-estree': 8.67.0(typescript@6.0.3)
+      '@typescript-eslint/typescript-estree': 8.67.0(typescript@7.0.2)
       '@typescript-eslint/visitor-keys': 8.67.0
       debug: 4.4.3
       eslint: 10.8.1(jiti@2.6.1)
-      typescript: 6.0.3
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/project-service@8.67.0(typescript@6.0.3)':
+  '@typescript-eslint/project-service@8.67.0(typescript@7.0.2)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.67.0(typescript@6.0.3)
+      '@typescript-eslint/tsconfig-utils': 8.67.0(typescript@7.0.2)
       '@typescript-eslint/types': 8.67.0
       debug: 4.4.3
-      typescript: 6.0.3
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/rule-tester@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)':
+  '@typescript-eslint/rule-tester@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)':
     dependencies:
-      '@typescript-eslint/parser': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
-      '@typescript-eslint/typescript-estree': 8.67.0(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/parser': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
+      '@typescript-eslint/typescript-estree': 8.67.0(typescript@7.0.2)
+      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       ajv: 6.15.0
       eslint: 10.8.1(jiti@2.6.1)
       json-stable-stringify-without-jsonify: 1.0.1
       lodash.merge: 4.6.2
       semver: 7.8.5
-      typescript: 6.0.3
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
@@ -3592,47 +3587,47 @@ snapshots:
       '@typescript-eslint/types': 8.67.0
       '@typescript-eslint/visitor-keys': 8.67.0
 
-  '@typescript-eslint/tsconfig-utils@8.67.0(typescript@6.0.3)':
+  '@typescript-eslint/tsconfig-utils@8.67.0(typescript@7.0.2)':
     dependencies:
-      typescript: 6.0.3
+      typescript: 7.0.2
 
-  '@typescript-eslint/type-utils@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)':
+  '@typescript-eslint/type-utils@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)':
     dependencies:
       '@typescript-eslint/types': 8.67.0
-      '@typescript-eslint/typescript-estree': 8.67.0(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/typescript-estree': 8.67.0(typescript@7.0.2)
+      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       debug: 4.4.3
       eslint: 10.8.1(jiti@2.6.1)
-      ts-api-utils: 2.5.0(typescript@6.0.3)
-      typescript: 6.0.3
+      ts-api-utils: 2.5.0(typescript@7.0.2)
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
   '@typescript-eslint/types@8.67.0': {}
 
-  '@typescript-eslint/typescript-estree@8.67.0(typescript@6.0.3)':
+  '@typescript-eslint/typescript-estree@8.67.0(typescript@7.0.2)':
     dependencies:
-      '@typescript-eslint/project-service': 8.67.0(typescript@6.0.3)
-      '@typescript-eslint/tsconfig-utils': 8.67.0(typescript@6.0.3)
+      '@typescript-eslint/project-service': 8.67.0(typescript@7.0.2)
+      '@typescript-eslint/tsconfig-utils': 8.67.0(typescript@7.0.2)
       '@typescript-eslint/types': 8.67.0
       '@typescript-eslint/visitor-keys': 8.67.0
       debug: 4.4.3
       minimatch: 10.2.6
       semver: 7.8.5
       tinyglobby: 0.2.17
-      ts-api-utils: 2.5.0(typescript@6.0.3)
-      typescript: 6.0.3
+      ts-api-utils: 2.5.0(typescript@7.0.2)
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)':
+  '@typescript-eslint/utils@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)':
     dependencies:
       '@eslint-community/eslint-utils': 4.10.1(eslint@10.8.1(jiti@2.6.1))
       '@typescript-eslint/scope-manager': 8.67.0
       '@typescript-eslint/types': 8.67.0
-      '@typescript-eslint/typescript-estree': 8.67.0(typescript@6.0.3)
+      '@typescript-eslint/typescript-estree': 8.67.0(typescript@7.0.2)
       eslint: 10.8.1(jiti@2.6.1)
-      typescript: 6.0.3
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
 
@@ -3709,19 +3704,19 @@ snapshots:
       vite: '@voidzero-dev/vite-plus-core@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(yaml@2.8.1)'
       vue: 3.5.41(typescript@7.0.2)
 
-  '@vitest/browser-preview@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))':
+  '@vitest/browser-preview@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10)':
     dependencies:
       '@testing-library/dom': 10.4.1
       '@testing-library/user-event': 14.6.5(@testing-library/dom@10.4.1)
-      '@vitest/browser': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))
-      vitest: 4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10))(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
+      '@vitest/browser': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10)
+      vitest: 4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
     transitivePeerDependencies:
       - bufferutil
       - msw
       - utf-8-validate
       - vite
 
-  '@vitest/browser@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))':
+  '@vitest/browser@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10)':
     dependencies:
       '@blazediff/core': 1.9.1
       '@vitest/mocker': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
@@ -3730,7 +3725,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.1
-      vitest: 4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10))(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
+      vitest: 4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
       ws: 8.21.3
     transitivePeerDependencies:
       - bufferutil
@@ -3778,29 +3773,6 @@ snapshots:
       '@vitest/pretty-format': 4.1.10
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.1
-
-  '@voidzero-dev/vite-plus-core@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(yaml@2.8.1)':
-    dependencies:
-      '@oxc-project/runtime': 0.143.0
-      '@oxc-project/types': 0.143.0
-      lightningcss: 1.33.0
-      postcss: 8.5.26
-      yuku-codegen: 0.5.48
-      yuku-parser: 0.5.48
-    optionalDependencies:
-      '@types/node': 24.10.15
-      '@voidzero-dev/vite-plus-darwin-arm64': 0.2.9
-      '@voidzero-dev/vite-plus-darwin-x64': 0.2.9
-      '@voidzero-dev/vite-plus-linux-arm64-gnu': 0.2.9
-      '@voidzero-dev/vite-plus-linux-arm64-musl': 0.2.9
-      '@voidzero-dev/vite-plus-linux-x64-gnu': 0.2.9
-      '@voidzero-dev/vite-plus-linux-x64-musl': 0.2.9
-      '@voidzero-dev/vite-plus-win32-arm64-msvc': 0.2.9
-      '@voidzero-dev/vite-plus-win32-x64-msvc': 0.2.9
-      fsevents: 2.3.3
-      jiti: 2.6.1
-      typescript: 6.0.3
-      yaml: 2.8.1
 
   '@voidzero-dev/vite-plus-core@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(yaml@2.8.1)':
     dependencies:
@@ -4691,31 +4663,6 @@ snapshots:
       '@oxc-minify/binding-win32-ia32-msvc': 0.146.0
       '@oxc-minify/binding-win32-x64-msvc': 0.146.0
 
-  oxfmt@0.62.0(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)):
-    dependencies:
-      tinypool: 2.1.0
-    optionalDependencies:
-      '@oxfmt/binding-android-arm-eabi': 0.62.0
-      '@oxfmt/binding-android-arm64': 0.62.0
-      '@oxfmt/binding-darwin-arm64': 0.62.0
-      '@oxfmt/binding-darwin-x64': 0.62.0
-      '@oxfmt/binding-freebsd-x64': 0.62.0
-      '@oxfmt/binding-linux-arm-gnueabihf': 0.62.0
-      '@oxfmt/binding-linux-arm-musleabihf': 0.62.0
-      '@oxfmt/binding-linux-arm64-gnu': 0.62.0
-      '@oxfmt/binding-linux-arm64-musl': 0.62.0
-      '@oxfmt/binding-linux-ppc64-gnu': 0.62.0
-      '@oxfmt/binding-linux-riscv64-gnu': 0.62.0
-      '@oxfmt/binding-linux-riscv64-musl': 0.62.0
-      '@oxfmt/binding-linux-s390x-gnu': 0.62.0
-      '@oxfmt/binding-linux-x64-gnu': 0.62.0
-      '@oxfmt/binding-linux-x64-musl': 0.62.0
-      '@oxfmt/binding-openharmony-arm64': 0.62.0
-      '@oxfmt/binding-win32-arm64-msvc': 0.62.0
-      '@oxfmt/binding-win32-ia32-msvc': 0.62.0
-      '@oxfmt/binding-win32-x64-msvc': 0.62.0
-      vite-plus: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)
-
   oxfmt@0.62.0(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)):
     dependencies:
       tinypool: 2.1.0
@@ -4750,30 +4697,6 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 7.0.2001
       '@oxlint-tsgolint/win32-x64': 7.0.2001
 
-  oxlint@1.77.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)):
-    optionalDependencies:
-      '@oxlint/binding-android-arm-eabi': 1.77.0
-      '@oxlint/binding-android-arm64': 1.77.0
-      '@oxlint/binding-darwin-arm64': 1.77.0
-      '@oxlint/binding-darwin-x64': 1.77.0
-      '@oxlint/binding-freebsd-x64': 1.77.0
-      '@oxlint/binding-linux-arm-gnueabihf': 1.77.0
-      '@oxlint/binding-linux-arm-musleabihf': 1.77.0
-      '@oxlint/binding-linux-arm64-gnu': 1.77.0
-      '@oxlint/binding-linux-arm64-musl': 1.77.0
-      '@oxlint/binding-linux-ppc64-gnu': 1.77.0
-      '@oxlint/binding-linux-riscv64-gnu': 1.77.0
-      '@oxlint/binding-linux-riscv64-musl': 1.77.0
-      '@oxlint/binding-linux-s390x-gnu': 1.77.0
-      '@oxlint/binding-linux-x64-gnu': 1.77.0
-      '@oxlint/binding-linux-x64-musl': 1.77.0
-      '@oxlint/binding-openharmony-arm64': 1.77.0
-      '@oxlint/binding-win32-arm64-msvc': 1.77.0
-      '@oxlint/binding-win32-ia32-msvc': 1.77.0
-      '@oxlint/binding-win32-x64-msvc': 1.77.0
-      oxlint-tsgolint: 7.0.2001
-      vite-plus: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)
-
   oxlint@1.77.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)):
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.77.0
@@ -4797,30 +4720,6 @@ snapshots:
       '@oxlint/binding-win32-x64-msvc': 1.77.0
       oxlint-tsgolint: 7.0.2001
       vite-plus: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)
-
-  oxlint@1.79.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)):
-    optionalDependencies:
-      '@oxlint/binding-android-arm-eabi': 1.79.0
-      '@oxlint/binding-android-arm64': 1.79.0
-      '@oxlint/binding-darwin-arm64': 1.79.0
-      '@oxlint/binding-darwin-x64': 1.79.0
-      '@oxlint/binding-freebsd-x64': 1.79.0
-      '@oxlint/binding-linux-arm-gnueabihf': 1.79.0
-      '@oxlint/binding-linux-arm-musleabihf': 1.79.0
-      '@oxlint/binding-linux-arm64-gnu': 1.79.0
-      '@oxlint/binding-linux-arm64-musl': 1.79.0
-      '@oxlint/binding-linux-ppc64-gnu': 1.79.0
-      '@oxlint/binding-linux-riscv64-gnu': 1.79.0
-      '@oxlint/binding-linux-riscv64-musl': 1.79.0
-      '@oxlint/binding-linux-s390x-gnu': 1.79.0
-      '@oxlint/binding-linux-x64-gnu': 1.79.0
-      '@oxlint/binding-linux-x64-musl': 1.79.0
-      '@oxlint/binding-openharmony-arm64': 1.79.0
-      '@oxlint/binding-win32-arm64-msvc': 1.79.0
-      '@oxlint/binding-win32-ia32-msvc': 1.79.0
-      '@oxlint/binding-win32-x64-msvc': 1.79.0
-      oxlint-tsgolint: 7.0.2001
-      vite-plus: 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)
 
   oxlint@1.79.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1)):
     optionalDependencies:
@@ -5049,26 +4948,24 @@ snapshots:
 
   trough@2.2.0: {}
 
-  ts-api-utils@2.5.0(typescript@6.0.3):
+  ts-api-utils@2.5.0(typescript@7.0.2):
     dependencies:
-      typescript: 6.0.3
+      typescript: 7.0.2
 
   type-check@0.4.0:
     dependencies:
       prelude-ls: 1.2.1
 
-  typescript-eslint@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3):
+  typescript-eslint@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.67.0(@typescript-eslint/parser@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3))(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
-      '@typescript-eslint/parser': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
-      '@typescript-eslint/typescript-estree': 8.67.0(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/eslint-plugin': 8.67.0(@typescript-eslint/parser@8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2))(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
+      '@typescript-eslint/parser': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
+      '@typescript-eslint/typescript-estree': 8.67.0(typescript@7.0.2)
+      '@typescript-eslint/utils': 8.67.0(eslint@10.8.1(jiti@2.6.1))(typescript@7.0.2)
       eslint: 10.8.1(jiti@2.6.1)
-      typescript: 6.0.3
+      typescript: 7.0.2
     transitivePeerDependencies:
       - supports-color
-
-  typescript@6.0.3: {}
 
   typescript@7.0.2:
     optionalDependencies:
@@ -5150,70 +5047,12 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1):
-    dependencies:
-      '@oxc-project/types': 0.143.0
-      '@oxlint/plugins': 1.73.0
-      '@vitest/browser': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))
-      '@vitest/browser-preview': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))
-      '@vitest/expect': 4.1.10
-      '@vitest/mocker': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
-      '@vitest/pretty-format': 4.1.10
-      '@vitest/runner': 4.1.10
-      '@vitest/snapshot': 4.1.10
-      '@vitest/spy': 4.1.10
-      '@vitest/utils': 4.1.10
-      '@voidzero-dev/vite-plus-core': 0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(yaml@2.8.1)
-      oxfmt: 0.62.0(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1))
-      oxlint: 1.77.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@6.0.3)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1))
-      oxlint-tsgolint: 7.0.2001
-      vitest: 4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10))(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
-    optionalDependencies:
-      '@voidzero-dev/vite-plus-darwin-arm64': 0.2.9
-      '@voidzero-dev/vite-plus-darwin-x64': 0.2.9
-      '@voidzero-dev/vite-plus-linux-arm64-gnu': 0.2.9
-      '@voidzero-dev/vite-plus-linux-arm64-musl': 0.2.9
-      '@voidzero-dev/vite-plus-linux-x64-gnu': 0.2.9
-      '@voidzero-dev/vite-plus-linux-x64-musl': 0.2.9
-      '@voidzero-dev/vite-plus-win32-arm64-msvc': 0.2.9
-      '@voidzero-dev/vite-plus-win32-x64-msvc': 0.2.9
-    transitivePeerDependencies:
-      - '@arethetypeswrong/core'
-      - '@edge-runtime/vm'
-      - '@opentelemetry/api'
-      - '@types/node'
-      - '@vitejs/devtools'
-      - '@vitest/coverage-istanbul'
-      - '@vitest/coverage-v8'
-      - '@vitest/ui'
-      - bufferutil
-      - esbuild
-      - happy-dom
-      - jiti
-      - jsdom
-      - less
-      - msw
-      - publint
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - svelte
-      - terser
-      - tsx
-      - typescript
-      - unplugin-unused
-      - unrun
-      - utf-8-validate
-      - vite
-      - yaml
-
   vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1):
     dependencies:
       '@oxc-project/types': 0.143.0
       '@oxlint/plugins': 1.73.0
-      '@vitest/browser': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))
-      '@vitest/browser-preview': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))
+      '@vitest/browser': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10)
+      '@vitest/browser-preview': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10)
       '@vitest/expect': 4.1.10
       '@vitest/mocker': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
       '@vitest/pretty-format': 4.1.10
@@ -5225,7 +5064,7 @@ snapshots:
       oxfmt: 0.62.0(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1))
       oxlint: 1.77.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.2.9(@types/node@24.10.15)(jiti@2.6.1)(typescript@7.0.2)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(yaml@2.8.1))
       oxlint-tsgolint: 7.0.2001
-      vitest: 4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10))(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
+      vitest: 4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
     optionalDependencies:
       '@voidzero-dev/vite-plus-darwin-arm64': 0.2.9
       '@voidzero-dev/vite-plus-darwin-x64': 0.2.9
@@ -5353,7 +5192,7 @@ snapshots:
       - unrun
       - yaml
 
-  vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10))(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)):
+  vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)):
     dependencies:
       '@vitest/expect': 4.1.10
       '@vitest/mocker': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))
@@ -5377,7 +5216,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.10.15
-      '@vitest/browser-preview': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10(@types/node@24.10.15)(@vitest/browser-preview@4.1.10)(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1)))
+      '@vitest/browser-preview': 4.1.10(vite@7.1.12(@types/node@24.10.15)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.1))(vitest@4.1.10)
     transitivePeerDependencies:
       - msw
 
