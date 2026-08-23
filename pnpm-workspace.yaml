@@ -10,11 +10,6 @@ minimumReleaseAge: 2880
 minimumReleaseAgeExclude:
   - corsa-oxlint
   - "@corsa-bind/*"
-  - "@typescript/native-preview"
-  - "@typescript/native-preview-*"
 onlyBuiltDependencies:
   - esbuild
-publicHoistPattern:
-  - "@typescript/native-preview"
-  - "@typescript/native-preview-*"
 useNodeVersion: 24.18.0

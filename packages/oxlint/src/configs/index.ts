@@ -1,29 +1,13 @@
-import { resolveBundledTsgo } from "../shared/native-preview";
-
 type RuleSeverity = "allow" | "off" | "warn" | "error" | "deny" | number;
 type RuleEntry = RuleSeverity | [RuleSeverity, ...unknown[]];
 
-type CorsaOxlintSettings = {
-  corsa?: {
-    executable?: string;
-  };
-};
-
 export type OxlintConfig = {
   jsPlugins: ["oxlint-plugin-awscdk"];
-  settings?: { corsaOxlint?: CorsaOxlintSettings };
   rules: Record<string, RuleEntry>;
 };
 
-// Emitted alongside the CORSA_EXECUTABLE override in `../index.ts` so that
-// consumers spreading `configs.recommended`/`configs.strict` still get the
-// plugin-bundled `native-preview` even when the plugin entry has not been
-// side-effect imported (e.g. when only the config is referenced by string).
-const bundledTsgo = resolveBundledTsgo();
-
 const createOxlintConfig = (rules: Record<string, RuleEntry>): OxlintConfig => ({
   jsPlugins: ["oxlint-plugin-awscdk"],
-  ...(bundledTsgo ? { settings: { corsaOxlint: { corsa: { executable: bundledTsgo } } } } : {}),
   rules,
 });
 

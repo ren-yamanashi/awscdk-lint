@@ -1,5 +1,8 @@
 {
   "jsPlugins": ["oxlint-plugin-awscdk"],
+  "options": {
+    "typeAware": true
+  },
   "rules": {
     "awscdk/construct-constructor-property": "error",
     "awscdk/no-construct-in-interface": "error",
