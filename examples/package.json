@@ -22,7 +22,7 @@
     "oxlint": "^1.79.0",
     "oxlint-plugin-awscdk": "workspace:*",
     "oxlint-tsgolint": "^7.0.2001",
-    "typescript": "^7.0.2",
+    "typescript": "^6.0.2",
     "typescript-eslint": "^8.67.0"
   }
 }
