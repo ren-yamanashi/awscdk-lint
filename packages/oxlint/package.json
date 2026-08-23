@@ -60,7 +60,7 @@
     "vite-plus": "^0.2.9"
   },
   "peerDependencies": {
-    "oxlint": "^1.79.0"
+    "oxlint": "^1.69.0"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
