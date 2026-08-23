@@ -29,9 +29,7 @@
     "packages/oxlint": {
       "release-type": "node",
       "component": "oxlint-plugin-awscdk",
-      "package-name": "oxlint-plugin-awscdk",
-      "bump-minor-pre-major": true,
-      "release-as": "1.0.0"
+      "package-name": "oxlint-plugin-awscdk"
     }
   }
 }
