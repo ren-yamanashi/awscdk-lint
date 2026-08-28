@@ -129,6 +129,23 @@ ruleTester.run("require-passing-this", requirePassingThis, {
         }
       }
       `,
+    },
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const sample = new SampleConstruct(this, "Sample");
+          new SampleConstruct(sample, "ValidId");
+        }
+      }
+      `,
       options: [{}],
     },
   ],
