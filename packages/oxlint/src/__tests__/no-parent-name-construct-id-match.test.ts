@@ -87,6 +87,24 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
         }
       }`,
     },
+    // WHEN: new expression is inside a nested closure in the constructor
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          [1, 2].forEach(() => new SampleClass(this, "TestClass"));
+          const create = () => new SampleClass(this, "TestClass");
+          create();
+        }
+      }`,
+    },
   ],
   invalid: [
     // WHEN: in method
