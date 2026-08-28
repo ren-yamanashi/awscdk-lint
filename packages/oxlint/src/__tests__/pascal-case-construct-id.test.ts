@@ -77,6 +77,27 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       }
       const test = new TestClass("test", "invalid_id");`,
     },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', \`ValidId\`);`,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const suffix = 'x';
+      const test = new TestClass('test', \`bucket-\${suffix}\`);`,
+    },
   ],
   invalid: [
     {
@@ -116,6 +137,25 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
         }
       }
       const test = new TestClass('test', 'InvalidId');`,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', \`template_bucket\`);`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', \`TemplateBucket\`);`,
     },
   ],
 });

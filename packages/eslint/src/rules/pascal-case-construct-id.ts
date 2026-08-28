@@ -1,5 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
+import { findConstructIdString } from "../core/ast-node/finder/construct-id-string";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -8,6 +9,7 @@ import { createRule } from "../shared/create-rule";
 const QUOTE_TYPE = {
   SINGLE: "'",
   DOUBLE: '"',
+  BACKTICK: "`",
 } as const;
 
 type QuoteType = (typeof QUOTE_TYPE)[keyof typeof QUOTE_TYPE];
@@ -64,6 +66,16 @@ const isPascalCase = (str: string) => {
 };
 
 /**
+ * Pick the quote type used to wrap the ID literal so that the fixer keeps
+ * the original delimiter (single/double quote or backtick).
+ */
+const findQuoteType = (node: TSESTree.Node): QuoteType => {
+  if (node.type === AST_NODE_TYPES.TemplateLiteral) return QUOTE_TYPE.BACKTICK;
+  if (node.type === AST_NODE_TYPES.Literal && node.raw?.startsWith('"')) return QUOTE_TYPE.DOUBLE;
+  return QUOTE_TYPE.SINGLE;
+};
+
+/**
  * Check the construct ID is PascalCase
  */
 const validateConstructId = (node: TSESTree.NewExpression, context: Context) => {
@@ -71,19 +83,18 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context) => 
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
-  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
-    return;
-  }
+  const constructId = findConstructIdString(secondArg);
+  if (constructId === null) return;
 
-  const quote: QuoteType = secondArg.raw?.startsWith('"') ? QUOTE_TYPE.DOUBLE : QUOTE_TYPE.SINGLE;
+  if (isPascalCase(constructId)) return;
 
-  if (isPascalCase(secondArg.value)) return;
+  const quote = findQuoteType(secondArg);
 
   context.report({
     node: secondArg,
     messageId: "invalidConstructId",
     fix: (fixer) => {
-      const pascalCaseValue = toPascalCase(secondArg.value);
+      const pascalCaseValue = toPascalCase(constructId);
       return fixer.replaceText(secondArg, `${quote}${pascalCaseValue}${quote}`);
     },
   });
