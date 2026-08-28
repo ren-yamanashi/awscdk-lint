@@ -59,6 +59,8 @@ export const noConstructStackSuffix = createRule({
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
+    // Merge user-supplied options over defaults so `[{}]` behaves like `[]`.
+    const options: Option = { ...defaultOption, ...context.options[0] };
 
     return {
       NewExpression(node) {
@@ -71,7 +73,7 @@ export const noConstructStackSuffix = createRule({
         const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
-        validateConstructId(node, context);
+        validateConstructId(node, context, options);
       },
     };
   },
@@ -80,9 +82,11 @@ export const noConstructStackSuffix = createRule({
 /**
  * Validate that construct ID does not end with "Construct" or "Stack"
  */
-const validateConstructId = (node: TSESTree.NewExpression, context: Context): void => {
-  const options = context.options[0] ?? defaultOption;
-
+const validateConstructId = (
+  node: TSESTree.NewExpression,
+  context: Context,
+  options: Option,
+): void => {
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
   const constructId = findConstructIdString(secondArg);

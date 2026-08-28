@@ -150,6 +150,43 @@ ruleTester.run("require-passing-this", requirePassingThis, {
       }
       `,
     },
+    // WHEN: no options are passed, the default (`allowNonThisAndDisallowScope: true`) applies
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const sample = new SampleConstruct(this, "Sample");
+          new SampleConstruct(sample, "ValidId");
+        }
+      }
+      `,
+    },
+    // WHEN: an empty options object is passed, the default (`allowNonThisAndDisallowScope: true`) still applies
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const sample = new SampleConstruct(this, "Sample");
+          new SampleConstruct(sample, "ValidId");
+        }
+      }
+      `,
+      options: [{}],
+    },
   ],
   invalid: [
     // WHEN: passing 'scope' variable
