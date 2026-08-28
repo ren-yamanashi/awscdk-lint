@@ -12,7 +12,7 @@ const DEFAULT_TAG_PATTERN = /(^|[\s*])@default(\s|$)/;
  * start line is strictly greater than the end line of the previous token.
  * This excludes trailing comments that belong to the preceding property.
  */
-export const getAttachedJSDocComments = (
+export const findAttachedJSDocComments = (
   sourceCode: TSESLint.SourceCode,
   node: TSESTree.Node,
 ): TSESTree.BlockComment[] => {

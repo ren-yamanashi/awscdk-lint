@@ -1,7 +1,10 @@
 import { AST_NODE_TYPES } from "@typescript-eslint/utils";
 
+import {
+  findAttachedJSDocComments,
+  hasDefaultTag,
+} from "../core/ast-node/finder/attached-jsdoc-comment";
 import { createRule } from "../shared/create-rule";
-import { getAttachedJSDocComments, hasDefaultTag } from "../shared/jsdoc-comment";
 
 /**
  * Requires @default JSDoc documentation for optional properties in interfaces ending with 'Props'
@@ -45,7 +48,7 @@ export const requirePropsDefaultDoc = createRule({
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;
 
-        const comments = getAttachedJSDocComments(context.sourceCode, node);
+        const comments = findAttachedJSDocComments(context.sourceCode, node);
         if (hasDefaultTag(comments)) return;
 
         const propertyName =

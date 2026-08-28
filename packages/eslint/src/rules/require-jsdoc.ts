@@ -1,8 +1,8 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
+import { findAttachedJSDocComments } from "../core/ast-node/finder/attached-jsdoc-comment";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
-import { getAttachedJSDocComments } from "../shared/jsdoc-comment";
 
 /**
  * Require JSDoc comments for interface properties and public properties in Construct classes
@@ -41,7 +41,7 @@ export const requireJSDoc = createRule({
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;
 
-        const comments = getAttachedJSDocComments(context.sourceCode, node);
+        const comments = findAttachedJSDocComments(context.sourceCode, node);
         if (comments.length > 0) return;
 
         const propertyName =
@@ -77,7 +77,7 @@ export const requireJSDoc = createRule({
           return;
         }
 
-        const comments = getAttachedJSDocComments(context.sourceCode, node);
+        const comments = findAttachedJSDocComments(context.sourceCode, node);
         if (comments.length > 0) return;
 
         const propertyName =
