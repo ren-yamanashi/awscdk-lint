@@ -90,6 +90,29 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       }
       const test = new TestClass("test", "invalid_id");`,
     },
+    // WHEN: id is PascalCase template literal without expressions
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', \`ValidId\`);`,
+    },
+    // WHEN: id is a template literal with expressions
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const suffix = 'x';
+      const test = new TestClass('test', \`bucket-\${suffix}\`);`,
+    },
   ],
   invalid: [
     // WHEN: id is snake_case(double quote)
@@ -131,6 +154,26 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
         }
       }
       const test = new TestClass('test', 'InvalidId');`,
+    },
+    // WHEN: id is snake_case template literal without expressions
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', \`template_bucket\`);`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', \`TemplateBucket\`);`,
     },
   ],
 });

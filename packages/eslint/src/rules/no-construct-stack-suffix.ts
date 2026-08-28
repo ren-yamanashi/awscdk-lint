@@ -1,5 +1,6 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+import { ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
+import { findConstructIdString } from "../core/ast-node/finder/construct-id-string";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -82,11 +83,10 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context): vo
 
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
-  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
-    return;
-  }
+  const constructId = findConstructIdString(secondArg);
+  if (constructId === null) return;
 
-  const formattedConstructId = toPascalCase(secondArg.value);
+  const formattedConstructId = toPascalCase(constructId);
   const disallowedSuffixes = options.disallowedSuffixes;
 
   if (
@@ -98,7 +98,7 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context): vo
       messageId: "invalidConstructId",
       data: {
         classType: "Construct",
-        id: secondArg.value,
+        id: constructId,
         suffix: SUFFIX_TYPE.CONSTRUCT,
       },
     });
@@ -111,7 +111,7 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context): vo
       messageId: "invalidConstructId",
       data: {
         classType: "Stack",
-        id: secondArg.value,
+        id: constructId,
         suffix: SUFFIX_TYPE.STACK,
       },
     });

@@ -90,6 +90,18 @@ ruleTester.run("no-construct-stack-suffix", noConstructStackSuffix, {
       new SampleStack({ name: "sample" }, "SampleStack");`,
       options: [{ disallowedSuffixes: ["Construct"] }],
     },
+    // WHEN: construct id is a template literal with expressions (dynamic)
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const suffix = 'x';
+      new SampleConstruct({ name: "sample" }, \`Sample-\${suffix}\`);`,
+    },
   ],
   invalid: [
     // WHEN: construct id has "Construct" suffix, and extends Construct
@@ -140,6 +152,18 @@ ruleTester.run("no-construct-stack-suffix", noConstructStackSuffix, {
       }
       new SampleStack({ name: "sample" }, "SampleStack");`,
       options: [{ disallowedSuffixes: ["Stack"] }],
+      errors: [{ messageId: "invalidConstructId" }],
+    },
+    // WHEN: construct id is a template literal without expressions and has "Construct" suffix
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      new SampleConstruct({ name: "sample" }, \`TemplateBucketConstruct\`);`,
       errors: [{ messageId: "invalidConstructId" }],
     },
   ],
