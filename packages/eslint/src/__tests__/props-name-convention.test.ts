@@ -53,6 +53,30 @@ ruleTester.run("props-name-convention", propsNameConvention, {
   ],
   invalid: [
     {
+      // WHEN: constructor has an overload signature and the implementation takes wrongly named props
+      code: `
+        class Construct {}
+        interface Props {
+          readonly bucket?: string;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string);
+          constructor(scope: Construct, id: string, props?: Props) {
+            super(scope, id);
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropsName",
+          data: {
+            interfaceName: "Props",
+            expectedName: "MyConstructProps",
+          },
+        },
+      ],
+    },
+    {
       // WHEN: Props interface name does not follow ${ConstructName}Props format
       code: `
         class Construct {}
