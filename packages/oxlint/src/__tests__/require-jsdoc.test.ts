@@ -90,5 +90,55 @@ ruleTester.run("require-jsdoc", requireJSDoc, {
         },
       ],
     },
+    {
+      // WHEN: only a non-JSDoc block comment precedes the property
+      code: `
+        interface TestProps {
+          /* not a jsdoc */
+          prop1: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "prop1" },
+        },
+      ],
+    },
+    {
+      // WHEN: JSDoc is a trailing comment on the previous property line
+      // (comment attributes to neither `first` nor `second` because it starts
+      // on the same line as `first` and precedes only `second`).
+      code: `
+        interface TestProps {
+          first: string; /** doc for first */
+          second: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "first" },
+        },
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "second" },
+        },
+      ],
+    },
+    {
+      // WHEN: quoted key without documentation
+      code: `
+        interface TestProps {
+          "bucket-name": string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "bucket-name" },
+        },
+      ],
+    },
   ],
 });

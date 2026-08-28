@@ -147,5 +147,37 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    // WHEN: public field type annotation contains `:` (object type literal)
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            public config: { a: string; b: number } = { a: "x", b: 1 };
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class TestClass extends Construct {
+            public readonly config: { a: string; b: number } = { a: "x", b: 1 };
+          }
+        `,
+    },
+    // WHEN: public static field is mutable (readonly must follow static)
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            public static defaultName: string = "sample";
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class TestClass extends Construct {
+            public static readonly defaultName: string = "sample";
+          }
+        `,
+    },
   ],
 });

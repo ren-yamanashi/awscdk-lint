@@ -501,6 +501,26 @@ ruleTester.run("no-unused-props", noUnusedProps, {
       }
       `,
     },
+    {
+      name: "Constructor with overload signatures: all props are used in the implementation body",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string);
+        constructor(scope: Construct, id: string, props: MyConstructProps);
+        constructor(scope: Construct, id: string, props?: MyConstructProps) {
+          super(scope, id);
+          console.log(props?.bucketName, props?.enableVersioning);
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {
