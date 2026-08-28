@@ -1,4 +1,5 @@
 import { AST_NODE_TYPES } from "corsa-oxlint";
+import type { ESTree } from "corsa-oxlint";
 
 import { createRule } from "../shared/create-rule";
 
@@ -36,17 +37,8 @@ export const noMutablePropertyOfPropsInterface = createRule({
           if (property.readonly) continue;
 
           // NOTE: computed keys cannot be resolved statically, so they are skipped
-          let propertyName: string;
-          if (property.key.type === AST_NODE_TYPES.Identifier) {
-            propertyName = property.key.name;
-          } else if (
-            property.key.type === AST_NODE_TYPES.Literal &&
-            (typeof property.key.value === "string" || typeof property.key.value === "number")
-          ) {
-            propertyName = String(property.key.value);
-          } else {
-            continue;
-          }
+          const propertyName = findStaticPropertyName(property.key);
+          if (propertyName === null) continue;
 
           context.report({
             node: property,
@@ -64,3 +56,19 @@ export const noMutablePropertyOfPropsInterface = createRule({
     };
   },
 });
+
+/**
+ * Find the static name of a property key
+ * @param key - The key of a property signature
+ * @returns The property name, or null for keys that cannot be resolved statically
+ */
+const findStaticPropertyName = (key: ESTree.TSPropertySignature["key"]): string | null => {
+  if (key.type === AST_NODE_TYPES.Identifier) return key.name;
+  if (
+    key.type === AST_NODE_TYPES.Literal &&
+    (typeof key.value === "string" || typeof key.value === "number")
+  ) {
+    return String(key.value);
+  }
+  return null;
+};
