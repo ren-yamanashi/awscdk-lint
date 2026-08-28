@@ -3,6 +3,7 @@ import type { ESTree, ParserServices, RuleContext } from "corsa-oxlint";
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
+import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -80,12 +81,6 @@ const checkNumOfConstructorProperty = (
 };
 
 /**
- * Unwraps a parameter with a default value (e.g. `props: MyConstructProps = {}`) to its binding
- */
-const unwrapDefaultValue = (param: ConstructorParam) =>
-  param.type === AST_NODE_TYPES.AssignmentPattern ? param.left : param;
-
-/**
  * Checks if the first parameter is named "scope" and of type Construct
  */
 const checkFirstParamIsScope = (
@@ -93,8 +88,8 @@ const checkFirstParamIsScope = (
   context: RuleContext,
   parserServices: ParserServices,
 ) => {
-  const binding = unwrapDefaultValue(firstParam);
-  if (binding.type !== AST_NODE_TYPES.Identifier || binding.name !== "scope") {
+  const binding = findConstructorParamIdentifier(firstParam);
+  if (!binding || binding.name !== "scope") {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorProperty",
@@ -116,8 +111,8 @@ const checkFirstParamIsScope = (
  * Checks if the second parameter is named "id" and of type string
  */
 const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: RuleContext) => {
-  const binding = unwrapDefaultValue(secondParam);
-  if (binding.type !== AST_NODE_TYPES.Identifier || binding.name !== "id") {
+  const binding = findConstructorParamIdentifier(secondParam);
+  if (!binding || binding.name !== "id") {
     context.report({
       node: secondParam,
       messageId: "invalidConstructorProperty",
@@ -135,8 +130,8 @@ const checkSecondParamIsId = (secondParam: ConstructorProperties[1], context: Ru
  */
 const checkThirdParamIsProps = (thirdParam: ConstructorProperties[2], context: RuleContext) => {
   if (!thirdParam) return;
-  const binding = unwrapDefaultValue(thirdParam);
-  if (binding.type !== AST_NODE_TYPES.Identifier || binding.name !== "props") {
+  const binding = findConstructorParamIdentifier(thirdParam);
+  if (!binding || binding.name !== "props") {
     context.report({
       node: thirdParam,
       messageId: "invalidConstructorProperty",

@@ -1,8 +1,9 @@
-import type { CorsaType, ESTree, ParserServices, RuleContext } from "corsa-oxlint";
+import type { ESTree, ParserServices, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../../core/ast-node/finder/constructor";
+import { findConstructorParamIdentifier } from "../../core/ast-node/finder/constructor-param-identifier";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../../shared/create-rule";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
@@ -42,38 +43,41 @@ export const noUnusedProps = createRule({
 
         const propsParam = getPropsParam(constructor, parserServices);
         if (!propsParam) return;
-        if (isPropsUsedInSuperCall(constructor, propsParam.node.name)) return;
+        if (isPropsUsedInSuperCall(constructor, propsParam.identifier.name)) return;
 
         const tracker = new PropsUsageTracker(propsParam.type, checker);
         const analyzer = new PropsUsageAnalyzer(tracker);
 
-        analyzer.analyze(constructor, propsParam.node);
-        reportUnusedProperties(tracker, propsParam.node, context);
+        analyzer.analyze(constructor, propsParam.identifier.name, {
+          treatAsInstanceVariable: propsParam.isParameterProperty,
+        });
+        reportUnusedProperties(tracker, propsParam.reportNode, context);
       },
     };
   },
 });
 
-const getPropsParam = (
-  constructor: ESTree.MethodDefinition,
-  parserServices: ParserServices,
-): { node: ESTree.BindingIdentifier; type: CorsaType } | null => {
+const getPropsParam = (constructor: ESTree.MethodDefinition, parserServices: ParserServices) => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
 
   const propsParam = params[2];
+  const isParameterProperty = propsParam.type === AST_NODE_TYPES.TSParameterProperty;
 
   // ++++++++++++++Important+++++++++++++
   // When AST_NODE_TYPES is "ObjectPattern" (e.g. { bucketName, enableVersioning }: MyConstructProps), it can be confirmed whether the variable is used in the IDE, and it conflicts with the @typescript-eslint/no-unused-vars rule, so this rule does not apply.
   // ++++++++++++++++++++++++++++++++++++
-  if (propsParam.type !== AST_NODE_TYPES.Identifier) return null;
+  const identifier = findConstructorParamIdentifier(propsParam);
+  if (!identifier) return null;
 
-  const type = parserServices.getTypeAtLocation(propsParam);
+  const type = parserServices.getTypeAtLocation(identifier);
   if (!type) return null;
 
   return {
-    node: propsParam,
+    identifier,
+    reportNode: propsParam,
     type,
+    isParameterProperty,
   };
 };
 
@@ -129,7 +133,7 @@ const isPropsUsedInSuperCall = (
  */
 const reportUnusedProperties = (
   tracker: IPropsUsageTracker,
-  propsParam: ESTree.BindingIdentifier,
+  propsParam: ESTree.Node,
   context: RuleContext,
 ): void => {
   for (const propName of tracker.getUnusedProperties()) {

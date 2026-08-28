@@ -12,7 +12,20 @@ import {
 } from "./visitor";
 
 export interface IPropsUsageAnalyzer {
-  analyze(constructor: ESTree.MethodDefinition, propsParam: ESTree.BindingIdentifier): void;
+  analyze(
+    constructor: ESTree.MethodDefinition,
+    propsParamName: string,
+    options?: AnalyzeOptions,
+  ): void;
+}
+
+export interface AnalyzeOptions {
+  /**
+   * When true, `this.<propsParamName>` is treated as a props instance variable in addition to
+   * regular usage tracking. This is used for parameter property forms where the constructor
+   * parameter `props` is also auto-assigned to `this.props` by TypeScript.
+   */
+  treatAsInstanceVariable?: boolean;
 }
 
 export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
@@ -22,10 +35,13 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     this.tracker = tracker;
   }
 
-  analyze(constructor: ESTree.MethodDefinition, propsParam: ESTree.BindingIdentifier): void {
+  analyze(
+    constructor: ESTree.MethodDefinition,
+    propsParamName: string,
+    options: AnalyzeOptions = {},
+  ): void {
     const constructorBody = constructor.value.body;
     const classNode = constructor.parent;
-    const propsParamName = propsParam.name;
     if (!constructorBody) return;
     if (!classNode || classNode.type !== AST_NODE_TYPES.ClassBody) return;
 
@@ -37,6 +53,18 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
       classNode,
       propsParamName,
     );
+    if (options.treatAsInstanceVariable) {
+      this.checkUsageForBoundInstanceVariable(classNode, propsParamName);
+    }
+  }
+
+  /**
+   * Tracks usage through `this.<name>` for parameter-property-declared props, where
+   * TypeScript implicitly assigns the parameter to an instance field of the same name.
+   */
+  private checkUsageForBoundInstanceVariable(classBody: ESTree.ClassBody, name: string): void {
+    const visitor = new InstanceVariableUsageVisitor(this.tracker, name);
+    traverseNodes(classBody, visitor);
   }
 
   /**
