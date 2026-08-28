@@ -1,4 +1,4 @@
-import { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 
 import {
   findPublicPropertiesInClass,
@@ -34,7 +34,6 @@ export const noMutablePublicPropertyOfConstruct = createRule({
 
     return {
       ClassDeclaration(node) {
-        const sourceCode = context.sourceCode;
         const type = parserServices.getTypeAtLocation(node);
         if (!isConstructOrStackType(type)) return;
 
@@ -43,7 +42,6 @@ export const noMutablePublicPropertyOfConstruct = createRule({
           validatePublicProperty({
             publicProperty: property,
             context,
-            sourceCode,
           });
         }
       },
@@ -54,9 +52,8 @@ export const noMutablePublicPropertyOfConstruct = createRule({
 const validatePublicProperty = (args: {
   publicProperty: PublicProperty;
   context: Context;
-  sourceCode: Readonly<TSESLint.SourceCode>;
 }) => {
-  const { publicProperty, context, sourceCode } = args;
+  const { publicProperty, context } = args;
   if (publicProperty.node.readonly) return;
 
   context.report({
@@ -66,14 +63,16 @@ const validatePublicProperty = (args: {
       propertyName: publicProperty.name,
     },
     fix: (fixer) => {
-      const accessibility = publicProperty.node.accessibility ? "public " : "";
-      const paramText = sourceCode.getText(publicProperty.node);
-      const [key, value] = paramText.split(":");
-      const replacedKey = key.startsWith("public ") ? key.replace("public ", "") : key;
-      return fixer.replaceText(
-        publicProperty.node,
-        `${accessibility}readonly ${replacedKey}:${value}`,
-      );
+      // Insert `readonly ` immediately before the property key so the
+      // surrounding text (type annotations, initializers, other modifiers)
+      // stays byte-identical. TS modifier order is
+      // accessibility -> static -> override -> readonly, so inserting right
+      // before the key always yields a legal position.
+      const anchor =
+        publicProperty.node.type === AST_NODE_TYPES.TSParameterProperty
+          ? publicProperty.node.parameter
+          : publicProperty.node.key;
+      return fixer.insertTextBefore(anchor, "readonly ");
     },
   });
 };
