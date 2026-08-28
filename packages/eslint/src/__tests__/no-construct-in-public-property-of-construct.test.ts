@@ -189,6 +189,33 @@ ruleTester.run(
     ],
     invalid: [
       {
+        name: "public field type is Record with Construct as value type (Record<string, Bucket>)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          class TestClass extends Construct {
+            public bucketMap: Record<string, Bucket>;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
         name: "public field type is class that extends Resource (Bucket extends BucketBase)",
         code: `
           class Construct {}
