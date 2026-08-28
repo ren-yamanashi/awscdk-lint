@@ -25,13 +25,15 @@ export const preventConstructIdCollision = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
 
         if (!isConstructType(type) || node.arguments.length < 2) return;
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructIdInLoop(node, context);
