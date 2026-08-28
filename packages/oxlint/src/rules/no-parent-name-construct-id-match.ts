@@ -1,7 +1,9 @@
-import type { ESTree, ParserServices, RuleContext } from "corsa-oxlint";
+import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
+import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
+import { isInsideConstructorOrMethod } from "../core/ast-node/finder/enclosing-method";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -13,24 +15,6 @@ type Option = {
 
 const defaultOption: Option = {
   disallowContainingParentName: false,
-};
-
-type ConstructorFn = ESTree.MethodDefinition["value"];
-
-type ValidateStatementArgs<T extends ESTree.Node> = {
-  statement: T;
-  parentClassName: string;
-  context: RuleContext;
-  parserServices: ParserServices;
-  option: Option;
-};
-
-type ValidateExpressionArgs<T extends ESTree.NewExpression | ConstructorFn> = {
-  expression: T;
-  parentClassName: string;
-  context: RuleContext;
-  parserServices: ParserServices;
-  option: Option;
 };
 
 /**
@@ -68,258 +52,54 @@ export const noParentNameConstructIdMatch = createRule({
     const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {
-      ClassBody(node) {
+      NewExpression(node) {
+        if (node.arguments.length < 2) return;
+
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type, checker)) return;
+        if (!isConstructType(type, checker)) return;
 
-        const parent = node.parent;
-        if (parent?.type !== AST_NODE_TYPES.ClassDeclaration) return;
+        // NOTE: nested closures do not have a stable "parent class" relationship
+        if (!isInsideConstructorOrMethod(node)) return;
 
-        const parentClassName = parent.id?.name;
+        const enclosingClass = findEnclosingClass(node);
+        if (!enclosingClass) return;
+
+        const enclosingClassType = parserServices.getTypeAtLocation(enclosingClass);
+        if (!isConstructOrStackType(enclosingClassType, checker)) return;
+
+        const parentClassName = enclosingClass.id?.name;
         if (!parentClassName) return;
 
-        for (const body of node.body) {
-          if (
-            body.type !== AST_NODE_TYPES.MethodDefinition ||
-            !["method", "constructor"].includes(body.kind) ||
-            body.value.type !== AST_NODE_TYPES.FunctionExpression
-          ) {
-            continue;
-          }
-          validateConstructorBody({
-            expression: body.value,
-            parentClassName,
-            context,
-            parserServices,
-            option,
-          });
-        }
+        validateConstructId({ node, parentClassName, context, option });
       },
     };
   },
 });
 
-const validateConstructorBody = ({
-  expression,
-  parentClassName,
-  context,
-  parserServices,
-  option,
-}: ValidateExpressionArgs<ConstructorFn>): void => {
-  if (!expression.body) return;
-  for (const statement of expression.body.body) {
-    switch (statement.type) {
-      case AST_NODE_TYPES.VariableDeclaration: {
-        const newExpression = statement.declarations[0].init;
-        if (newExpression?.type !== AST_NODE_TYPES.NewExpression) continue;
-        validateConstructId({
-          context,
-          expression: newExpression,
-          parentClassName,
-          parserServices,
-          option,
-        });
-        break;
-      }
-      case AST_NODE_TYPES.ExpressionStatement: {
-        if (statement.expression?.type !== AST_NODE_TYPES.NewExpression) break;
-        validateStatement({
-          statement,
-          parentClassName,
-          context,
-          parserServices,
-          option,
-        });
-        break;
-      }
-      case AST_NODE_TYPES.IfStatement: {
-        traverseStatements({
-          context,
-          parentClassName,
-          statement: statement.consequent,
-          parserServices,
-          option,
-        });
-        break;
-      }
-      case AST_NODE_TYPES.SwitchStatement: {
-        for (const switchCase of statement.cases) {
-          for (const statement of switchCase.consequent) {
-            traverseStatements({
-              context,
-              parentClassName,
-              statement,
-              parserServices,
-              option,
-            });
-          }
-        }
-        break;
-      }
-    }
-  }
+type ValidateConstructIdArgs = {
+  node: ESTree.NewExpression;
+  parentClassName: string;
+  context: RuleContext;
+  option: Option;
 };
 
-const traverseStatements = ({
-  statement,
-  parentClassName,
-  context,
-  parserServices,
-  option,
-}: ValidateStatementArgs<ESTree.Node>) => {
-  switch (statement.type) {
-    case AST_NODE_TYPES.BlockStatement: {
-      for (const body of statement.body) {
-        validateStatement({
-          statement: body,
-          parentClassName,
-          context,
-          parserServices,
-          option,
-        });
-      }
-      break;
-    }
-    case AST_NODE_TYPES.ExpressionStatement: {
-      const newExpression = statement.expression;
-      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
-      validateStatement({
-        statement,
-        parentClassName,
-        context,
-        parserServices,
-        option,
-      });
-      break;
-    }
-    case AST_NODE_TYPES.VariableDeclaration: {
-      const newExpression = statement.declarations[0].init;
-      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
-      validateConstructId({
-        context,
-        expression: newExpression,
-        parentClassName,
-        parserServices,
-        option,
-      });
-      break;
-    }
-  }
-};
-
-const validateStatement = ({
-  statement,
-  parentClassName,
-  context,
-  parserServices,
-  option,
-}: ValidateStatementArgs<ESTree.Node>): void => {
-  switch (statement.type) {
-    case AST_NODE_TYPES.VariableDeclaration: {
-      const newExpression = statement.declarations[0].init;
-      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
-      validateConstructId({
-        context,
-        expression: newExpression,
-        parentClassName,
-        parserServices,
-        option,
-      });
-      break;
-    }
-    case AST_NODE_TYPES.ExpressionStatement: {
-      const newExpression = statement.expression;
-      if (newExpression?.type !== AST_NODE_TYPES.NewExpression) break;
-      validateConstructId({
-        context,
-        expression: newExpression,
-        parentClassName,
-        parserServices,
-        option,
-      });
-      break;
-    }
-    case AST_NODE_TYPES.IfStatement: {
-      validateIfStatement({
-        statement,
-        parentClassName,
-        context,
-        parserServices,
-        option,
-      });
-      break;
-    }
-    case AST_NODE_TYPES.SwitchStatement: {
-      validateSwitchStatement({
-        statement,
-        parentClassName,
-        context,
-        parserServices,
-        option,
-      });
-      break;
-    }
-  }
-};
-
-const validateIfStatement = ({
-  statement,
-  parentClassName,
-  context,
-  parserServices,
-  option,
-}: ValidateStatementArgs<ESTree.IfStatement>): void => {
-  traverseStatements({
-    context,
-    parentClassName,
-    statement: statement.consequent,
-    parserServices,
-    option,
-  });
-};
-
-const validateSwitchStatement = ({
-  statement,
-  parentClassName,
-  context,
-  parserServices,
-  option,
-}: ValidateStatementArgs<ESTree.SwitchStatement>): void => {
-  for (const caseStatement of statement.cases) {
-    for (const _consequent of caseStatement.consequent) {
-      traverseStatements({
-        context,
-        parentClassName,
-        statement: _consequent,
-        parserServices,
-        option,
-      });
-    }
-  }
-};
-
+/**
+ * Report when the construct id matches (or contains) the parent class name.
+ */
 const validateConstructId = ({
-  context,
-  expression,
+  node,
   parentClassName,
-  parserServices,
+  context,
   option,
-}: ValidateExpressionArgs<ESTree.NewExpression>): void => {
-  const type = parserServices.getTypeAtLocation(expression);
-
-  if (expression.arguments.length < 2) return;
-
+}: ValidateConstructIdArgs): void => {
   // NOTE: Treat the second argument as ID
-  const secondArg = expression.arguments[1];
+  const secondArg = node.arguments[1];
   if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
     return;
   }
 
   const formattedConstructId = toPascalCase(secondArg.value);
   const formattedParentClassName = toPascalCase(parentClassName);
-
-  const checker = parserServices.program.getTypeChecker();
-  if (!isConstructType(type, checker)) return;
 
   if (
     option.disallowContainingParentName &&

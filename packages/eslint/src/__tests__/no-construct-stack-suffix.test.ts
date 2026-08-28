@@ -179,5 +179,31 @@ ruleTester.run("no-construct-stack-suffix", noConstructStackSuffix, {
       new SampleConstruct({ name: "sample" }, \`TemplateBucketConstruct\`);`,
       errors: [{ messageId: "invalidConstructId" }],
     },
+    // WHEN: an empty options object is passed, defaults must still apply ("Construct" is disallowed)
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      new SampleConstruct({ name: "sample" }, "SampleConstruct");`,
+      options: [{}],
+      errors: [{ messageId: "invalidConstructId" }],
+    },
+    // WHEN: an empty options object is passed, defaults must still apply ("Stack" is disallowed)
+    {
+      code: `
+      class Stack {}
+      class SampleStack extends Stack {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      new SampleStack({ name: "sample" }, "SampleStack");`,
+      options: [{}],
+      errors: [{ messageId: "invalidConstructId" }],
+    },
   ],
 });

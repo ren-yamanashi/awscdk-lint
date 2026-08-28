@@ -15,6 +15,11 @@ export type PublicProperty = {
    * AST node representing the public property
    */
   node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
+  /**
+   * Type annotation attached to the property, if any.
+   * Absent when the property has no explicit annotation (e.g. `public foo = 0;`).
+   */
+  typeAnnotation?: ESTree.TSTypeAnnotation | null;
 };
 
 export const findPublicPropertiesInClass = (node: Class): PublicProperty[] => {
@@ -39,19 +44,19 @@ const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined =
     case AST_NODE_TYPES.TSParameterProperty: {
       if (property.parameter.type !== AST_NODE_TYPES.Identifier) return;
       if (["private", "protected"].includes(property.accessibility ?? "")) return;
-      if (!property.parameter.typeAnnotation) return;
       return {
         name: property.parameter.name,
         node: property,
+        typeAnnotation: property.parameter.typeAnnotation,
       };
     }
     case AST_NODE_TYPES.PropertyDefinition: {
       if (property.key.type !== AST_NODE_TYPES.Identifier) return;
       if (["private", "protected"].includes(property.accessibility ?? "")) return;
-      if (!property.typeAnnotation) return;
       return {
         name: property.key.name,
         node: property,
+        typeAnnotation: property.typeAnnotation,
       };
     }
   }
