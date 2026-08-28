@@ -87,6 +87,24 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
         }
       }`,
     },
+    // WHEN: new expression is in a regular method (not a constructor)
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+        test() {
+          new SampleClass(this, "TestClass");
+        }
+      }`,
+    },
   ],
   invalid: [
     // WHEN: child class inside constructor (expression statement)
@@ -269,7 +287,25 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
       }`,
       errors: [{ messageId: "invalidConstructId" }],
     },
-    // WHEN: in method
+    // WHEN: child assigned to `this` field (assignment expression)
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        public sample!: SampleClass;
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          this.sample = new SampleClass(scope, "TestClass");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+    },
+    // WHEN: child statement inside else branch of if
     {
       code: `
       class Construct {}
@@ -281,9 +317,47 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
       class TestClass extends Construct {
         constructor(scope: Construct, id: string) {
           super(scope, id);
+          if (false) {
+            // no-op
+          } else {
+            new SampleClass(scope, "TestClass");
+          }
         }
-        test() {
-          new SampleClass(scope, "TestClass");
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+    },
+    // WHEN: child statement inside for-of loop body
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          for (const item of [1, 2, 3]) {
+            new SampleClass(scope, "TestClass");
+          }
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+    },
+    // WHEN: child appears in a second declarator of a VariableDeclaration
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const a = "x", b = new SampleClass(scope, "TestClass");
         }
       }`,
       errors: [{ messageId: "invalidConstructId" }],
