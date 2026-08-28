@@ -560,6 +560,196 @@ ruleTester.run("no-unused-props", noUnusedProps, {
       }
       `,
     },
+    {
+      name: "Props is passed as whole to NewExpression argument",
+      code: `
+      class Construct {}
+      class Queue extends Construct {
+        constructor(scope: Construct, id: string, props: any) { super(scope, id); }
+      }
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          new Queue(this, "Queue", props);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is spread into a NewExpression argument object",
+      code: `
+      class Construct {}
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string, props: any) { super(scope, id); }
+      }
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          new Bucket(this, "Dest", { ...props, extra: true });
+        }
+      }
+      `,
+    },
+    {
+      name: "Props alias is passed as a whole to a NewExpression argument",
+      code: `
+      class Construct {}
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string, props: any) { super(scope, id); }
+      }
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          const bucketProps = props;
+          new Bucket(this, "Dest", bucketProps);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is queried via 'in' operator",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        encryption: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          if ("encryption" in props) {
+            console.log("encrypted");
+          }
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is destructured with a rest element",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        logPrefix: string;
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          const { logPrefix, ...bucketProps } = props;
+          console.log(logPrefix, bucketProps);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is accessed via string literal computed key",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          console.log(props["bucketName"], props["enableVersioning"]);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is accessed via a variable computed key (treated as whole usage)",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          const key: keyof MyConstructProps = "bucketName";
+          console.log(props[key]);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is assigned to a private field via # and its properties are used",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      class MyConstruct extends Construct {
+        #props: MyConstructProps;
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this.#props = props;
+        }
+        log() {
+          console.log(this.#props.bucketName, this.#props.enableVersioning);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is passed transitively through two private methods",
+      code: `
+      class Construct {}
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string, props: any) { super(scope, id); }
+      }
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this.setup(props);
+        }
+        private setup(p: MyConstructProps) {
+          this.createBucket(p);
+        }
+        private createBucket(p: MyConstructProps) {
+          new Bucket(this, "B", { bucketName: p.bucketName, versioned: p.enableVersioning });
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -904,6 +1094,54 @@ ruleTester.run("no-unused-props", noUnusedProps, {
         constructor(scope: Construct, id: string, props: MyConstructProps = {} as MyConstructProps) {
           super(scope, id);
           console.log(props.bucketName);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
+    {
+      name: "String literal computed access reports only untouched properties",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          console.log(props["bucketName"]);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "enableVersioning" } }],
+    },
+    {
+      name: "Transitive method chain still reports properties never referenced",
+      code: `
+      class Construct {}
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string, props: any) { super(scope, id); }
+      }
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+        unusedProp: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this.setup(props);
+        }
+        private setup(p: MyConstructProps) {
+          this.createBucket(p);
+        }
+        private createBucket(p: MyConstructProps) {
+          new Bucket(this, "B", { bucketName: p.bucketName, versioned: p.enableVersioning });
         }
       }
       `,

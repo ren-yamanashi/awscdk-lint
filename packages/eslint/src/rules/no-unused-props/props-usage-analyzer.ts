@@ -26,6 +26,11 @@ export interface AnalyzeOptions {
   treatAsInstanceVariable?: boolean;
 }
 
+type InstanceVarBinding = {
+  name: string;
+  isPrivateField: boolean;
+};
+
 export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   private readonly tracker: IPropsUsageTracker;
 
@@ -42,183 +47,75 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     const classNode = constructor.parent;
     if (!constructorBody) return;
 
-    this.checkUsageForDirectAccess(constructorBody, propsParamName);
-    this.checkUsageForAliasAccess(constructorBody, propsParamName);
-    this.checkUsageForInstanceVariable(classNode, constructor, propsParamName);
-    this.checkUsageForPrivateMethodsCalledFromConstructor(
-      constructorBody,
-      classNode,
-      propsParamName,
-    );
+    this.analyzeBlockForBinding(constructorBody, propsParamName);
+    this.checkUsageForInstanceVariable(classNode, constructorBody, propsParamName);
+    this.analyzeTransitiveMethodCalls(constructorBody, classNode, propsParamName, new Set());
     if (options.treatAsInstanceVariable) {
-      this.checkUsageForBoundInstanceVariable(classNode, propsParamName);
+      const visitor = new InstanceVariableUsageVisitor(this.tracker, propsParamName);
+      traverseNodes(classNode, visitor);
     }
   }
 
   /**
-   * Tracks usage through `this.<name>` for parameter-property-declared props, where
-   * TypeScript implicitly assigns the parameter to an instance field of the same name.
+   * Runs the direct-usage and alias visitors over a block (constructor body or a method body
+   * reached transitively via `this.method(props)`).
    */
-  private checkUsageForBoundInstanceVariable(classBody: TSESTree.ClassBody, name: string): void {
-    const visitor = new InstanceVariableUsageVisitor(this.tracker, name);
+  private analyzeBlockForBinding(block: TSESTree.BlockStatement, paramName: string): void {
+    const directVisitor = new DirectPropsUsageVisitor(this.tracker, paramName);
+    traverseNodes(block, directVisitor);
+
+    const aliasVisitor = new PropsAliasVisitor(this.tracker, paramName);
+    traverseNodes(block, aliasVisitor);
+  }
+
+  /**
+   * Tracks `this.<field> = props` bindings and scans the whole class for reads of that field.
+   * Handles both `Identifier` (`this.myProps`) and `PrivateIdentifier` (`this.#myProps`).
+   */
+  private checkUsageForInstanceVariable(
+    classBody: TSESTree.ClassBody,
+    constructorBody: TSESTree.BlockStatement,
+    propsParamName: string,
+  ): void {
+    const binding = this.findPropsInstanceVariable(constructorBody, propsParamName);
+    if (!binding) return;
+
+    const visitor = new InstanceVariableUsageVisitor(
+      this.tracker,
+      binding.name,
+      binding.isPrivateField,
+    );
     traverseNodes(classBody, visitor);
   }
 
   /**
-   * Analyzes direct access to props within the constructor body.
-   *
-   * @example
-   * ```typescript
-   * constructor(scope: Construct, id: string, props: MyConstructProps) {
-   *   super(scope, id);
-   *   console.log(props.bucketName);  // <- Direct access tracked here
-   * }
-   * ```
-   *
-   * @param constructorBody - The constructor's BlockStatement to analyze
-   * @param propsParamName - The name of the props parameter (e.g., "props")
+   * Follows `this.method(props)` chains from the constructor into method bodies (and further
+   * into any methods those bodies call). A visited set keyed by MethodDefinition node prevents
+   * infinite loops on recursive methods.
    */
-  private checkUsageForDirectAccess(
-    constructorBody: TSESTree.BlockStatement,
-    propsParamName: string,
-  ): void {
-    const directVisitor = new DirectPropsUsageVisitor(this.tracker, propsParamName);
-    traverseNodes(constructorBody, directVisitor);
-  }
-
-  /**
-   * Analyzes props usage via aliases within the constructor body.
-   *
-   * When props is assigned to another variable (alias), this method tracks
-   * usage of that alias throughout the constructor.
-   *
-   * @example
-   * ```typescript
-   * constructor(scope: Construct, id: string, props: MyConstructProps) {
-   *   super(scope, id);
-   *   const p = props;  // <- Alias assignment detected
-   *   console.log(p.bucketName);  // <- Usage tracked here
-   * }
-   * ```
-   *
-   * @param constructorBody - The constructor's BlockStatement to analyze
-   * @param propsParamName - The name of the props parameter (e.g., "props")
-   */
-  private checkUsageForAliasAccess(
-    constructorBody: TSESTree.BlockStatement,
-    propsParamName: string,
-  ): void {
-    const aliasVisitor = new PropsAliasVisitor(this.tracker, propsParamName);
-    traverseNodes(constructorBody, aliasVisitor);
-  }
-
-  /**
-   * Analyzes the class body for props usage via instance variables.
-   *
-   * When props is assigned to an instance variable (e.g., `this.myProps = props`),
-   * this method tracks usage of that instance variable throughout the entire class.
-   *
-   * @example
-   * ```typescript
-   * class MyConstruct extends Construct {
-   *   private myProps: MyConstructProps;
-   *
-   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
-   *     super(scope, id);
-   *     this.myProps = props;  // <- Instance variable assignment detected
-   *   }
-   *
-   *   someMethod() {
-   *     console.log(this.myProps.bucketName);  // <- Usage tracked here
-   *   }
-   * }
-   * ```
-   *
-   * @param classBody - The ClassBody node to analyze
-   * @param constructor - The constructor MethodDefinition node
-   * @param propsParamName - The name of the props parameter (e.g., "props")
-   */
-  private checkUsageForInstanceVariable(
+  private analyzeTransitiveMethodCalls(
+    body: TSESTree.BlockStatement,
     classBody: TSESTree.ClassBody,
-    constructor: TSESTree.MethodDefinition,
-    propsParamName: string,
-  ) {
-    if (!constructor.value.body) return;
-    const instanceVarName = this.findPropsInstanceVariable(constructor.value.body, propsParamName);
-    if (!instanceVarName) return;
-
-    const instanceVisitor = new InstanceVariableUsageVisitor(this.tracker, instanceVarName);
-    traverseNodes(classBody, instanceVisitor);
-  }
-
-  /**
-   * Analyzes private methods that are called from the constructor with props as an argument.
-   *
-   * When a constructor calls a private method and passes props to it, this method
-   * finds the method definition and analyzes the props usage within that method.
-   *
-   * @example
-   * ```typescript
-   * class MyConstruct extends Construct {
-   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
-   *     super(scope, id);
-   *     this.setupBucket(props);  // <- Method call with props detected
-   *   }
-   *
-   *   private setupBucket(p: MyConstructProps) {
-   *     // Props usage in this method body is analyzed
-   *     new Bucket(this, 'Bucket', { bucketName: p.bucketName });
-   *   }
-   * }
-   * ```
-   *
-   * @param constructorBody - The constructor's BlockStatement to search for method calls
-   * @param classBody - The ClassBody containing method definitions
-   * @param propsParamName - The name of the props parameter (e.g., "props")
-   */
-  private checkUsageForPrivateMethodsCalledFromConstructor(
-    constructorBody: TSESTree.BlockStatement,
-    classBody: TSESTree.ClassBody,
-    propsParamName: string,
+    paramName: string,
+    visited: Set<TSESTree.MethodDefinition>,
   ): void {
-    // NOTE: Collect method calls in constructor
-    const methodCallsWithProps = this.collectMethodCallsWithProps(constructorBody, propsParamName);
+    const methodCalls = this.collectMethodCallsWithProps(body, paramName);
 
-    // NOTE: For each method call, find the method definition and analyze it
-    for (const { methodName, propsArgIndices } of methodCallsWithProps) {
+    for (const { methodName, propsArgIndices } of methodCalls) {
       const methodDef = this.findMethodDefinition(classBody, methodName);
       if (!methodDef?.value.body) continue;
+      if (visited.has(methodDef)) continue;
+      visited.add(methodDef);
 
-      // NOTE: Get the actual parameter names from the method definition
       for (const argIndex of propsArgIndices) {
         const param = methodDef.value.params[argIndex];
-        if (param?.type === AST_NODE_TYPES.Identifier) {
-          const visitor = new DirectPropsUsageVisitor(this.tracker, param.name);
-          traverseNodes(methodDef.value.body, visitor);
-        }
+        if (param?.type !== AST_NODE_TYPES.Identifier) continue;
+        this.analyzeBlockForBinding(methodDef.value.body, param.name);
+        this.analyzeTransitiveMethodCalls(methodDef.value.body, classBody, param.name, visited);
       }
     }
   }
 
-  /**
-   * Collects method calls in the constructor body where props is passed as an argument.
-   *
-   * Uses `MethodCallCollectorVisitor` to traverse the constructor body and find
-   * all `this.methodName(props)` patterns.
-   *
-   * @example
-   * ```typescript
-   * constructor(scope: Construct, id: string, props: MyConstructProps) {
-   *   super(scope, id);
-   *   this.setupBucket(props);        // <- Collected: { methodName: "setupBucket", propsArgIndices: [0] }
-   *   this.configure(config, props);  // <- Collected: { methodName: "configure", propsArgIndices: [1] }
-   * }
-   * ```
-   *
-   * @param body - The constructor's BlockStatement to traverse
-   * @param propsParamName - The name of the props parameter (e.g., "props")
-   * @returns Array of method call info with method names and argument indices where props appears
-   */
   private collectMethodCallsWithProps(
     body: TSESTree.BlockStatement,
     propsParamName: string,
@@ -229,86 +126,36 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   }
 
   /**
-   * Finds the instance variable name where props is assigned in the constructor.
-   *
-   * This method detects the pattern where props is stored in an instance variable
-   * for later access within the class.
-   *
-   * @example
-   * ```typescript
-   * class MyConstruct extends Construct {
-   *   private myProps: MyConstructProps;
-   *
-   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
-   *     super(scope, id);
-   *     this.myProps = props;  // <- This pattern is detected
-   *   }
-   * }
-   * ```
-   *
-   * AST structure for `this.myProps = props`:
-   *   ExpressionStatement
-   *   └── expression: AssignmentExpression
-   *       ├── left: MemberExpression
-   *       │   ├── object: ThisExpression
-   *       │   └── property: Identifier (name: "myProps" - returned value)
-   *       └── right: Identifier (name: "props" === propsParamName)
-   *
-   * @param body - The constructor's BlockStatement to analyze
-   * @param propsParamName - The name of the props parameter (e.g., "props")
-   * @returns The instance variable name (e.g., "myProps") or null if not found
+   * Detects `this.<name> = props` or `this.#<name> = props` in the constructor's top-level
+   * statements. Returns the field's name and whether it is a `#`-prefixed private field.
    */
   private findPropsInstanceVariable(
     body: TSESTree.BlockStatement,
     propsParamName: string,
-  ): string | null {
+  ): InstanceVarBinding | null {
     for (const statement of body.body) {
+      if (statement.type !== AST_NODE_TYPES.ExpressionStatement) continue;
+      const expression = statement.expression;
+      if (expression.type !== AST_NODE_TYPES.AssignmentExpression) continue;
       if (
-        statement.type === AST_NODE_TYPES.ExpressionStatement &&
-        statement.expression.type === AST_NODE_TYPES.AssignmentExpression &&
-        statement.expression.left.type === AST_NODE_TYPES.MemberExpression &&
-        statement.expression.left.object.type === AST_NODE_TYPES.ThisExpression &&
-        statement.expression.left.property.type === AST_NODE_TYPES.Identifier &&
-        statement.expression.right.type === AST_NODE_TYPES.Identifier &&
-        statement.expression.right.name === propsParamName
+        expression.right.type !== AST_NODE_TYPES.Identifier ||
+        expression.right.name !== propsParamName
       ) {
-        return statement.expression.left.property.name;
+        continue;
+      }
+      const left = expression.left;
+      if (left.type !== AST_NODE_TYPES.MemberExpression) continue;
+      if (left.object.type !== AST_NODE_TYPES.ThisExpression) continue;
+      if (left.property.type === AST_NODE_TYPES.Identifier) {
+        return { name: left.property.name, isPrivateField: false };
+      }
+      if (left.property.type === AST_NODE_TYPES.PrivateIdentifier) {
+        return { name: left.property.name, isPrivateField: true };
       }
     }
     return null;
   }
 
-  /**
-   * Finds a method definition in the class body by its name.
-   *
-   * This method is used to locate the actual method implementation when
-   * a method call like `this.someMethod(props)` is found in the constructor.
-   *
-   * @example
-   * ```typescript
-   * class MyConstruct extends Construct {
-   *   constructor(scope: Construct, id: string, props: MyConstructProps) {
-   *     super(scope, id);
-   *     this.setupBucket(props);  // <- Method call detected
-   *   }
-   *
-   *   private setupBucket(p: MyConstructProps) {  // <- This definition is found
-   *     new Bucket(this, 'Bucket', { bucketName: p.bucketName });
-   *   }
-   * }
-   * ```
-   *
-   * AST structure for method definition:
-   *   MethodDefinition
-   *   ├── key: Identifier (name: "setupBucket" === methodName)
-   *   └── value: FunctionExpression
-   *       ├── params: [Identifier, ...]
-   *       └── body: BlockStatement
-   *
-   * @param classBody - The ClassBody node containing all class members
-   * @param methodName - The name of the method to find (e.g., "setupBucket")
-   * @returns The MethodDefinition node or null if not found
-   */
   private findMethodDefinition(
     classBody: TSESTree.ClassBody,
     methodName: string,
