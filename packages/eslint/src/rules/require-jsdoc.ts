@@ -1,7 +1,8 @@
-import { AST_NODE_TYPES, AST_TOKEN_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
+import { getAttachedJSDocComments } from "../shared/jsdoc-comment";
 
 /**
  * Require JSDoc comments for interface properties and public properties in Construct classes
@@ -26,7 +27,12 @@ export const requireJSDoc = createRule({
     const parserServices = ESLintUtils.getParserServices(context);
     return {
       TSPropertySignature(node) {
-        if (node.key.type !== AST_NODE_TYPES.Identifier) return;
+        if (
+          node.key.type !== AST_NODE_TYPES.Identifier &&
+          node.key.type !== AST_NODE_TYPES.Literal
+        ) {
+          return;
+        }
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
@@ -35,26 +41,21 @@ export const requireJSDoc = createRule({
         // NOTE: Check if the interface name ends with 'Props'
         if (!parent.id.name.endsWith("Props")) return;
 
-        // NOTE: Get JSDoc comments
-        const sourceCode = context.sourceCode;
-        const comments = sourceCode.getCommentsBefore(node);
-        const hasJSDoc = comments.some(
-          ({ type, value }) => type === AST_TOKEN_TYPES.Block && value.startsWith("*"),
-        );
+        const comments = getAttachedJSDocComments(context.sourceCode, node);
+        if (comments.length > 0) return;
 
-        if (!hasJSDoc) {
-          context.report({
-            node,
-            messageId: "missingJSDoc",
-            data: {
-              propertyName: node.key.name,
-            },
-          });
-        }
+        const propertyName =
+          node.key.type === AST_NODE_TYPES.Identifier ? node.key.name : String(node.key.value);
+        context.report({
+          node,
+          messageId: "missingJSDoc",
+          data: { propertyName },
+        });
       },
       PropertyDefinition(node) {
         if (
-          node.key.type !== AST_NODE_TYPES.Identifier ||
+          (node.key.type !== AST_NODE_TYPES.Identifier &&
+            node.key.type !== AST_NODE_TYPES.Literal) ||
           node.parent.type !== AST_NODE_TYPES.ClassBody
         ) {
           return;
@@ -76,21 +77,16 @@ export const requireJSDoc = createRule({
           return;
         }
 
-        const sourceCode = context.sourceCode;
-        const comments = sourceCode.getCommentsBefore(node);
-        const hasJSDoc = comments.some(
-          ({ type, value }) => type === AST_TOKEN_TYPES.Block && value.startsWith("*"),
-        );
+        const comments = getAttachedJSDocComments(context.sourceCode, node);
+        if (comments.length > 0) return;
 
-        if (!hasJSDoc) {
-          context.report({
-            node,
-            messageId: "missingJSDoc",
-            data: {
-              propertyName: node.key.name,
-            },
-          });
-        }
+        const propertyName =
+          node.key.type === AST_NODE_TYPES.Identifier ? node.key.name : String(node.key.value);
+        context.report({
+          node,
+          messageId: "missingJSDoc",
+          data: { propertyName },
+        });
       },
     };
   },
