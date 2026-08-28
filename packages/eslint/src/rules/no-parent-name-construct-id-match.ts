@@ -1,7 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
-import { isInsideConstructor } from "../core/ast-node/finder/enclosing-constructor";
+import { isInsideConstructorOrMethod } from "../core/ast-node/finder/enclosing-method";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -58,10 +58,8 @@ export const noParentNameConstructIdMatch = createRule({
         const type = parserServices.getTypeAtLocation(node);
         if (!isConstructType(type)) return;
 
-        // NOTE: Only validate constructs instantiated inside a Construct/Stack
-        // subclass constructor. Instantiations in other methods or standalone
-        // functions do not have a stable "parent class" relationship.
-        if (!isInsideConstructor(node)) return;
+        // NOTE: nested closures do not have a stable "parent class" relationship
+        if (!isInsideConstructorOrMethod(node)) return;
 
         const enclosingClass = findEnclosingClass(node);
         if (!enclosingClass) return;

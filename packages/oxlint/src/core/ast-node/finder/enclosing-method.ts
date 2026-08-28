@@ -29,16 +29,16 @@ const findEnclosingFunction = (node: ESTree.Node): EnclosingFunction | undefined
 };
 
 /**
- * Return true when the node is inside a class constructor body,
- * without crossing any other function/method boundary first.
+ * Return true when the node is inside a class constructor or regular method body,
+ * without crossing any other function boundary first.
  */
-export const isInsideConstructor = (node: ESTree.Node): boolean => {
+export const isInsideConstructorOrMethod = (node: ESTree.Node): boolean => {
   const fn = findEnclosingFunction(node);
   if (!fn) return false;
   const owner = fn.parent;
   return (
     fn.type === AST_NODE_TYPES.FunctionExpression &&
     owner?.type === AST_NODE_TYPES.MethodDefinition &&
-    owner.kind === "constructor"
+    (owner.kind === "constructor" || owner.kind === "method")
   );
 };

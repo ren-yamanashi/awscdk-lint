@@ -87,7 +87,9 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
         }
       }`,
     },
-    // WHEN: new expression is in a regular method (not a constructor)
+  ],
+  invalid: [
+    // WHEN: in method
     {
       code: `
       class Construct {}
@@ -104,9 +106,8 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
           new SampleClass(this, "TestClass");
         }
       }`,
+      errors: [{ messageId: "invalidConstructId" }],
     },
-  ],
-  invalid: [
     // WHEN: child class inside constructor (expression statement)
     {
       code: `
