@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
 
 import { createRule } from "../shared/create-rule";
 
@@ -32,21 +32,20 @@ export const noMutablePropertyOfPropsInterface = createRule({
 
         for (const property of node.body.body) {
           // NOTE: check property signature
-          if (
-            property.type !== AST_NODE_TYPES.TSPropertySignature ||
-            property.key.type !== AST_NODE_TYPES.Identifier
-          ) {
-            continue;
-          }
+          if (property.type !== AST_NODE_TYPES.TSPropertySignature) continue;
 
           // NOTE: Skip if already readonly
           if (property.readonly) continue;
+
+          // NOTE: computed keys cannot be resolved statically, so they are skipped
+          const propertyName = findStaticPropertyName(property.key);
+          if (propertyName === null) continue;
 
           context.report({
             node: property,
             messageId: "invalidPropertyOfPropsInterface",
             data: {
-              propertyName: property.key.name,
+              propertyName,
             },
             fix: (fixer) => {
               const propertyText = sourceCode.getText(property);
@@ -58,3 +57,19 @@ export const noMutablePropertyOfPropsInterface = createRule({
     };
   },
 });
+
+/**
+ * Find the static name of a property key
+ * @param key - The key of a property signature
+ * @returns The property name, or null for keys that cannot be resolved statically
+ */
+const findStaticPropertyName = (key: TSESTree.TSPropertySignature["key"]): string | null => {
+  if (key.type === AST_NODE_TYPES.Identifier) return key.name;
+  if (
+    key.type === AST_NODE_TYPES.Literal &&
+    (typeof key.value === "string" || typeof key.value === "number")
+  ) {
+    return String(key.value);
+  }
+  return null;
+};
