@@ -88,14 +88,18 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context) => 
 
   if (isPascalCase(constructId)) return;
 
-  const quote = findQuoteType(secondArg);
+  const pascalCaseValue = toPascalCase(constructId);
+  // Skip the fix when the converted value would still fail validation
+  // (e.g. leading digits, symbol-only input) so the fix always converges.
+  if (!isPascalCase(pascalCaseValue)) {
+    context.report({ node: secondArg, messageId: "invalidConstructId" });
+    return;
+  }
 
+  const quote = findQuoteType(secondArg);
   context.report({
     node: secondArg,
     messageId: "invalidConstructId",
-    fix: (fixer) => {
-      const pascalCaseValue = toPascalCase(constructId);
-      return fixer.replaceText(secondArg, `${quote}${pascalCaseValue}${quote}`);
-    },
+    fix: (fixer) => fixer.replaceText(secondArg, `${quote}${pascalCaseValue}${quote}`),
   });
 };
