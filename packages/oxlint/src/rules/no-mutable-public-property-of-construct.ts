@@ -63,11 +63,9 @@ const validatePublicProperty = (args: {
       propertyName: publicProperty.name,
     },
     fix: (fixer) => {
-      // Insert `readonly ` immediately before the property key so the
-      // surrounding text (type annotations, initializers, other modifiers)
-      // stays byte-identical. TS modifier order is
-      // accessibility -> static -> override -> readonly, so inserting right
-      // before the key always yields a legal position.
+      // NOTE: TS modifier order is accessibility -> static -> override -> readonly,
+      // so inserting right before the key is always a legal position
+
       const anchor =
         publicProperty.node.type === AST_NODE_TYPES.TSParameterProperty
           ? publicProperty.node.parameter
