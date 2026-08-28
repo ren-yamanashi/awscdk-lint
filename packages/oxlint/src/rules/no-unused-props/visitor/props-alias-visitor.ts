@@ -4,7 +4,7 @@ import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
-import { isTrackedFormForBareIdentifier } from "./is-tracked-form";
+import { isTrackedFormForAliasIdentifier } from "./is-tracked-form";
 
 /**
  * Tracks props usage through variable aliases.
@@ -40,7 +40,7 @@ export class PropsAliasVisitor implements INodeVisitor {
       return;
     }
     if (!this.aliases.has(node.name)) return;
-    if (isTrackedFormForBareIdentifier(node)) return;
+    if (isTrackedFormForAliasIdentifier(node)) return;
     this.tracker.markAllAsUsed();
   }
 

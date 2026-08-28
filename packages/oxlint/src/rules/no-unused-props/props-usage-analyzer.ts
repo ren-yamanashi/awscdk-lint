@@ -10,6 +10,7 @@ import {
   PropsAliasVisitor,
   traverseNodes,
 } from "./visitor";
+import { INodeVisitor } from "./visitor/interface/node-visitor";
 
 export interface IPropsUsageAnalyzer {
   analyze(
@@ -72,48 +73,60 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   }
 
   /**
-   * Tracks `this.<field> = props` bindings and scans the whole class for reads of that field.
-   * Handles both `Identifier` (`this.myProps`) and `PrivateIdentifier` (`this.#myProps`).
+   * Collects every `this.<field> = <paramName>` binding reachable inside `block` — including
+   * nested (`if (c) { this.a = props }`) and multiple assignments — then scans the whole class
+   * body for reads of each captured field. Both `Identifier` (`this.myProps`) and
+   * `PrivateIdentifier` (`this.#myProps`) targets are supported.
    */
   private checkUsageForInstanceVariable(
     classBody: ESTree.ClassBody,
-    constructorBody: ESTree.BlockStatement,
-    propsParamName: string,
+    block: ESTree.BlockStatement,
+    paramName: string,
   ): void {
-    const binding = this.findPropsInstanceVariable(constructorBody, propsParamName);
-    if (!binding) return;
-
-    const visitor = new InstanceVariableUsageVisitor(
-      this.tracker,
-      binding.name,
-      binding.isPrivateField,
-    );
-    traverseNodes(classBody, visitor);
+    const bindings = findPropsInstanceVariableBindings(block, paramName);
+    for (const binding of bindings) {
+      const visitor = new InstanceVariableUsageVisitor(
+        this.tracker,
+        binding.name,
+        binding.isPrivateField,
+      );
+      traverseNodes(classBody, visitor);
+    }
   }
 
   /**
    * Follows `this.method(props)` chains from the constructor into method bodies (and further
-   * into any methods those bodies call). A visited set keyed by MethodDefinition node prevents
-   * infinite loops on recursive methods.
+   * into any methods those bodies call). `visited` is keyed by `${methodName}:${argIndex}` so
+   * the same method can still be analyzed for a different argument position, while recursion on
+   * the exact same method + arg-position is short-circuited.
+   *
+   * If a call cannot be tracked (target method missing, body-less, or the param at the props
+   * argument index is not a plain Identifier), the props object is treated as escaped and every
+   * property is marked used — otherwise `isTrackedFormForBareIdentifier` would have suppressed
+   * the escape mark without any per-property tracking taking its place.
    */
   private analyzeTransitiveMethodCalls(
     body: ESTree.BlockStatement,
     classBody: ESTree.ClassBody,
     paramName: string,
-    visited: Set<ESTree.MethodDefinition>,
+    visited: Set<string>,
   ): void {
     const methodCalls = this.collectMethodCallsWithProps(body, paramName);
 
     for (const { methodName, propsArgIndices } of methodCalls) {
       const methodDef = this.findMethodDefinition(classBody, methodName);
-      if (!methodDef?.value.body) continue;
-      if (visited.has(methodDef)) continue;
-      visited.add(methodDef);
-
       for (const argIndex of propsArgIndices) {
-        const param = methodDef.value.params[argIndex];
-        if (param?.type !== AST_NODE_TYPES.Identifier) continue;
+        const visitedKey = `${methodName}:${argIndex}`;
+        if (visited.has(visitedKey)) continue;
+        visited.add(visitedKey);
+
+        const param = methodDef?.value.body ? methodDef.value.params[argIndex] : undefined;
+        if (!methodDef?.value.body || param?.type !== AST_NODE_TYPES.Identifier) {
+          this.tracker.markAllAsUsed();
+          continue;
+        }
         this.analyzeBlockForBinding(methodDef.value.body, param.name);
+        this.checkUsageForInstanceVariable(classBody, methodDef.value.body, param.name);
         this.analyzeTransitiveMethodCalls(methodDef.value.body, classBody, param.name, visited);
       }
     }
@@ -129,36 +142,9 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
   }
 
   /**
-   * Detects `this.<name> = props` or `this.#<name> = props` in the constructor's top-level
-   * statements. Returns the field's name and whether it is a `#`-prefixed private field.
+   * Resolves a class method by name, skipping overload signatures (body-less
+   * `TSEmptyBodyFunctionExpression` values) so the implementation is returned.
    */
-  private findPropsInstanceVariable(
-    body: ESTree.BlockStatement,
-    propsParamName: string,
-  ): InstanceVarBinding | null {
-    for (const statement of body.body) {
-      if (statement.type !== AST_NODE_TYPES.ExpressionStatement) continue;
-      const expression = statement.expression;
-      if (expression.type !== AST_NODE_TYPES.AssignmentExpression) continue;
-      if (
-        expression.right.type !== AST_NODE_TYPES.Identifier ||
-        expression.right.name !== propsParamName
-      ) {
-        continue;
-      }
-      const left = expression.left;
-      if (left.type !== AST_NODE_TYPES.MemberExpression) continue;
-      if (left.object.type !== AST_NODE_TYPES.ThisExpression) continue;
-      if (left.property.type === AST_NODE_TYPES.Identifier) {
-        return { name: left.property.name, isPrivateField: false };
-      }
-      if (left.property.type === AST_NODE_TYPES.PrivateIdentifier) {
-        return { name: left.property.name, isPrivateField: true };
-      }
-    }
-    return null;
-  }
-
   private findMethodDefinition(
     classBody: ESTree.ClassBody,
     methodName: string,
@@ -167,7 +153,8 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
       if (
         member.type === AST_NODE_TYPES.MethodDefinition &&
         member.key.type === AST_NODE_TYPES.Identifier &&
-        member.key.name === methodName
+        member.key.name === methodName &&
+        member.value.type !== AST_NODE_TYPES.TSEmptyBodyFunctionExpression
       ) {
         return member;
       }
@@ -175,3 +162,37 @@ export class PropsUsageAnalyzer implements IPropsUsageAnalyzer {
     return null;
   }
 }
+
+/**
+ * Traversal-based collector for `this.<name> = <paramName>` / `this.#<name> = <paramName>`
+ * bindings inside a block. Returns every match (nested or repeated), preserving discovery
+ * order and de-duplicating on (name, isPrivateField).
+ */
+const findPropsInstanceVariableBindings = (
+  block: ESTree.BlockStatement,
+  paramName: string,
+): InstanceVarBinding[] => {
+  const bindings: InstanceVarBinding[] = [];
+  const seen = new Set<string>();
+  const visitor: INodeVisitor = {
+    visitAssignmentExpression: (node) => {
+      if (node.right.type !== AST_NODE_TYPES.Identifier || node.right.name !== paramName) return;
+      const left = node.left;
+      if (left.type !== AST_NODE_TYPES.MemberExpression) return;
+      if (left.object.type !== AST_NODE_TYPES.ThisExpression) return;
+      const isPrivateField = left.property.type === AST_NODE_TYPES.PrivateIdentifier;
+      if (
+        left.property.type !== AST_NODE_TYPES.Identifier &&
+        left.property.type !== AST_NODE_TYPES.PrivateIdentifier
+      ) {
+        return;
+      }
+      const key = `${isPrivateField ? "#" : ""}${left.property.name}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      bindings.push({ name: left.property.name, isPrivateField });
+    },
+  };
+  traverseNodes(block, visitor);
+  return bindings;
+};

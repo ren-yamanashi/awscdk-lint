@@ -756,6 +756,144 @@ ruleTester.run("no-unused-props", noUnusedProps, {
       }
       `,
     },
+    {
+      name: "Props is passed to an inherited method (unresolved) — treated as whole usage",
+      code: `
+      class Construct {
+        protected inheritedHelper(_props: unknown): void {}
+      }
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this.inheritedHelper(props);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is passed via computed this-call — treated as whole usage",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this["setup"](props);
+        }
+        private setup(p: MyConstructProps) {
+          console.log(p.bucketName);
+        }
+      }
+      `,
+    },
+    {
+      name: "Alias is passed to a this-method — treated as whole usage of the alias",
+      code: `
+      class Construct {}
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string, props: any) { super(scope, id); }
+      }
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          const bucketProps = props;
+          this.store(bucketProps);
+        }
+        private store(p: unknown) {
+          console.log(p);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is assigned to instance field inside a conditional and read elsewhere",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        #props?: MyConstructProps;
+        constructor(scope: Construct, id: string, props: MyConstructProps, condition: boolean) {
+          super(scope, id);
+          if (condition) {
+            this.#props = props;
+          }
+        }
+        log() {
+          console.log(this.#props?.bucketName, this.#props?.enableVersioning);
+        }
+      }
+      `,
+    },
+    {
+      name: "Props is assigned to multiple instance fields and every field is read",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        private a?: MyConstructProps;
+        private b?: MyConstructProps;
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this.a = props;
+          this.b = props;
+        }
+        log() {
+          console.log(this.a?.bucketName);
+          console.log(this.b?.enableVersioning);
+        }
+      }
+      `,
+    },
+    {
+      name: "Same method is called with props at two different arg positions",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this.m(props, {} as MyConstructProps);
+          this.m({} as MyConstructProps, props);
+        }
+        private m(first: MyConstructProps, second: MyConstructProps) {
+          console.log(first.bucketName);
+          console.log(second.enableVersioning);
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -1148,6 +1286,29 @@ ruleTester.run("no-unused-props", noUnusedProps, {
         }
         private createBucket(p: MyConstructProps) {
           new Bucket(this, "B", { bucketName: p.bucketName, versioned: p.enableVersioning });
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
+    {
+      name: "Instance-variable binding still reports properties that no method reads",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        unusedProp: string;
+      }
+
+      export class MyConstruct extends Construct {
+        private myProps: MyConstructProps;
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          this.myProps = props;
+        }
+        log() {
+          console.log(this.myProps.bucketName);
         }
       }
       `,

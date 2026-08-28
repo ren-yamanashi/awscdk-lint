@@ -39,6 +39,34 @@ export const isTrackedFormForBareIdentifier = (node: ESTree.Identifier): boolean
   }
 };
 
+/**
+ * Narrower tracked-form check for alias identifiers (variables bound via `const a = props`).
+ *
+ * Aliases are only tracked when they appear as a member-access object (`a.x`) or as the RHS of
+ * a destructuring declaration (`const { x } = a`). Every other position — including plain
+ * `const b = a`, `this.x = a`, `this.m(a)` — is treated as a whole-object escape because there
+ * is no alias-of-alias, instance-variable, or method-call tracking for aliased references.
+ */
+export const isTrackedFormForAliasIdentifier = (node: ESTree.Identifier): boolean => {
+  const parent = node.parent;
+  if (!parent) return true;
+
+  if (isNonReferencePosition(node, parent)) return true;
+
+  switch (parent.type) {
+    case AST_NODE_TYPES.MemberExpression: {
+      return parent.object === node;
+    }
+    case AST_NODE_TYPES.VariableDeclarator: {
+      // NOTE: destructuring `const { x } = alias` is tracked; plain `const b = alias` is not.
+      return parent.init === node && parent.id.type === AST_NODE_TYPES.ObjectPattern;
+    }
+    default: {
+      return false;
+    }
+  }
+};
+
 const isNonReferencePosition = (node: ESTree.Identifier, parent: ESTree.Node): boolean => {
   switch (parent.type) {
     case AST_NODE_TYPES.MemberExpression: {
@@ -70,8 +98,12 @@ const isThisMemberLeft = (left: ESTree.Node): boolean => {
 
 const isThisMethodCall = (call: ESTree.CallExpression): boolean => {
   const callee = call.callee;
+  // NOTE: computed calls (`this["m"](props)`) are not collected by MethodCallCollectorVisitor,
+  // so they must fall through to the whole-object escape path.
   return (
     callee.type === AST_NODE_TYPES.MemberExpression &&
-    callee.object.type === AST_NODE_TYPES.ThisExpression
+    !callee.computed &&
+    callee.object.type === AST_NODE_TYPES.ThisExpression &&
+    callee.property.type === AST_NODE_TYPES.Identifier
   );
 };
