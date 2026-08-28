@@ -162,6 +162,40 @@ ruleTester.run("require-passing-this", requirePassingThis, {
       }
       `,
     },
+    // WHEN: instantiated class inherits its constructor from a parent Construct
+    {
+      code: `
+      class Construct {}
+      class Target extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Inherited extends Target {}
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new Inherited(scope, "X");
+        }
+      }
+      `,
+      errors: [{ messageId: "missingPassingThis" }],
+      output: `
+      class Construct {}
+      class Target extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Inherited extends Target {}
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new Inherited(this, "X");
+        }
+      }
+      `,
+    },
     // WHEN: allowNonThisAndDisallowScope is false and not passing `this`
     {
       options: [{ allowNonThisAndDisallowScope: false }],

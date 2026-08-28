@@ -49,6 +49,7 @@ export const requirePassingThis = createRule({
   create(context: Context) {
     const options = context.options[0] || defaultOption;
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
@@ -67,7 +68,8 @@ export const requirePassingThis = createRule({
         if (argument.type === AST_NODE_TYPES.ThisExpression) return;
 
         // NOTE: If the first argument is not `scope`, it's valid
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[0] !== "scope") return;
 
         // NOTE: If `allowNonThisAndDisallowScope` is false, require `this` for all cases
