@@ -45,6 +45,16 @@ ruleTester.run("no-import-private", noImportPrivate, {
       code: 'import { x } from "@myorg/private-utils";',
       filename: "src/moduleA/a.ts",
     },
+    {
+      // WHEN: A file inside a `private` dir imports its own sibling module
+      code: 'import { b } from "./b";',
+      filename: "src/lib/private/a.ts",
+    },
+    {
+      // WHEN: A file inside a `private` subtree imports another module in the same subtree
+      code: 'import { shared } from "../shared";',
+      filename: "src/lib/private/helper/x.ts",
+    },
   ],
   invalid: [
     // WHEN: Importing modules in a private directory at a different level is not allowed

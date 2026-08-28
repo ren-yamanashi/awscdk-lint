@@ -39,6 +39,13 @@ export const noImportPrivate: Rule.RuleModule = {
 
         const importDirSegments = importSegments.slice(0, lastPrivateIndex);
         const currentDirSegments = getDirSegments(absoluteCurrentDirPath);
+
+        // NOTE: an importer inside the private subtree itself is not crossing its boundary
+        const privateRootSegments = importSegments.slice(0, lastPrivateIndex + 1);
+        if (privateRootSegments.every((segment, index) => segment === currentDirSegments[index])) {
+          return;
+        }
+
         if (
           currentDirSegments.length !== importDirSegments.length ||
           currentDirSegments.some((segment, index) => segment !== importDirSegments[index])
