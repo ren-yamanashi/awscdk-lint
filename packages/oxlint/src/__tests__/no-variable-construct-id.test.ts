@@ -231,6 +231,39 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
           super(scope, id);
         }
       }
+      const createResource = function (scope: Construct, id: string) {
+        new TargetConstruct(scope, id);
+      };
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const myFunction = function (id: string, num: number) {
+            return new TargetConstruct(this, id + num);
+          };
+          myFunction('id', 1);
+          myFunction('id', 2);
+        }
+      }
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
       class NotAConstruct {
         create(scope: Construct, id: string) {
           new TargetConstruct(scope, id);
