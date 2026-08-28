@@ -49,10 +49,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
   },
 });
 
-const validatePublicProperty = (args: {
-  publicProperty: PublicProperty;
-  context: RuleContext;
-}) => {
+const validatePublicProperty = (args: { publicProperty: PublicProperty; context: RuleContext }) => {
   const { publicProperty, context } = args;
   if (publicProperty.node.readonly) return;
 
