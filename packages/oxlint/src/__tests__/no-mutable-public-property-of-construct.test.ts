@@ -185,5 +185,24 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public count) {
+              super(scope, id);
+            }
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public readonly count) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
   ],
 });

@@ -204,5 +204,25 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    // WHEN: constructor parameter property is mutable and has no type annotation
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public count) {
+              super(scope, id);
+            }
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public readonly count) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
   ],
 });
