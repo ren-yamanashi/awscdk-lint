@@ -578,6 +578,32 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       errors: [{ messageId: "invalidInterfaceProperty" }],
     },
     {
+      name: "property type is a nested generic with Construct (Record<string, Bucket[]>)",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        nestedBuckets: Record<string, Bucket[]>;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
       name: "property type is Map with Construct as value type (Map<string, Bucket>)",
       code: `
       class Resource {}
