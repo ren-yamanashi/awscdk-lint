@@ -110,6 +110,17 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       `,
     },
     {
+      name: "property type is Record with interface value (Record<string, IBucket>)",
+      code: `
+      interface IBucket {
+        bucketName: string;
+      }
+      interface MyConstructProps {
+        bucketsByName: Record<string, IBucket>;
+      }
+      `,
+    },
+    {
       name: "property type is Pick utility type wrapping a plain interface (regression for #492)",
       code: `
       interface AlarmProps {
@@ -188,6 +199,110 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       }
       interface MyConstructProps {
         bucket: Bucket;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Record with Construct as value type (Record<string, Bucket>)",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucketsByName: Record<string, Bucket>;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is a nested generic with Construct (Record<string, Bucket[]>)",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        nestedBuckets: Record<string, Bucket[]>;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is Map with Construct as value type (Map<string, Bucket>)",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucketMap: Map<string, Bucket>;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is tuple with Construct at non-zero position ([string, Bucket])",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        pair: [string, Bucket];
       }
       `,
       errors: [{ messageId: "invalidInterfaceProperty" }],
