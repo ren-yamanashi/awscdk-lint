@@ -1,14 +1,8 @@
 import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
 
 /**
- * Finds the constructor implementation in a class declaration
- *
- * When a class has overload signatures on its constructor, the class body contains
- * multiple constructor members. Only the implementation signature has a body
- * (its `value` is a `FunctionExpression`, not `TSEmptyBodyFunctionExpression`).
- * Callers of this finder always want to inspect the implementation, so overload
- * signatures are skipped.
- *
+ * Finds the constructor implementation in a class declaration.
+ * Overload signatures (body-less `TSEmptyBodyFunctionExpression` values) are skipped.
  * @param node The class declaration
  * @returns The constructor implementation or undefined if not found
  */
