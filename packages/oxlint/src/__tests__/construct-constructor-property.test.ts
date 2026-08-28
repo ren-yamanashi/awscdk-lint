@@ -92,6 +92,30 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
     },
     {
       code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps = {}) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      code: `
       export class MyConstruct {
         constructor(invalidProperty: any) {}
       }
