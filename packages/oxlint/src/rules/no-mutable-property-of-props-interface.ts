@@ -1,5 +1,6 @@
-import { AST_NODE_TYPES } from "corsa-oxlint";
 import type { ESTree } from "corsa-oxlint";
+
+import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { createRule } from "../shared/create-rule";
 
