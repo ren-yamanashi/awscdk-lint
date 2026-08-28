@@ -85,7 +85,6 @@ const validateConstructId = (node: ESTree.NewExpression, context: RuleContext) =
   if (isPascalCase(constructId)) return;
 
   const pascalCaseValue = toPascalCase(constructId);
-  const quote = findQuoteType(secondArg);
   // Skip the fix when the converted value would still fail validation
   // (e.g. leading digits, symbol-only input) so the fix always converges.
   if (!isPascalCase(pascalCaseValue)) {
@@ -93,6 +92,7 @@ const validateConstructId = (node: ESTree.NewExpression, context: RuleContext) =
     return;
   }
 
+  const quote = findQuoteType(secondArg);
   context.report({
     node: secondArg,
     messageId: "invalidConstructId",
