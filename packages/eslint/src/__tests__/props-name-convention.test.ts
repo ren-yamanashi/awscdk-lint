@@ -50,8 +50,60 @@ ruleTester.run("props-name-convention", propsNameConvention, {
         }
       `,
     },
+    {
+      // WHEN: props parameter is a parameter property with a valid interface name
+      code: `
+        class Construct {}
+        interface MyConstructProps {
+          readonly bucket?: string;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, private readonly props: MyConstructProps) {
+            super(scope, id);
+          }
+        }
+      `,
+    },
+    {
+      // WHEN: props parameter has a default value with a valid interface name
+      code: `
+        class Construct {}
+        interface MyConstructProps {
+          readonly bucket?: string;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, props: MyConstructProps = {}) {
+            super(scope, id);
+          }
+        }
+      `,
+    },
   ],
   invalid: [
+    {
+      // WHEN: constructor has an overload signature and the implementation takes wrongly named props
+      code: `
+        class Construct {}
+        interface Props {
+          readonly bucket?: string;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string);
+          constructor(scope: Construct, id: string, props?: Props) {
+            super(scope, id);
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropsName",
+          data: {
+            interfaceName: "Props",
+            expectedName: "MyConstructProps",
+          },
+        },
+      ],
+    },
     {
       // WHEN: Props interface name does not follow ${ConstructName}Props format
       code: `
@@ -84,6 +136,52 @@ ruleTester.run("props-name-convention", propsNameConvention, {
         }
         class MyConstruct extends Construct {
           constructor(scope: Construct, id: string, props: WrongProps) {
+            super(scope, id);
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropsName",
+          data: {
+            interfaceName: "WrongProps",
+            expectedName: "MyConstructProps",
+          },
+        },
+      ],
+    },
+    {
+      // WHEN: parameter property props has a wrong interface name
+      code: `
+        class Construct {}
+        interface WrongProps {
+          readonly bucket?: string;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, private readonly props: WrongProps) {
+            super(scope, id);
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropsName",
+          data: {
+            interfaceName: "WrongProps",
+            expectedName: "MyConstructProps",
+          },
+        },
+      ],
+    },
+    {
+      // WHEN: default value props has a wrong interface name
+      code: `
+        class Construct {}
+        interface WrongProps {
+          readonly bucket?: string;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, props: WrongProps = {}) {
             super(scope, id);
           }
         }

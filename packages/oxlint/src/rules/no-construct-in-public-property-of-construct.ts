@@ -49,6 +49,10 @@ const validatePublicProperty = (
   context: RuleContext,
   parserServices: ParserServices,
 ) => {
+  // Only inspect properties that have an explicit type annotation.
+  // Inferring the type from an initializer is out of scope for this rule.
+  if (!publicProperty.typeAnnotation) return;
+
   const type = parserServices.getTypeAtLocation(publicProperty.node);
   const checker = parserServices.program.getTypeChecker();
   const constructType = findTypeOfCdkConstruct(type, checker);

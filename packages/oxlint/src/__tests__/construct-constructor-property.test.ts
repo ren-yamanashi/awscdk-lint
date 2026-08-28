@@ -92,6 +92,30 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
     },
     {
       code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps = {}) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      code: `
       export class MyConstruct {
         constructor(invalidProperty: any) {}
       }
@@ -212,6 +236,25 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       }
       `,
       errors: [{ messageId: "invalidConstructorProperty" }],
+    },
+    {
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string);
+        constructor(scope: Construct, id: string, props: MyConstructProps);
+        constructor(parent: Construct, name: string, opts?: MyConstructProps) {
+          super(parent, name);
+        }
+      }
+      `,
+      errors: [
+        { messageId: "invalidConstructorProperty" },
+        { messageId: "invalidConstructorProperty" },
+        { messageId: "invalidConstructorProperty" },
+      ],
     },
   ],
 });

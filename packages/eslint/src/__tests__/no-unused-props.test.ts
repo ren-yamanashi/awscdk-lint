@@ -507,6 +507,65 @@ ruleTester.run("no-unused-props", noUnusedProps, {
       }
       `,
     },
+    {
+      name: "Constructor with overload signatures: all props are used in the implementation body",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string);
+        constructor(scope: Construct, id: string, props: MyConstructProps);
+        constructor(scope: Construct, id: string, props?: MyConstructProps) {
+          super(scope, id);
+          console.log(props?.bucketName, props?.enableVersioning);
+        }
+      }
+      `,
+    },
+    {
+      name: "Parameter property props: all properties are used via this.props",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps) {
+          super(scope, id);
+          console.log(this.props.bucketName, this.props.enableVersioning);
+        }
+      }
+      `,
+    },
+    {
+      name: "Parameter property props: all properties are used in another method via this.props",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps) {
+          super(scope, id);
+        }
+
+        private log() {
+          console.log(this.props.bucketName, this.props.enableVersioning);
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -816,6 +875,45 @@ ruleTester.run("no-unused-props", noUnusedProps, {
       }
       `,
       errors: [{ messageId: "unusedProp" }],
+    },
+    {
+      name: "Parameter property props: some properties are unused",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        enableVersioning: boolean;
+        unusedProp: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps) {
+          super(scope, id);
+          console.log(this.props.bucketName, this.props.enableVersioning);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
+    {
+      name: "Default value props: some properties are unused",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName: string;
+        unusedProp: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps = {} as MyConstructProps) {
+          super(scope, id);
+          console.log(props.bucketName);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
     },
   ],
 });

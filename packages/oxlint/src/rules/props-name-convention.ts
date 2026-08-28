@@ -1,6 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
+import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -37,9 +38,12 @@ export const propsNameConvention = createRule({
         if (!constructor) return;
 
         const propsParam = constructor.value.params?.[2];
-        if (propsParam?.type !== AST_NODE_TYPES.Identifier) return;
+        if (!propsParam) return;
 
-        const typeAnnotation = propsParam.typeAnnotation;
+        const binding = findConstructorParamIdentifier(propsParam);
+        if (!binding) return;
+
+        const typeAnnotation = binding.typeAnnotation;
         if (typeAnnotation?.type !== AST_NODE_TYPES.TSTypeAnnotation) return;
 
         const typeNode = typeAnnotation.typeAnnotation;

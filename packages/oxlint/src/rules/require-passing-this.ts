@@ -34,7 +34,7 @@ export const requirePassingThis = createRule({
         properties: {
           allowNonThisAndDisallowScope: {
             type: "boolean",
-            default: false,
+            default: true,
           },
         },
         additionalProperties: false,
@@ -44,7 +44,8 @@ export const requirePassingThis = createRule({
   },
   defaultOptions: [defaultOption],
   create(context) {
-    const options: Option = context.options[0] ?? defaultOption;
+    // Merge user-supplied options over defaults so `[{}]` behaves like `[]`.
+    const options: Option = { ...defaultOption, ...context.options[0] };
     const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
     return {

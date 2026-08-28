@@ -31,13 +31,16 @@ const findFromArray = (type: Type): Type | undefined => {
 };
 
 /**
- * Find Construct type from a generics type (e.g. Array<s3.Bucket>, Promise<s3.Bucket[]>)
+ * Find Construct type from a generics type
+ * (e.g. Array<s3.Bucket>, Record<string, s3.Bucket>, [string, s3.Bucket], Promise<s3.Bucket[]>).
+ * Walks every type argument so that Constructs at non-zero positions are also detected.
  */
 const findFromGenerics = (type: Type): Type | undefined => {
-  const genericsArgument = findGenericsTypeArgument(type);
-  if (!genericsArgument) return undefined;
-
-  return findTypeOfCdkConstruct(genericsArgument);
+  for (const argument of findGenericsTypeArgument(type)) {
+    const foundType = findTypeOfCdkConstruct(argument);
+    if (foundType) return foundType;
+  }
+  return undefined;
 };
 
 /**

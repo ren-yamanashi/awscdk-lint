@@ -91,6 +91,32 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       `,
     },
     {
+      name: 'constructor has "scope, id, props" signature with parameter property props',
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      name: 'constructor has "scope, id, props" signature with parameter property and default value props',
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, private readonly props: MyConstructProps = {}) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
       name: 'constructor has more than 3 parameters but first three are "scope, id, props"',
       code: `
       class Construct {}
@@ -235,6 +261,26 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       }
       `,
       errors: [{ messageId: "invalidConstructorProperty" }],
+    },
+    {
+      name: "constructor overload signatures are valid but implementation signature has invalid property names",
+      code: `
+      class Construct {}
+      interface MyConstructProps {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string);
+        constructor(scope: Construct, id: string, props: MyConstructProps);
+        constructor(parent: Construct, name: string, opts?: MyConstructProps) {
+          super(parent, name);
+        }
+      }
+      `,
+      errors: [
+        { messageId: "invalidConstructorProperty" },
+        { messageId: "invalidConstructorProperty" },
+        { messageId: "invalidConstructorProperty" },
+      ],
     },
   ],
 });
