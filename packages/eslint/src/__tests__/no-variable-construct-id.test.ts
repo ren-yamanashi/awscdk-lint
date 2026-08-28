@@ -314,6 +314,25 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
       `,
       errors: [{ messageId: "invalidConstructId" }],
     },
+    // WHEN: id is variable and the instantiated class inherits its constructor
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class InheritedConstruct extends TargetConstruct {}
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new InheritedConstruct(this, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructId" }],
+    },
     {
       code: `
       class Construct {}

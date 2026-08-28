@@ -106,6 +106,32 @@ ruleTester.run(
         `,
       },
       {
+        name: "field has no type annotation but initializer is Construct instance (not inferred)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          class TestClass extends Construct {
+            public readonly bucket = new Bucket();
+          }
+        `,
+      },
+      {
         name: "class does not extend Construct",
         code: `
           class Resource {}
