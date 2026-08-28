@@ -243,6 +243,41 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
       }
       `,
     },
+    // WHEN: new expression is inside a standalone function expression (no class context)
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      const createResource = function (scope: Construct, id: string) {
+        new TargetConstruct(scope, id);
+      };
+      `,
+    },
+    // WHEN: id is variable in a function expression assigned in constructor
+    {
+      code: `
+      class Construct {}
+      class TargetConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const myFunction = function (id: string, num: number) {
+            return new TargetConstruct(this, id + num);
+          };
+          myFunction('id', 1);
+          myFunction('id', 2);
+        }
+      }
+      `,
+    },
     // WHEN: new expression is inside a class that does not extend Construct
     {
       code: `

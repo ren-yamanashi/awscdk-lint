@@ -77,7 +77,7 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context) => 
 
 /**
  * Check if construct ID validation should be skipped for a node.
- * Skip if it is inside a loop statement, non-constructor method, or arrow function.
+ * Skip if it is inside a loop statement, non-constructor method, or function other than a constructor.
  */
 const shouldSkipIdValidation = (node: TSESTree.Node): boolean => {
   let current = node.parent;
@@ -108,6 +108,15 @@ const shouldSkipIdValidation = (node: TSESTree.Node): boolean => {
     // Constructs in standalone functions (outside of classes) are intended to be called
     // multiple times with different IDs
     if (current.type === AST_NODE_TYPES.FunctionDeclaration) {
+      return true;
+    }
+
+    // Constructs in function expressions are also intended to be called multiple times.
+    // A constructor body is a FunctionExpression under MethodDefinition and must stay validated.
+    if (
+      current.type === AST_NODE_TYPES.FunctionExpression &&
+      current.parent?.type !== AST_NODE_TYPES.MethodDefinition
+    ) {
       return true;
     }
 
