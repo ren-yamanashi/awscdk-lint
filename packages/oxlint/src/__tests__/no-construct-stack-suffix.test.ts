@@ -78,6 +78,17 @@ ruleTester.run("no-construct-stack-suffix", noConstructStackSuffix, {
       new SampleStack({ name: "sample" }, "SampleStack");`,
       options: [{ disallowedSuffixes: ["Construct"] }],
     },
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const suffix = 'x';
+      new SampleConstruct({ name: "sample" }, \`Sample-\${suffix}\`);`,
+    },
   ],
   invalid: [
     {
@@ -124,6 +135,17 @@ ruleTester.run("no-construct-stack-suffix", noConstructStackSuffix, {
       }
       new SampleStack({ name: "sample" }, "SampleStack");`,
       options: [{ disallowedSuffixes: ["Stack"] }],
+      errors: [{ messageId: "invalidConstructId" }],
+    },
+    {
+      code: `
+      class Construct {}
+      class SampleConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      new SampleConstruct({ name: "sample" }, \`TemplateBucketConstruct\`);`,
       errors: [{ messageId: "invalidConstructId" }],
     },
   ],

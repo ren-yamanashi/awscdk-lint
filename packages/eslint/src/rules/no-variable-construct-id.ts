@@ -28,6 +28,7 @@ export const noVariableConstructId = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
@@ -41,7 +42,8 @@ export const noVariableConstructId = createRule({
           : undefined;
         if (enclosingClassType && !isConstructOrStackType(enclosingClassType)) return;
 
-        const constructorPropertyNames = findConstructorPropertyNames(type);
+        const calleeType = parserServices.getTypeAtLocation(node.callee);
+        const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);
         if (constructorPropertyNames[1] !== "id") return;
 
         validateConstructId(node, context);
