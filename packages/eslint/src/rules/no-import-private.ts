@@ -23,18 +23,22 @@ export const noImportPrivate: Rule.RuleModule = {
     return {
       ImportDeclaration(node) {
         const importPath = node.source.value?.toString() ?? "";
-        const currentFilePath = context.filename;
-        const currentDirPath = path.dirname(currentFilePath);
+        // Only relative imports can address a `private` directory on disk.
+        // Bare specifiers like `@scope/private-utils` must not be resolved as paths.
+        if (!importPath.startsWith("./") && !importPath.startsWith("../")) return;
 
-        if (!importPath.includes("/private")) return;
+        const currentDirPath = path.dirname(context.filename);
         const absoluteCurrentDirPath = path.resolve(currentDirPath);
         const absoluteImportPath = path.resolve(currentDirPath, importPath);
 
-        // NOTE: Get the directory from the import path up to the private directory
-        const importDirBeforePrivate = absoluteImportPath.split("/private")[0];
+        const importSegments = getDirSegments(absoluteImportPath);
+        // Match the deepest exact `private` segment so that a `private` subtree
+        // can still import from its own child `private` directory.
+        const lastPrivateIndex = importSegments.lastIndexOf("private");
+        if (lastPrivateIndex === -1) return;
 
+        const importDirSegments = importSegments.slice(0, lastPrivateIndex);
         const currentDirSegments = getDirSegments(absoluteCurrentDirPath);
-        const importDirSegments = getDirSegments(importDirBeforePrivate);
         if (
           currentDirSegments.length !== importDirSegments.length ||
           currentDirSegments.some((segment, index) => segment !== importDirSegments[index])
@@ -47,7 +51,7 @@ export const noImportPrivate: Rule.RuleModule = {
 };
 
 /**
- * Split the directory path into segments (split at `/`)
+ * Split the directory path into segments using the platform separator.
  * @param dirPath - The directory path to split
  * @returns The segments of the directory path
  */
