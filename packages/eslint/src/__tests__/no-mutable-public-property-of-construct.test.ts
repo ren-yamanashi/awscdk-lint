@@ -71,6 +71,15 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    // WHEN: public field is readonly and has no type annotation (initializer-inferred)
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            public readonly inferred = 0;
+          }
+        `,
+    },
   ],
   invalid: [
     // WHEN: public field is mutable, nested superClass is Construct
@@ -176,6 +185,22 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           class Construct {}
           class TestClass extends Construct {
             public static readonly defaultName: string = "sample";
+          }
+        `,
+    },
+    // WHEN: public field is mutable and has no type annotation (initializer-inferred)
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            public inferred = 0;
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class TestClass extends Construct {
+            public readonly inferred = 0;
           }
         `,
     },

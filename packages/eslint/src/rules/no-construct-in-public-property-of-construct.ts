@@ -15,6 +15,7 @@ type Context = TSESLint.RuleContext<"invalidPublicPropertyOfConstruct", []>;
 type PublicProperty = {
   name: string;
   node: TSESTree.Parameter | TSESTree.ClassElement;
+  typeAnnotation?: TSESTree.TSTypeAnnotation;
 };
 
 /**
@@ -56,6 +57,10 @@ const validatePublicProperty = (
   context: Context,
   parserServices: ParserServicesWithTypeInformation,
 ) => {
+  // Only inspect properties that have an explicit type annotation.
+  // Inferring the type from an initializer is out of scope for this rule.
+  if (!publicProperty.typeAnnotation) return;
+
   const type = parserServices.getTypeAtLocation(publicProperty.node);
   const constructType = findTypeOfCdkConstruct(type);
   if (constructType) {
