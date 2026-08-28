@@ -41,6 +41,15 @@ ruleTester.run("no-mutable-property-of-props-interface", noMutablePropertyOfProp
         }
       `,
     },
+    // WHEN: Quoted property keys are readonly
+    {
+      code: `
+        interface QuotedKeyProps {
+          readonly "bucket-name": string;
+          readonly "table-arn"?: string;
+        }
+      `,
+    },
   ],
   invalid: [
     // WHEN: readonly is not set
@@ -90,6 +99,25 @@ ruleTester.run("no-mutable-property-of-props-interface", noMutablePropertyOfProp
         interface ConfigProps {
           readonly name?: string;
           readonly age?: number;
+        }
+      `,
+      errors: [
+        { messageId: "invalidPropertyOfPropsInterface" },
+        { messageId: "invalidPropertyOfPropsInterface" },
+      ],
+    },
+    // WHEN: Quoted property keys do not have readonly
+    {
+      code: `
+        interface QuotedKeyProps {
+          "bucket-name": string;
+          "table-arn"?: string;
+        }
+      `,
+      output: `
+        interface QuotedKeyProps {
+          readonly "bucket-name": string;
+          readonly "table-arn"?: string;
         }
       `,
       errors: [
