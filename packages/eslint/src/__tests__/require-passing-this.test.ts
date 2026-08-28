@@ -128,6 +128,28 @@ ruleTester.run("require-passing-this", requirePassingThis, {
       `,
       options: [{ allowNonThisAndDisallowScope: true }],
     },
+    // WHEN: subclass redeclares a constructor that does not follow (scope, id)
+    {
+      code: `
+      class Construct {}
+      class Target extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Wrapped extends Target {
+        constructor(config: { scope: Construct }) {
+          super(config.scope, "Fixed");
+        }
+      }
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new Wrapped({ scope });
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     // WHEN: passing 'scope' variable
