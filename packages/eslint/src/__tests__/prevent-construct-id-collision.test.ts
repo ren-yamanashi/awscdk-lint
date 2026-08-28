@@ -279,6 +279,26 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
       `,
       errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
+    // WHEN: Literal ID inside forEach and the instantiated class inherits its constructor
+    {
+      name: "literal ID in forEach with an inherited constructor is invalid",
+      code: `
+      class Construct {}
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class InheritedBucket extends Bucket {}
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          [1, 2, 3].forEach(() => new InheritedBucket(this, "Bucket"));
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
     // WHEN: Literal ID inside map
     {
       name: "literal ID in map is invalid",

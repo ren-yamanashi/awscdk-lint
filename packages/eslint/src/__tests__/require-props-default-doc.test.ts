@@ -50,6 +50,15 @@ ruleTester.run("require-default-doc-optional-props", requirePropsDefaultDoc, {
         }
       `,
     },
+    {
+      // WHEN: @default appears at the end of a JSDoc line
+      code: `
+        interface MyConstructProps {
+          /** the last line is @default */
+          optional?: number;
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -78,6 +87,69 @@ ruleTester.run("require-default-doc-optional-props", requirePropsDefaultDoc, {
         {
           messageId: "missingDefaultDoc",
           data: { propertyName: "optional" },
+        },
+      ],
+    },
+    {
+      // WHEN: JSDoc contains an unrelated substring that happens to include "@default"
+      code: `
+        interface MyConstructProps {
+          /** Contact no-reply@defaultmail.com if needed */
+          optional?: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingDefaultDoc",
+          data: { propertyName: "optional" },
+        },
+      ],
+    },
+    {
+      // WHEN: Non-JSDoc block comment (starts with "/*" not "/**") mentions @default
+      code: `
+        interface MyConstructProps {
+          /* * @default 1 */
+          optional?: number;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingDefaultDoc",
+          data: { propertyName: "optional" },
+        },
+      ],
+    },
+    {
+      // WHEN: @default appears in a trailing comment on the previous property line
+      code: `
+        interface MyConstructProps {
+          first?: number; /** @default 2 */
+          second?: number;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingDefaultDoc",
+          data: { propertyName: "first" },
+        },
+        {
+          messageId: "missingDefaultDoc",
+          data: { propertyName: "second" },
+        },
+      ],
+    },
+    {
+      // WHEN: Optional property has quoted key without documentation
+      code: `
+        interface MyConstructProps {
+          "bucket-name"?: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingDefaultDoc",
+          data: { propertyName: "bucket-name" },
         },
       ],
     },

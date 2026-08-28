@@ -155,6 +155,28 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       }
       const test = new TestClass('test', 'InvalidId');`,
     },
+    // WHEN: id is snake_case and the instantiated class inherits its constructor
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class InheritedClass extends TestClass {}
+      const test = new InheritedClass("test", "invalid_id");`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class InheritedClass extends TestClass {}
+      const test = new InheritedClass("test", "InvalidId");`,
+    },
     // WHEN: id is snake_case template literal without expressions
     {
       code: `
