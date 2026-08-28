@@ -58,7 +58,8 @@ export const noConstructStackSuffix = createRule({
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
     const checker = parserServices.program.getTypeChecker();
-    const options: Option = context.options[0] ?? defaultOption;
+    // Merge user-supplied options over defaults so `[{}]` behaves like `[]`.
+    const options: Option = { ...defaultOption, ...context.options[0] };
 
     return {
       NewExpression(node) {
