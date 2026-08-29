@@ -12,6 +12,30 @@ ruleTester.run(
   {
     valid: [
       {
+        name: "public field type is class whose declaration-merged base class has no matching interface",
+        code: `
+          class Construct {}
+          class Resource {}
+          export abstract class BaseLoadBalancer extends Resource {
+            constructor() {
+              super();
+            }
+          }
+          // NOTE: declaration merging leaves the base class without a matching read-only interface
+          export interface BaseLoadBalancer {
+            addListener(): void;
+          }
+          export class ApplicationLoadBalancer extends BaseLoadBalancer {
+            constructor() {
+              super();
+            }
+          }
+          class TestClass extends Construct {
+            public loadBalancer: ApplicationLoadBalancer;
+          }
+        `,
+      },
+      {
         name: "field type is not class (string)",
         code: `
           class Construct {}
@@ -204,6 +228,37 @@ ruleTester.run(
       },
     ],
     invalid: [
+      {
+        name: "public field type is class whose declaration-merged base class implements a matching interface (Topic extends TopicBase)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface ITopic {
+            topicArn: string;
+          }
+          export abstract class TopicBase extends Resource implements ITopic {
+            abstract readonly topicArn: string;
+            constructor() {
+              super();
+            }
+          }
+          // NOTE: reproduces the generated CDK augmentation that merges an interface into the base class
+          export interface TopicBase {
+            addSubscription(): void;
+          }
+          export class Topic extends TopicBase {
+            readonly topicArn: string;
+            constructor() {
+              super();
+              this.topicArn = "test-topic";
+            }
+          }
+          class TestClass extends Construct {
+            public topic: Topic;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
       {
         name: "public field type is Record with Construct as value type (Record<string, Bucket>)",
         code: `

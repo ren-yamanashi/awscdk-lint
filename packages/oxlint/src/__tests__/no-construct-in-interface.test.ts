@@ -9,6 +9,29 @@ const ruleTester = new RuleTester({
 ruleTester.run("no-construct-in-interface", noConstructInInterface, {
   valid: [
     {
+      name: "property type is class whose declaration-merged base class has no matching interface",
+      code: `
+      class Resource {}
+      export abstract class BaseLoadBalancer extends Resource {
+        constructor() {
+          super();
+        }
+      }
+      // NOTE: declaration merging leaves the base class without a matching read-only interface
+      export interface BaseLoadBalancer {
+        addListener(): void;
+      }
+      export class ApplicationLoadBalancer extends BaseLoadBalancer {
+        constructor() {
+          super();
+        }
+      }
+      interface MyConstructProps {
+        loadBalancer: ApplicationLoadBalancer;
+      }
+      `,
+    },
+    {
       name: "property type is not class (string)",
       code: `
       interface TestInterface {
@@ -177,6 +200,36 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
     },
   ],
   invalid: [
+    {
+      name: "property type is class whose declaration-merged base class implements a matching interface (Topic extends TopicBase)",
+      code: `
+      class Resource {}
+      interface ITopic {
+        topicArn: string;
+      }
+      export abstract class TopicBase extends Resource implements ITopic {
+        abstract readonly topicArn: string;
+        constructor() {
+          super();
+        }
+      }
+      // NOTE: reproduces the generated CDK augmentation that merges an interface into the base class
+      export interface TopicBase {
+        addSubscription(): void;
+      }
+      export class Topic extends TopicBase {
+        readonly topicArn: string;
+        constructor() {
+          super();
+          this.topicArn = "test-topic";
+        }
+      }
+      interface MyConstructProps {
+        topic: Topic;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
     {
       name: "property type is class that extends Resource (Bucket extends BucketBase)",
       code: `
