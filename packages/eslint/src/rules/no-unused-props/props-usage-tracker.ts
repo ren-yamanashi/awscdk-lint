@@ -84,25 +84,20 @@ export class PropsUsageTracker implements IPropsUsageTracker {
     node: TSESTree.MemberExpression,
     propsParamName: string,
   ): void {
-    // NOTE: Check for props.propertyName or props?.propertyName pattern
-    if (
-      node.object.type === AST_NODE_TYPES.Identifier &&
-      node.object.name === propsParamName &&
-      node.property.type === AST_NODE_TYPES.Identifier
-    ) {
-      this.markAsUsed(node.property.name);
+    // NOTE: props.x / props?.x / props["x"] / props[<other>]
+    if (node.object.type === AST_NODE_TYPES.Identifier && node.object.name === propsParamName) {
+      this.markPropertyFromAccess(node);
       return;
     }
 
-    // NOTE: Check for this.props.propertyName or this.props?.propertyName pattern
+    // NOTE: this.props.x / this.props?.x / this.props["x"] (parameter-property style bindings)
     if (
       node.object.type === AST_NODE_TYPES.MemberExpression &&
       node.object.object.type === AST_NODE_TYPES.ThisExpression &&
       node.object.property.type === AST_NODE_TYPES.Identifier &&
-      node.object.property.name === propsParamName &&
-      node.property.type === AST_NODE_TYPES.Identifier
+      node.object.property.name === propsParamName
     ) {
-      this.markAsUsed(node.property.name);
+      this.markPropertyFromAccess(node);
       return;
     }
   }
@@ -111,7 +106,6 @@ export class PropsUsageTracker implements IPropsUsageTracker {
     node: TSESTree.VariableDeclarator,
     propsParamName: string,
   ): void {
-    // NOTE: Check for destructuring assignment: const { prop1, prop2 } = props
     if (
       node.id.type !== AST_NODE_TYPES.ObjectPattern ||
       node.init?.type !== AST_NODE_TYPES.Identifier ||
@@ -120,9 +114,13 @@ export class PropsUsageTracker implements IPropsUsageTracker {
       return;
     }
 
-    const names = findPropertyNames(node.id.properties);
-    for (const name of names) {
+    for (const name of findPropertyNames(node.id.properties)) {
       this.markAsUsed(name);
+    }
+    // NOTE: `const { a, ...rest } = props` — the rest binding captures the remaining
+    // properties opaquely, so treat them all as used
+    if (node.id.properties.some((p) => p.type === AST_NODE_TYPES.RestElement)) {
+      this.markAllAsUsed();
     }
   }
 
@@ -141,9 +139,28 @@ export class PropsUsageTracker implements IPropsUsageTracker {
     }
 
     this.markAsUsed(node.right.property.name);
+  }
 
-    // NOTE: this.props = props pattern doesn't mark all properties as used
-    // because we still need to check which properties are actually accessed later
+  /**
+   * Marks the property targeted by the given member expression's `property` node. Falls back to
+   * marking all properties when the access is computed with a non-string-literal key.
+   */
+  private markPropertyFromAccess(node: TSESTree.MemberExpression): void {
+    const property = node.property;
+    if (!node.computed && property.type === AST_NODE_TYPES.Identifier) {
+      this.markAsUsed(property.name);
+      return;
+    }
+    if (
+      node.computed &&
+      property.type === AST_NODE_TYPES.Literal &&
+      typeof property.value === "string"
+    ) {
+      this.markAsUsed(property.value);
+      return;
+    }
+    // NOTE: props[variable] / props[expr] — key is opaque, so all properties are treated as used
+    this.markAllAsUsed();
   }
 
   /**

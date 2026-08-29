@@ -2,21 +2,19 @@ import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
 
 import { IPropsUsageTracker } from "../props-usage-tracker";
 import { INodeVisitor } from "./interface/node-visitor";
+import { isTrackedFormForAliasIdentifier } from "./is-tracked-form";
 
 /**
- * Visitor that tracks props usage through variable aliases.
+ * Tracks props usage through variable aliases.
  *
- * When props is assigned to another variable (alias), this visitor:
- * 1. Registers the alias when `const myProps = props` is detected
- * 2. Tracks property access on the alias like `myProps.bucketName`
+ * `const alias = props` registers `alias` and the same tracked-form / whole-escape rules used
+ * for `props` itself are then applied to occurrences of `alias`.
  *
  * @example
  * ```typescript
- * constructor(scope: Construct, id: string, props: MyConstructProps) {
- *   super(scope, id);
- *   const myProps = props;              // <- Alias 'myProps' is registered
- *   console.log(myProps.bucketName);    // <- 'bucketName' is marked as used
- * }
+ * const alias = props;
+ * console.log(alias.bucketName);           // per-property mark
+ * new Bucket(this, "B", alias);            // whole-escape → mark all
  * ```
  */
 export class PropsAliasVisitor implements INodeVisitor {
@@ -29,48 +27,33 @@ export class PropsAliasVisitor implements INodeVisitor {
 
   visitMemberExpression(node: TSESTree.MemberExpression): void {
     this.tracker.markAsUsedForMemberExpression(node, this.propsParamName);
-    /**
-     * NOTE: Check if the object is an alias of props
-     * ```ts
-     * const myProps = props;
-     * console.log(myProps.bucketName); // <- detect this access
-     * ```
-     */
-    if (
-      node.object.type === AST_NODE_TYPES.Identifier &&
-      this.aliases.has(node.object.name) &&
-      node.property.type === AST_NODE_TYPES.Identifier
-    ) {
-      this.tracker.markAsUsed(node.property.name);
+    if (node.object.type === AST_NODE_TYPES.Identifier && this.aliases.has(node.object.name)) {
+      this.tracker.markAsUsedForMemberExpression(node, node.object.name);
+    }
+  }
+
+  visitVariableDeclarator(node: TSESTree.VariableDeclarator): void {
+    // NOTE: `const { x, ...rest } = alias` — mirror the direct destructuring behavior for aliases
+    if (node.init?.type !== AST_NODE_TYPES.Identifier) return;
+    if (this.aliases.has(node.init.name)) {
+      this.tracker.markAsUsedForVariableDeclarator(node, node.init.name);
     }
   }
 
   visitIdentifier(node: TSESTree.Identifier): void {
-    /**
-     * Handles alias registration for props.
-     *
-     * This method detects when props is assigned to a simple variable,
-     * which creates an alias that should be tracked for property access.
-     *
-     * Handled pattern:
-     *
-     * **Variable assignment** (`const myProps = props`):
-     *    - Registers 'myProps' as an alias of props
-     *    - Later access like `myProps.bucketName` will be detected by visitMemberExpression
-     *
-     *    AST structure:
-     *      VariableDeclarator
-     *      ├── id: Identifier (name: "myProps" - the alias to register)
-     *      └── init: Identifier (name: "props")
-     */
-    if (node.name !== this.propsParamName) return;
+    if (node.name === this.propsParamName) {
+      this.registerAliasIfDeclaration(node);
+      return;
+    }
+    if (!this.aliases.has(node.name)) return;
+    if (isTrackedFormForAliasIdentifier(node)) return;
+    this.tracker.markAllAsUsed();
+  }
 
+  private registerAliasIfDeclaration(node: TSESTree.Identifier): void {
     const parent = node.parent;
-    if (!parent) return;
-
-    // NOTE: const myProps = props - track 'myProps' as an alias of props
     if (
-      parent.type === AST_NODE_TYPES.VariableDeclarator &&
+      parent?.type === AST_NODE_TYPES.VariableDeclarator &&
       parent.init === node &&
       parent.id.type === AST_NODE_TYPES.Identifier
     ) {
