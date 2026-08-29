@@ -1,4 +1,10 @@
-import type { ESTree, ParserServices, RuleContext } from "corsa-oxlint";
+import type {
+  CorsaType,
+  CorsaTypeCheckerShape,
+  ESTree,
+  ParserServices,
+  RuleContext,
+} from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
@@ -41,7 +47,7 @@ export const noUnusedProps = createRule({
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        const propsParam = getPropsParam(constructor, parserServices);
+        const propsParam = getPropsParam(constructor, parserServices, checker);
         if (!propsParam) return;
         if (isPropsUsedInSuperCall(constructor, propsParam.identifier.name)) return;
 
@@ -57,7 +63,11 @@ export const noUnusedProps = createRule({
   },
 });
 
-const getPropsParam = (constructor: ESTree.MethodDefinition, parserServices: ParserServices) => {
+const getPropsParam = (
+  constructor: ESTree.MethodDefinition,
+  parserServices: ParserServices,
+  checker: CorsaTypeCheckerShape,
+) => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
 
@@ -76,9 +86,30 @@ const getPropsParam = (constructor: ESTree.MethodDefinition, parserServices: Par
   return {
     identifier,
     reportNode: propsParam,
-    type,
+    type: getNonNullableType(type, checker),
     isParameterProperty,
   };
+};
+
+/**
+ * Removes the nullish members of a props parameter type
+ *
+ * An optional parameter (e.g. `props?: MyConstructProps`) is typed as the union
+ * `MyConstructProps | undefined`, which only exposes the properties shared by every union member
+ * (none). The corsa type checker has no `getNonNullableType`, so the union is unwrapped here.
+ */
+const getNonNullableType = (type: CorsaType, checker: CorsaTypeCheckerShape) => {
+  if (!checker.isUnionType(type)) return type;
+
+  const members = checker.getTypesOfType(type).filter((member) => !isNullishType(member, checker));
+  // NOTE: A union of several non-nullish members keeps the checker's own semantics (the
+  // properties shared by every member), so it is left untouched
+  return members.length === 1 ? members[0] : type;
+};
+
+const isNullishType = (type: CorsaType, checker: CorsaTypeCheckerShape): boolean => {
+  const typeText = checker.typeToString(type);
+  return typeText === "undefined" || typeText === "null";
 };
 
 /**
