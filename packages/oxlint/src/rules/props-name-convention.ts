@@ -2,7 +2,7 @@ import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
-import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -31,7 +31,7 @@ export const propsNameConvention = createRule({
         if (!node.id || !node.superClass) return;
 
         const type = parserServices.getTypeAtLocation(node.superClass);
-        if (!isConstructType(type, checker)) return;
+        if (!isConstructTypeIgnoringSubclasses(type, checker)) return;
 
         // NOTE: check constructor parameter
         const constructor = findConstructor(node);

@@ -1,6 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 
-import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
 export const preferGrantsProperty = createRule({
@@ -36,7 +36,7 @@ export const preferGrantsProperty = createRule({
         const objectNode = node.callee.object;
         const tsNode = parserServices.esTreeNodeToTSNodeMap.get(objectNode);
         const type = checker.getTypeAtLocation(tsNode);
-        if (!isConstructType(type)) return;
+        if (!isConstructTypeIgnoringSubclasses(type)) return;
 
         const grantsProperty = type.getProperty("grants");
         if (!grantsProperty) return;

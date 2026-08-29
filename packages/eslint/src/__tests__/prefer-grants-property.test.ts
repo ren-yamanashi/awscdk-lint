@@ -88,6 +88,25 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
       topic.grants.subscribe();
       `,
     },
+    // WHEN: receiver is a union of two Construct types
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      class Queue extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const target: Topic | Queue;
+      target.grantPublish();
+      `,
+    },
   ],
   invalid: [
     // WHEN: class has grants property with Grants suffix and method exists

@@ -76,6 +76,24 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
       topic.grants.subscribe();
       `,
     },
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      class Queue extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const target: Topic | Queue;
+      target.grantPublish();
+      `,
+    },
   ],
   invalid: [
     {

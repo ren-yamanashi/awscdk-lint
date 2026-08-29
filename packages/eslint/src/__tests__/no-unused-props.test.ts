@@ -1314,5 +1314,25 @@ ruleTester.run("no-unused-props", noUnusedProps, {
       `,
       errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
     },
+    {
+      name: "Class extending Stack: some properties are unused",
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+
+      interface MyStackProps {
+        usedProp: string;
+        unusedProp: string;
+      }
+
+      export class MyStack extends Stack {
+        constructor(scope: Construct, id: string, props: MyStackProps) {
+          super(scope, id);
+          console.log(props.usedProp);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
   ],
 });

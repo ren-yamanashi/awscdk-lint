@@ -271,6 +271,37 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
       }
       `,
     },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class App extends Construct {}
+      class MyStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      const app = new App();
+      new MyStack(app, 1 + "MyStack");
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class MyStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new MyStack(this, id + "MyStack");
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {

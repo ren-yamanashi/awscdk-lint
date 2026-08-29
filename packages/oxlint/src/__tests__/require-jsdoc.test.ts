@@ -140,5 +140,21 @@ ruleTester.run("require-jsdoc", requireJSDoc, {
         },
       ],
     },
+    {
+      // WHEN: Class extending Stack has an undocumented public property
+      code: `
+        class Construct {}
+        class Stack extends Construct {}
+        class MyStack extends Stack {
+          public bucketName: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "bucketName" },
+        },
+      ],
+    },
   ],
 });

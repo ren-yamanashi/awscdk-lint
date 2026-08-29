@@ -1,7 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
-import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
@@ -52,7 +52,7 @@ export const requirePassingThis = createRule({
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
 
-        if (!isConstructType(type, checker) || !node.arguments.length) return;
+        if (!isConstructTypeIgnoringSubclasses(type, checker) || !node.arguments.length) return;
 
         // NOTE: Only flag when inside a Construct/Stack class where `this` is available
         const enclosingClass = findEnclosingClass(node);

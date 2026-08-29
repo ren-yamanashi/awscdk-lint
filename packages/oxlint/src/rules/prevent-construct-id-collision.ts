@@ -2,7 +2,7 @@ import type { ESTree, RuleContext } from "corsa-oxlint";
 
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
-import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
 
@@ -33,7 +33,7 @@ export const preventConstructIdCollision = createRule({
       NewExpression(node) {
         const type = parserServices.getTypeAtLocation(node);
 
-        if (!isConstructType(type, checker) || node.arguments.length < 2) return;
+        if (!isConstructTypeIgnoringSubclasses(type, checker) || node.arguments.length < 2) return;
 
         const calleeType = parserServices.getTypeAtLocation(node.callee);
         const constructorPropertyNames = findConstructorPropertyNames(calleeType, checker);

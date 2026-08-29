@@ -4,6 +4,7 @@ import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
+import { isAppType } from "../core/cdk-construct/type-checker/is-app";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -46,7 +47,9 @@ export const constructConstructorProperty = createRule({
     return {
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructType(type, checker)) return;
+        // NOTE: App and its subclasses take `(props)` instead of `(scope, id)`,
+        // so they can never satisfy this rule
+        if (!isConstructType(type, checker) || isAppType(type, checker)) return;
 
         const constructor = findConstructor(node);
         if (!constructor) return;
@@ -81,7 +84,8 @@ const checkNumOfConstructorProperty = (
 };
 
 /**
- * Checks if the first parameter is named "scope" and of type Construct
+ * Checks if the first parameter is named "scope" and of type Construct.
+ * Every Construct is a valid scope, App / Stage / Stack / CfnOutput included, so no class is ignored.
  */
 const checkFirstParamIsScope = (
   firstParam: ConstructorProperties[0],
@@ -98,6 +102,7 @@ const checkFirstParamIsScope = (
     !isConstructType(
       parserServices.getTypeAtLocation(binding),
       parserServices.program.getTypeChecker(),
+      [],
     )
   ) {
     context.report({

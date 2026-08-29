@@ -12,6 +12,5 @@ export const isResourceType = (
   type: Type,
   ignoredClasses: readonly string[] = [], // App, Stage, CfnOutput, Stack are not extended Resource, so no need to ignore them
 ): boolean => {
-  if (ignoredClasses.includes(type.symbol?.name ?? "")) return false;
-  return isExtendsFromTargetSuperClass(type, ["Resource"], isResourceType);
+  return isExtendsFromTargetSuperClass(type, ["Resource"], ignoredClasses);
 };
