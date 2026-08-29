@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
@@ -27,12 +27,11 @@ export const noConstructInInterface = createRule({
     return {
       TSInterfaceDeclaration(node) {
         for (const property of node.body.body) {
-          if (
-            property.type !== AST_NODE_TYPES.TSPropertySignature ||
-            property.key.type !== AST_NODE_TYPES.Identifier
-          ) {
-            continue;
-          }
+          if (property.type !== AST_NODE_TYPES.TSPropertySignature) continue;
+
+          // NOTE: computed keys cannot be resolved statically, so they are skipped
+          const propertyName = findStaticPropertyName(property.key);
+          if (propertyName === null) continue;
 
           const type = parserServices.getTypeAtLocation(property);
           const result = findTypeOfCdkConstruct(type);
@@ -42,7 +41,7 @@ export const noConstructInInterface = createRule({
               node: property,
               messageId: "invalidInterfaceProperty",
               data: {
-                propertyName: property.key.name,
+                propertyName,
                 typeName: result.symbol.name,
               },
             });
@@ -52,3 +51,19 @@ export const noConstructInInterface = createRule({
     };
   },
 });
+
+/**
+ * Find the static name of a property key
+ * @param key - The key of a property signature
+ * @returns The property name, or null for keys that cannot be resolved statically
+ */
+const findStaticPropertyName = (key: TSESTree.TSPropertySignature["key"]): string | null => {
+  if (key.type === AST_NODE_TYPES.Identifier) return key.name;
+  if (
+    key.type === AST_NODE_TYPES.Literal &&
+    (typeof key.value === "string" || typeof key.value === "number")
+  ) {
+    return String(key.value);
+  }
+  return null;
+};
