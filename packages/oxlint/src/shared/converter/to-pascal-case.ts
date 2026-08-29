@@ -5,7 +5,7 @@
  */
 export const toPascalCase = (str: string): string => {
   return str
-    .split(/[-_\s]/)
+    .split(/[^A-Za-z0-9]+/)
     .map((word) => {
       // Consider camelCase, split by uppercase letters
       return word

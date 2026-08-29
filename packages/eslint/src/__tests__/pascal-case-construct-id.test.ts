@@ -197,5 +197,38 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       }
       const test = new TestClass('test', \`TemplateBucket\`);`,
     },
+    // WHEN: id is separated by a non-alphanumeric symbol (e.g. dot)
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', "my.bucket");`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', "MyBucket");`,
+    },
+    // WHEN: id starts with digits — reported but not fixable (fix must not diverge)
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', "123bucket");`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
   ],
 });

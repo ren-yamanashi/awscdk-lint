@@ -157,5 +157,36 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       }
       const test = new TestClass('test', \`TemplateBucket\`);`,
     },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', "my.bucket");`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', "MyBucket");`,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      const test = new TestClass('test', "123bucket");`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
   ],
 });
