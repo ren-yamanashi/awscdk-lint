@@ -396,6 +396,35 @@ ruleTester.run(
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
       {
+        name: "constructor public property with a default value type is class that extends Resource (Bucket)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          class TestClass extends Construct {
+            constructor(public test: Bucket = undefined!) {
+              super();
+            }
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
         name: "public field type is array of class that extends Resource (Bucket[])",
         code: `
           class Construct {}
