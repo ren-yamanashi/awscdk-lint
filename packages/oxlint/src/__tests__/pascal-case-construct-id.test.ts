@@ -188,5 +188,120 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       errors: [{ messageId: "invalidConstructId" }],
       output: null,
     },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "Logs");
+          new TestClass(props, "logs");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "myBucket");
+          new TestClass(props, "my_bucket");
+          new TestClass(props, "my-bucket");
+          new TestClass(props, "my bucket");
+          new TestClass(props, "my.bucket");
+        }
+      }`,
+      errors: [
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+      ],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "my-bucket");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "MyBucket");
+        }
+      }`,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class FirstConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "my-bucket");
+        }
+      }
+      class SecondConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "my_bucket");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }, { messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class FirstConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "MyBucket");
+        }
+      }
+      class SecondConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "MyBucket");
+        }
+      }`,
+    },
   ],
 });

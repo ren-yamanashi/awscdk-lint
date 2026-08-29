@@ -1,6 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 import { findConstructIdString } from "../core/ast-node/finder/construct-id-string";
+import { findSiblingConstructIdStrings } from "../core/ast-node/finder/sibling-construct-id-strings";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
@@ -76,6 +77,20 @@ const findQuoteType = (node: TSESTree.Node): QuoteType => {
 };
 
 /**
+ * Check whether another construct created in the same body already owns the
+ * converted ID. `toPascalCase` is lossy ("Logs" and "logs" both become "Logs"),
+ * so fixing such an ID would create a duplicate construct ID that throws at
+ * synth time.
+ */
+const isTakenByAnotherConstruct = (node: TSESTree.NewExpression, pascalCaseValue: string) => {
+  // NOTE: Compare against the raw sibling IDs and their converted forms, so that
+  // several case variants of one word are not all fixed onto the same ID either.
+  return findSiblingConstructIdStrings(node).some(
+    (siblingId) => siblingId === pascalCaseValue || toPascalCase(siblingId) === pascalCaseValue,
+  );
+};
+
+/**
  * Check the construct ID is PascalCase
  */
 const validateConstructId = (node: TSESTree.NewExpression, context: Context) => {
@@ -90,8 +105,9 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context) => 
 
   const pascalCaseValue = toPascalCase(constructId);
   // Skip the fix when the converted value would still fail validation
-  // (e.g. leading digits, symbol-only input) so the fix always converges.
-  if (!isPascalCase(pascalCaseValue)) {
+  // (e.g. leading digits, symbol-only input) so the fix always converges,
+  // or when it would collide with another construct ID in the same body.
+  if (!isPascalCase(pascalCaseValue) || isTakenByAnotherConstruct(node, pascalCaseValue)) {
     context.report({ node: secondArg, messageId: "invalidConstructId" });
     return;
   }
