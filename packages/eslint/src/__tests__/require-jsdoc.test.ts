@@ -60,6 +60,59 @@ ruleTester.run("require-jsdoc", requireJSDoc, {
         }
       `,
     },
+    {
+      // WHEN: public parameter property with a JSDoc comment
+      code: `
+        class Construct {}
+        class TestConstruct extends Construct {
+          constructor(
+            scope: Construct,
+            id: string,
+            /**
+             * Description for bucket
+             */
+            public readonly bucket: string,
+          ) {
+            super();
+          }
+        }
+      `,
+    },
+    {
+      // WHEN: parameter property is not public
+      code: `
+        class Construct {}
+        class TestConstruct extends Construct {
+          constructor(
+            scope: Construct,
+            id: string,
+            private readonly bucket: string,
+            protected readonly table: string,
+          ) {
+            super();
+          }
+        }
+      `,
+    },
+    {
+      // WHEN: constructor parameter is not a parameter property
+      code: `
+        class Construct {}
+        class TestConstruct extends Construct {
+          constructor(scope: Construct, id: string, bucket: string) {
+            super();
+          }
+        }
+      `,
+    },
+    {
+      // WHEN: parameter property of a non-Construct class
+      code: `
+        class SampleConstruct {
+          constructor(public readonly bucket: string) {}
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -143,6 +196,53 @@ ruleTester.run("require-jsdoc", requireJSDoc, {
         {
           messageId: "missingJSDoc",
           data: { propertyName: "bucket-name" },
+        },
+      ],
+    },
+    {
+      // WHEN: public parameter property without JSDoc comments
+      code: `
+        class Construct {}
+        class TestConstruct extends Construct {
+          constructor(
+            scope: Construct,
+            id: string,
+            public readonly bucket: string,
+            readonly table: string,
+          ) {
+            super();
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "bucket" },
+        },
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "table" },
+        },
+      ],
+    },
+    {
+      // WHEN: public parameter property with a default value and without JSDoc comments
+      code: `
+        class Construct {}
+        class TestConstruct extends Construct {
+          constructor(
+            scope: Construct,
+            id: string,
+            public readonly bucket: string = "sample",
+          ) {
+            super();
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "bucket" },
         },
       ],
     },

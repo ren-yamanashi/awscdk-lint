@@ -1,6 +1,8 @@
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findAttachedJSDocComments } from "../core/ast-node/finder/attached-jsdoc-comment";
+import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
+import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -87,6 +89,30 @@ export const requireJSDoc = createRule({
           node,
           messageId: "missingJSDoc",
           data: { propertyName },
+        });
+      },
+      TSParameterProperty(node) {
+        // NOTE: TypeScript declares an instance field from a parameter property,
+        // so it is a public property of the class just like a PropertyDefinition
+        if (["private", "protected"].includes(node.accessibility ?? "")) return;
+
+        const identifier = findConstructorParamIdentifier(node);
+        if (!identifier) return;
+
+        // NOTE: Check if the class extends Construct
+        const classDeclaration = findEnclosingClass(node);
+        if (!classDeclaration?.superClass) return;
+
+        const classType = parserServices.getTypeAtLocation(classDeclaration);
+        if (!isConstructType(classType, checker)) return;
+
+        const comments = findAttachedJSDocComments(context.sourceCode, node);
+        if (comments.length > 0) return;
+
+        context.report({
+          node,
+          messageId: "missingJSDoc",
+          data: { propertyName: identifier.name },
         });
       },
     };
