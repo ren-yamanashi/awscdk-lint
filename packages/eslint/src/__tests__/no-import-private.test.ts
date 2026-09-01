@@ -55,11 +55,59 @@ ruleTester.run("no-import-private", noImportPrivate, {
       code: 'import { shared } from "../shared";',
       filename: "src/lib/private/helper/x.ts",
     },
+    {
+      // WHEN: Re-exporting from a same level private directory is allowed
+      code: 'export { sample } from "./private/c.ts";',
+      filename: "src/sampleB/a.ts",
+    },
+    {
+      // WHEN: Re-exporting everything from a same level private directory is allowed
+      code: 'export * from "./private/c.ts";',
+      filename: "src/sampleB/a.ts",
+    },
+    {
+      // WHEN: Bare specifiers are not resolved as filesystem paths on re-exports either
+      code: 'export { x } from "@myorg/private-utils";',
+      filename: "src/moduleA/a.ts",
+    },
+    {
+      // WHEN: A local export declares no module source and pulls in nothing
+      code: "const sample = 1;\nexport { sample };",
+      filename: "src/sampleA/a.ts",
+    },
+    {
+      // WHEN: Dynamically importing from a same level private directory is allowed
+      code: 'export const load = () => import("./private/c.ts");',
+      filename: "src/sampleB/a.ts",
+    },
+    {
+      // WHEN: A dynamic import whose specifier is not a static string cannot be resolved
+      code: "export const load = (specifier) => import(specifier);",
+      filename: "src/sampleA/a.ts",
+    },
   ],
   invalid: [
     // WHEN: Importing modules in a private directory at a different level is not allowed
     {
       code: 'import { sample } from "../sampleB/private/c.ts";',
+      filename: "src/sampleA/a.ts",
+      errors: [{ messageId: "invalidImportPath" }],
+    },
+    // WHEN: Re-exporting from a private directory at a different level is not allowed
+    {
+      code: 'export { sample } from "../sampleB/private/c.ts";',
+      filename: "src/sampleA/a.ts",
+      errors: [{ messageId: "invalidImportPath" }],
+    },
+    // WHEN: Re-exporting everything from a private directory at a different level is not allowed
+    {
+      code: 'export * from "../sampleB/private/c.ts";',
+      filename: "src/sampleA/a.ts",
+      errors: [{ messageId: "invalidImportPath" }],
+    },
+    // WHEN: Dynamically importing from a private directory at a different level is not allowed
+    {
+      code: 'export const load = () => import("../sampleB/private/c.ts");',
       filename: "src/sampleA/a.ts",
       errors: [{ messageId: "invalidImportPath" }],
     },
