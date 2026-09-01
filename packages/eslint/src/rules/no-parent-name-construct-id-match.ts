@@ -1,5 +1,6 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
+import { ESLintUtils, TSESLint, TSESTree } from "@typescript-eslint/utils";
 
+import { findConstructIdString } from "../core/ast-node/finder/construct-id-string";
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isInsideConstructorOrMethod } from "../core/ast-node/finder/enclosing-method";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
@@ -94,11 +95,10 @@ const validateConstructId = ({
 }: ValidateConstructIdArgs): void => {
   // NOTE: Treat the second argument as ID
   const secondArg = node.arguments[1];
-  if (secondArg.type !== AST_NODE_TYPES.Literal || typeof secondArg.value !== "string") {
-    return;
-  }
+  const constructId = findConstructIdString(secondArg);
+  if (constructId === null) return;
 
-  const formattedConstructId = toPascalCase(secondArg.value);
+  const formattedConstructId = toPascalCase(constructId);
   const formattedParentClassName = toPascalCase(parentClassName);
 
   if (
@@ -109,7 +109,7 @@ const validateConstructId = ({
       node: secondArg,
       messageId: "invalidConstructId",
       data: {
-        constructId: secondArg.value,
+        constructId,
         parentConstructName: parentClassName,
       },
     });
@@ -120,7 +120,7 @@ const validateConstructId = ({
       node: secondArg,
       messageId: "invalidConstructId",
       data: {
-        constructId: secondArg.value,
+        constructId,
         parentConstructName: parentClassName,
       },
     });
