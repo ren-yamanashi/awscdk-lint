@@ -105,6 +105,42 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
         }
       }`,
     },
+    // WHEN: construct id is a template literal without expressions
+    //       and does not match parent construct name
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new SampleClass(scope, \`ValidId\`);
+        }
+      }`,
+    },
+    // WHEN: construct id is a template literal with expressions (dynamic)
+    //       and disallowContainingParentName is true
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const suffix = "x";
+          new SampleClass(scope, \`TestClass\${suffix}\`);
+        }
+      }`,
+      options: [{ disallowContainingParentName: true }],
+    },
   ],
   invalid: [
     // WHEN: in method
@@ -380,6 +416,43 @@ ruleTester.run("no-parent-name-construct-id-match", noParentNameConstructIdMatch
         }
       }`,
       errors: [{ messageId: "invalidConstructId" }],
+    },
+    // WHEN: construct id is a template literal without expressions
+    //       and matches parent construct name
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new SampleClass(scope, \`TestClass\`);
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+    },
+    // WHEN: construct id is a template literal without expressions
+    //       that includes parent construct name, and disallowContainingParentName is true
+    {
+      code: `
+      class Construct {}
+      class SampleClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestClass extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new SampleClass(scope, \`SampleTestClass\`);
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      options: [{ disallowContainingParentName: true }],
     },
   ],
 });
