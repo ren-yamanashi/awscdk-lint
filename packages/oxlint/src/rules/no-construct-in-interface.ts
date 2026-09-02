@@ -30,8 +30,9 @@ export const noConstructInInterface = createRule({
         for (const property of node.body.body) {
           if (property.type !== AST_NODE_TYPES.TSPropertySignature) continue;
 
-          // NOTE: computed keys cannot be resolved statically, so they are skipped
-          const propertyName = findStaticPropertyName(property.key);
+          // NOTE: properties whose name cannot be resolved statically (computed keys, etc.)
+          // are out of scope for this rule
+          const propertyName = findStaticPropertyName(property);
           if (propertyName === null) continue;
 
           const type = parserServices.getTypeAtLocation(property);

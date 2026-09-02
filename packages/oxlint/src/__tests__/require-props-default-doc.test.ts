@@ -53,6 +53,23 @@ ruleTester.run("require-props-default-doc", requirePropsDefaultDoc, {
         }
       `,
     },
+    {
+      // WHEN: Optional property has a computed identifier key
+      code: `
+        const nameKey = "name";
+        interface MyConstructProps {
+          [nameKey]?: string;
+        }
+      `,
+    },
+    {
+      // WHEN: Optional property has a computed string literal key
+      code: `
+        interface MyConstructProps {
+          ["bucket-name"]?: string;
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -144,6 +161,20 @@ ruleTester.run("require-props-default-doc", requirePropsDefaultDoc, {
         {
           messageId: "missingDefaultDoc",
           data: { propertyName: "bucket-name" },
+        },
+      ],
+    },
+    {
+      // WHEN: Optional property has numeric literal key without documentation
+      code: `
+        interface MyConstructProps {
+          1?: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingDefaultDoc",
+          data: { propertyName: "1" },
         },
       ],
     },

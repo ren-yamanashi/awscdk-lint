@@ -36,8 +36,9 @@ export const noMutablePropertyOfPropsInterface = createRule({
           // NOTE: Skip if already readonly
           if (property.readonly) continue;
 
-          // NOTE: computed keys cannot be resolved statically, so they are skipped
-          const propertyName = findStaticPropertyName(property.key);
+          // NOTE: properties whose name cannot be resolved statically (computed keys, etc.)
+          // are out of scope for this rule
+          const propertyName = findStaticPropertyName(property);
           if (propertyName === null) continue;
 
           context.report({

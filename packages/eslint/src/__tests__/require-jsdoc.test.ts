@@ -60,6 +60,33 @@ ruleTester.run("require-jsdoc", requireJSDoc, {
         }
       `,
     },
+    {
+      // WHEN: Computed identifier key (the property name is not the key source text)
+      code: `
+        const nameKey = "name";
+        interface TestProps {
+          [nameKey]: string;
+        }
+      `,
+    },
+    {
+      // WHEN: Computed string literal key
+      code: `
+        interface TestProps {
+          ["bucket-name"]: string;
+        }
+      `,
+    },
+    {
+      // WHEN: Computed key on a public property of a Construct class
+      code: `
+        class Construct {}
+        const nameKey = "name";
+        class TestConstruct extends Construct {
+          public [nameKey]: string;
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -143,6 +170,20 @@ ruleTester.run("require-jsdoc", requireJSDoc, {
         {
           messageId: "missingJSDoc",
           data: { propertyName: "bucket-name" },
+        },
+      ],
+    },
+    {
+      // WHEN: numeric literal key without documentation
+      code: `
+        interface TestProps {
+          1: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "missingJSDoc",
+          data: { propertyName: "1" },
         },
       ],
     },
