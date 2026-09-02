@@ -1,6 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { findNonNullableType } from "../core/ts-type/finder/non-nullable-type";
 import { createRule } from "../shared/create-rule";
 
 export const preferGrantsProperty = createRule({
@@ -35,8 +36,13 @@ export const preferGrantsProperty = createRule({
         if (!methodName.startsWith("grant")) return;
 
         const objectNode = node.callee.object;
-        const type = parserServices.getTypeAtLocation(objectNode);
-        if (!type || !isConstructType(type, checker)) return;
+        const receiverType = parserServices.getTypeAtLocation(objectNode);
+        if (!receiverType) return;
+
+        // NOTE: An optional receiver such as `props.topic?.grantPublish()` is typed
+        // `Topic | undefined`, so strip the nullish members before inspecting the Construct.
+        const type = findNonNullableType(receiverType, checker);
+        if (!isConstructType(type, checker)) return;
 
         const grantsProperty = checker.getPropertiesOfType(type).find((s) => s.name === "grants");
         if (!grantsProperty) return;

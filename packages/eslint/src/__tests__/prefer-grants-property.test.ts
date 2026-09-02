@@ -88,6 +88,21 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
       topic.grants.subscribe();
       `,
     },
+    // WHEN: receiver is a union of a Construct and a non-Construct type
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const topic: Topic | string;
+      topic.grantPublish();
+      `,
+    },
   ],
   invalid: [
     // WHEN: class has grants property with Grants suffix and method exists
@@ -118,6 +133,84 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
         grantPublish() {}
       }
       const topic = new Topic();
+      topic.grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: receiver is a required Construct-typed prop
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      interface MyConstructProps {
+        readonly topic: Topic;
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          props.topic.grantPublish();
+        }
+      }
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: receiver is an optional Construct-typed prop accessed with optional chaining
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      interface MyConstructProps {
+        readonly topic?: Topic;
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          props.topic?.grantPublish();
+        }
+      }
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: receiver is a union with void
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const topic: Topic | void;
+      topic.grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: receiver is a union with null
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const topic: Topic | null;
       topic.grantPublish();
       `,
       errors: [{ messageId: "useGrantsProperty" }],
