@@ -10,6 +10,7 @@ import { Type, TypeChecker } from "typescript";
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../../core/ast-node/finder/constructor-param-identifier";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
+import { findNonNullableType } from "../../core/ts-type/finder/non-nullable-type";
 import { createRule } from "../../shared/create-rule";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
@@ -95,7 +96,7 @@ const getPropsParam = (
     // NOTE: An optional parameter (e.g. `props?: MyConstructProps`) is typed as the union
     // `MyConstructProps | undefined`, which only exposes the properties shared by every union
     // member (none). Strip the nullish members so the declared properties are tracked.
-    type: checker.getNonNullableType(parserServices.getTypeAtLocation(identifier)),
+    type: findNonNullableType(parserServices.getTypeAtLocation(identifier), checker),
     isParameterProperty,
   };
 };
