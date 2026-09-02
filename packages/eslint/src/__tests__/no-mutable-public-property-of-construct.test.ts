@@ -80,6 +80,18 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    // WHEN: constructor parameter property with a default value is readonly
+    {
+      code: `
+          class Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public readonly test: DependencyClass = undefined!) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
   ],
   invalid: [
     // WHEN: public field is mutable, nested superClass is Construct
@@ -219,6 +231,28 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           class Construct {}
           class TestClass extends Construct {
             constructor(scope: Construct, id: string, public readonly count) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
+    // WHEN: constructor parameter property is mutable and has a default value
+    {
+      code: `
+          class Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public test: DependencyClass = undefined!) {
+              super(scope, id);
+            }
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public readonly test: DependencyClass = undefined!) {
               super(scope, id);
             }
           }

@@ -160,6 +160,17 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       }
       `,
     },
+    {
+      name: "property key is a string literal and property type is interface (not construct class)",
+      code: `
+      interface IBucket {
+        bucketName: string;
+      }
+      interface MyConstructProps {
+        readonly "quotedBucket": IBucket;
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -889,6 +900,62 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       }
       `,
       errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property key is a string literal and property type is class that extends Resource",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        readonly "quotedBucket": Bucket;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "identifier key and string literal key are reported alike",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        readonly bucket: Bucket;
+        readonly "quotedBucket": Bucket;
+      }
+      `,
+      errors: [
+        { messageId: "invalidInterfaceProperty" },
+        { messageId: "invalidInterfaceProperty" },
+      ],
     },
   ],
 });

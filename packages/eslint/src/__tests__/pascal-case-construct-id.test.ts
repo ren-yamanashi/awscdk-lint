@@ -230,5 +230,124 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
       errors: [{ messageId: "invalidConstructId" }],
       output: null,
     },
+    // WHEN: the converted id is already used by another construct in the same constructor
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "Logs");
+          new TestClass(props, "logs");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    // WHEN: several case variants of one word are used in the same constructor
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "myBucket");
+          new TestClass(props, "my_bucket");
+          new TestClass(props, "my-bucket");
+          new TestClass(props, "my bucket");
+          new TestClass(props, "my.bucket");
+        }
+      }`,
+      errors: [
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+        { messageId: "invalidConstructId" },
+      ],
+      output: null,
+    },
+    // WHEN: the constructor holds no other construct id to collide with
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "my-bucket");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "MyBucket");
+        }
+      }`,
+    },
+    // WHEN: ids converting to the same value live in different constructors
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class FirstConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "my-bucket");
+        }
+      }
+      class SecondConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "my_bucket");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }, { messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class FirstConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "MyBucket");
+        }
+      }
+      class SecondConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "MyBucket");
+        }
+      }`,
+    },
   ],
 });
