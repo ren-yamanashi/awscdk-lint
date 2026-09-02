@@ -1,23 +1,14 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  ParserServicesWithTypeInformation,
-  TSESLint,
-  TSESTree,
-} from "@typescript-eslint/utils";
+import { ESLintUtils, ParserServicesWithTypeInformation, TSESLint } from "@typescript-eslint/utils";
 
-import { findPublicPropertiesInClass } from "../core/ast-node/finder/public-property";
+import {
+  findPublicPropertiesInClass,
+  PublicProperty,
+} from "../core/ast-node/finder/public-property";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
 type Context = TSESLint.RuleContext<"invalidPublicPropertyOfConstruct", []>;
-
-type PublicProperty = {
-  name: string;
-  node: TSESTree.Parameter | TSESTree.ClassElement;
-  typeAnnotation?: TSESTree.TSTypeAnnotation;
-};
 
 /**
  * Disallow Construct types in public property of Construct
@@ -65,11 +56,7 @@ const validatePublicProperty = (
   // NOTE: The declared type is read from the declaration's identifier rather than from the
   // property node, because the identifier resolves consistently for every declaration form
   // (`!`, `?`, initializer) in both type checkers.
-  const typeNode =
-    publicProperty.node.type === AST_NODE_TYPES.PropertyDefinition
-      ? publicProperty.node.key
-      : publicProperty.node;
-  const type = parserServices.getTypeAtLocation(typeNode);
+  const type = parserServices.getTypeAtLocation(publicProperty.node.key);
   const constructType = findTypeOfCdkConstruct(type);
   if (constructType) {
     context.report({

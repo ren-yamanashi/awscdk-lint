@@ -1,4 +1,4 @@
-import { AST_NODE_TYPES, ESLintUtils, TSESLint } from "@typescript-eslint/utils";
+import { ESLintUtils, TSESLint } from "@typescript-eslint/utils";
 
 import {
   findPublicPropertiesInClass,
@@ -62,12 +62,7 @@ const validatePublicProperty = (args: { publicProperty: PublicProperty; context:
     fix: (fixer) => {
       // NOTE: TS modifier order is accessibility -> static -> override -> readonly,
       // so inserting right before the key is always a legal position
-
-      const anchor =
-        publicProperty.node.type === AST_NODE_TYPES.TSParameterProperty
-          ? publicProperty.node.parameter
-          : publicProperty.node.key;
-      return fixer.insertTextBefore(anchor, "readonly ");
+      return fixer.insertTextBefore(publicProperty.node.key, "readonly ");
     },
   });
 };

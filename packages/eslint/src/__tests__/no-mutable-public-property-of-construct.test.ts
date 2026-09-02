@@ -92,6 +92,41 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    // WHEN: constructor parameter property is mutable (parameter properties are out of scope)
+    {
+      code: `
+          class Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public test: DependencyClass) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
+    // WHEN: constructor parameter property is mutable and has a default value
+    {
+      code: `
+          class Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public test: DependencyClass = undefined!) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
+    // WHEN: constructor parameter property is mutable and has no type annotation
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public count) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
   ],
   invalid: [
     // WHEN: public field is mutable, nested superClass is Construct
@@ -213,48 +248,6 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           class Construct {}
           class TestClass extends Construct {
             public readonly inferred = 0;
-          }
-        `,
-    },
-    // WHEN: constructor parameter property is mutable and has no type annotation
-    {
-      code: `
-          class Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public count) {
-              super(scope, id);
-            }
-          }
-        `,
-      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      output: `
-          class Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public readonly count) {
-              super(scope, id);
-            }
-          }
-        `,
-    },
-    // WHEN: constructor parameter property is mutable and has a default value
-    {
-      code: `
-          class Construct {}
-          class DependencyClass extends Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public test: DependencyClass = undefined!) {
-              super(scope, id);
-            }
-          }
-        `,
-      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      output: `
-          class Construct {}
-          class DependencyClass extends Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public readonly test: DependencyClass = undefined!) {
-              super(scope, id);
-            }
           }
         `,
     },

@@ -79,6 +79,38 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    {
+      code: `
+          class Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public test: DependencyClass) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
+    {
+      code: `
+          class Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public test: DependencyClass = undefined!) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
+    {
+      code: `
+          class Construct {}
+          class TestClass extends Construct {
+            constructor(scope: Construct, id: string, public count) {
+              super(scope, id);
+            }
+          }
+        `,
+    },
   ],
   invalid: [
     {
@@ -193,46 +225,6 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           class Construct {}
           class TestClass extends Construct {
             public readonly inferred = 0;
-          }
-        `,
-    },
-    {
-      code: `
-          class Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public count) {
-              super(scope, id);
-            }
-          }
-        `,
-      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      output: `
-          class Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public readonly count) {
-              super(scope, id);
-            }
-          }
-        `,
-    },
-    {
-      code: `
-          class Construct {}
-          class DependencyClass extends Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public test: DependencyClass = undefined!) {
-              super(scope, id);
-            }
-          }
-        `,
-      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
-      output: `
-          class Construct {}
-          class DependencyClass extends Construct {}
-          class TestClass extends Construct {
-            constructor(scope: Construct, id: string, public readonly test: DependencyClass = undefined!) {
-              super(scope, id);
-            }
           }
         `,
     },
