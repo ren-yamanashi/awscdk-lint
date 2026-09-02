@@ -1,5 +1,6 @@
-import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES } from "@typescript-eslint/utils";
 
+import { findStaticPropertyName } from "../core/ast-node/finder/static-property-key";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -57,19 +58,3 @@ export const noMutablePropertyOfPropsInterface = createRule({
     };
   },
 });
-
-/**
- * Find the static name of a property key
- * @param key - The key of a property signature
- * @returns The property name, or null for keys that cannot be resolved statically
- */
-const findStaticPropertyName = (key: TSESTree.TSPropertySignature["key"]): string | null => {
-  if (key.type === AST_NODE_TYPES.Identifier) return key.name;
-  if (
-    key.type === AST_NODE_TYPES.Literal &&
-    (typeof key.value === "string" || typeof key.value === "number")
-  ) {
-    return String(key.value);
-  }
-  return null;
-};
