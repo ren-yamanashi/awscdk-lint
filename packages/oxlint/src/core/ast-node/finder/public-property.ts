@@ -3,6 +3,7 @@ import type { ESTree } from "corsa-oxlint";
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
 import { findConstructor } from "./constructor";
+import { findConstructorParamIdentifier } from "./constructor-param-identifier";
 
 type Class = ESTree.ClassDeclaration | ESTree.ClassExpression;
 
@@ -42,12 +43,14 @@ const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined =
   switch (property.type) {
     // NOTE: get from constructor
     case AST_NODE_TYPES.TSParameterProperty: {
-      if (property.parameter.type !== AST_NODE_TYPES.Identifier) return;
+      // NOTE: a default value wraps the binding in an AssignmentPattern, so unwrap it first
+      const identifier = findConstructorParamIdentifier(property);
+      if (!identifier) return;
       if (["private", "protected"].includes(property.accessibility ?? "")) return;
       return {
-        name: property.parameter.name,
+        name: identifier.name,
         node: property,
-        typeAnnotation: property.parameter.typeAnnotation,
+        typeAnnotation: identifier.typeAnnotation,
       };
     }
     case AST_NODE_TYPES.PropertyDefinition: {

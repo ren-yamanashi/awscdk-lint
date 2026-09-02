@@ -1,5 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
+import { findStaticPropertyName } from "../core/ast-node/finder/static-property-key";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
@@ -27,12 +28,11 @@ export const noConstructInInterface = createRule({
     return {
       TSInterfaceDeclaration(node) {
         for (const property of node.body.body) {
-          if (
-            property.type !== AST_NODE_TYPES.TSPropertySignature ||
-            property.key.type !== AST_NODE_TYPES.Identifier
-          ) {
-            continue;
-          }
+          if (property.type !== AST_NODE_TYPES.TSPropertySignature) continue;
+
+          // NOTE: computed keys cannot be resolved statically, so they are skipped
+          const propertyName = findStaticPropertyName(property.key);
+          if (propertyName === null) continue;
 
           const type = parserServices.getTypeAtLocation(property);
           const result = findTypeOfCdkConstruct(type);
@@ -42,7 +42,7 @@ export const noConstructInInterface = createRule({
               node: property,
               messageId: "invalidInterfaceProperty",
               data: {
-                propertyName: property.key.name,
+                propertyName,
                 typeName: result.symbol.name,
               },
             });

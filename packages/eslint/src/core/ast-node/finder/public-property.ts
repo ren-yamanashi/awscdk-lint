@@ -1,6 +1,7 @@
 import { AST_NODE_TYPES, TSESTree } from "@typescript-eslint/utils";
 
 import { findConstructor } from "./constructor";
+import { findConstructorParamIdentifier } from "./constructor-param-identifier";
 
 export type PublicProperty = {
   /**
@@ -43,16 +44,18 @@ const findPublicProperty = (
   switch (property.type) {
     // NOTE: get from constructor
     case AST_NODE_TYPES.TSParameterProperty: {
-      if (property.parameter.type !== AST_NODE_TYPES.Identifier) {
+      // NOTE: a default value wraps the binding in an AssignmentPattern, so unwrap it first
+      const identifier = findConstructorParamIdentifier(property);
+      if (!identifier) {
         return;
       }
       if (["private", "protected"].includes(property.accessibility ?? "")) {
         return;
       }
       return {
-        name: property.parameter.name,
+        name: identifier.name,
         node: property,
-        typeAnnotation: property.parameter.typeAnnotation,
+        typeAnnotation: identifier.typeAnnotation,
       };
     }
     // NOTE: get from class element
