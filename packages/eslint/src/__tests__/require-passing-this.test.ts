@@ -187,6 +187,51 @@ ruleTester.run("require-passing-this", requirePassingThis, {
       `,
       options: [{}],
     },
+    // WHEN: a Stack subclass is instantiated at the top level (no enclosing class)
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class App extends Construct {}
+      class SampleStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      const app = new App();
+      new SampleStack(app, "Sample");
+      `,
+    },
+    // WHEN: App is instantiated with a props object at the top level
+    {
+      code: `
+      class Construct {}
+      class App extends Construct {
+        constructor(props: object) {
+          super();
+        }
+      }
+      const app = new App({});
+      `,
+    },
+    // WHEN: a Stack subclass is instantiated with 'scope' inside a Construct class
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class SampleStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new SampleStack(scope, "Sample");
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     // WHEN: passing 'scope' variable

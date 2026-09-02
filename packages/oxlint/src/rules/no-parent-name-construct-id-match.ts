@@ -5,7 +5,7 @@ import { ESLintUtils } from "corsa-oxlint";
 import { findConstructIdString } from "../core/ast-node/finder/construct-id-string";
 import { findEnclosingClass } from "../core/ast-node/finder/enclosing-class";
 import { isInsideConstructorOrMethod } from "../core/ast-node/finder/enclosing-method";
-import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
 import { toPascalCase } from "../shared/converter/to-pascal-case";
 import { createRule } from "../shared/create-rule";
@@ -57,7 +57,7 @@ export const noParentNameConstructIdMatch = createRule({
         if (node.arguments.length < 2) return;
 
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructType(type, checker)) return;
+        if (!isConstructTypeIgnoringSubclasses(type, checker)) return;
 
         // NOTE: nested closures do not have a stable "parent class" relationship
         if (!isInsideConstructorOrMethod(node)) return;

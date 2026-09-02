@@ -148,6 +148,48 @@ ruleTester.run("require-passing-this", requirePassingThis, {
       `,
       options: [{}],
     },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class App extends Construct {}
+      class SampleStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      const app = new App();
+      new SampleStack(app, "Sample");
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+      class App extends Construct {
+        constructor(props: object) {
+          super();
+        }
+      }
+      const app = new App({});
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class SampleStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class TestConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new SampleStack(scope, "Sample");
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {

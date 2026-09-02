@@ -72,6 +72,37 @@ ruleTester.run("props-name-convention", propsNameConvention, {
         }
       `,
     },
+    {
+      // WHEN: Class extends Stack (this rule applies to Construct classes only)
+      code: `
+        class Construct {}
+        class Stack extends Construct {}
+        interface WrongProps {
+          readonly bucket?: string;
+        }
+        class MyStack extends Stack {
+          constructor(scope: Construct, id: string, props: WrongProps) {
+            super(scope, id);
+          }
+        }
+      `,
+    },
+    {
+      // WHEN: Class extends a user-defined Stack base class (the whole Stack subtree is out of scope)
+      code: `
+        class Construct {}
+        class Stack extends Construct {}
+        class MyBaseStack extends Stack {}
+        interface WrongProps {
+          readonly bucket?: string;
+        }
+        class MyStack extends MyBaseStack {
+          constructor(scope: Construct, id: string, props: WrongProps) {
+            super(scope, id);
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     {

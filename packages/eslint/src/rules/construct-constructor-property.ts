@@ -8,6 +8,7 @@ import {
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
+import { isAppType } from "../core/cdk-construct/type-checker/is-app";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -51,7 +52,9 @@ export const constructConstructorProperty = createRule({
     return {
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructType(type)) return;
+        // NOTE: App and its subclasses take `(props)` instead of `(scope, id)`,
+        // so they can never satisfy this rule
+        if (!isConstructType(type) || isAppType(type)) return;
 
         const constructor = findConstructor(node);
         if (!constructor) return;
@@ -86,7 +89,8 @@ const checkNumOfConstructorProperty = (
 };
 
 /**
- * Checks if the first parameter is named "scope" and of type Construct
+ * Checks if the first parameter is named "scope" and of type Construct.
+ * Every Construct is a valid scope, App / Stage / Stack / CfnOutput included, so no class is ignored.
  */
 const checkFirstParamIsScope = (
   firstParam: ConstructorProperties[0],
@@ -99,7 +103,7 @@ const checkFirstParamIsScope = (
       node: firstParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (!isConstructType(parserServices.getTypeAtLocation(binding))) {
+  } else if (!isConstructType(parserServices.getTypeAtLocation(binding), [])) {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorType",

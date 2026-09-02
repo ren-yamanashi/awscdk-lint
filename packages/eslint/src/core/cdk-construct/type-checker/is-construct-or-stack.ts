@@ -12,6 +12,5 @@ export const isConstructOrStackType = (
   type: Type,
   ignoredClasses: readonly string[] = ["App", "Stage", "CfnOutput"] as const,
 ): boolean => {
-  if (ignoredClasses.includes(type.symbol?.name ?? "")) return false;
-  return isExtendsFromTargetSuperClass(type, ["Construct", "Stack"], isConstructOrStackType);
+  return isExtendsFromTargetSuperClass(type, ["Construct", "Stack"], ignoredClasses);
 };

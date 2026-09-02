@@ -294,6 +294,39 @@ ruleTester.run("no-variable-construct-id", noVariableConstructId, {
       }
       `,
     },
+    // WHEN: a Stack subclass is instantiated with a variable id at the top level
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class App extends Construct {}
+      class MyStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      const app = new App();
+      new MyStack(app, 1 + "MyStack");
+      `,
+    },
+    // WHEN: a Stack subclass is instantiated with a variable id inside a Construct class
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class MyStack extends Stack {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class SampleConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          new MyStack(this, id + "MyStack");
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     // WHEN: id is variable

@@ -137,6 +137,51 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       }
       `,
     },
+    {
+      name: "class extends App, whose constructor takes props instead of scope and id",
+      code: `
+      class Construct {}
+      interface AppProps {}
+      class App extends Construct {
+        constructor(props?: AppProps) {
+          super();
+        }
+      }
+
+      export class MyApp extends App {
+        constructor(props?: AppProps) {
+          super(props);
+        }
+      }
+      `,
+    },
+    {
+      name: "first parameter is typed as Stack",
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Stack, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
+    {
+      name: "first parameter is typed as a Stack subclass",
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      class MyStack extends Stack {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: MyStack, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -278,6 +323,23 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       `,
       errors: [
         { messageId: "invalidConstructorProperty" },
+        { messageId: "invalidConstructorProperty" },
+        { messageId: "invalidConstructorProperty" },
+      ],
+    },
+    {
+      name: "class extending Stack has invalid constructor property names",
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+
+      export class BadStack extends Stack {
+        constructor(myScope: Construct, myId: string) {
+          super(myScope, myId);
+        }
+      }
+      `,
+      errors: [
         { messageId: "invalidConstructorProperty" },
         { messageId: "invalidConstructorProperty" },
       ],
