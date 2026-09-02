@@ -305,5 +305,82 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
       `,
       errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
     },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const stacks = [new Stack(this, "StackA"), new Stack(this, "StackB")];
+          for (const stack of stacks) {
+            new Bucket(stack, "Bucket");
+          }
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const stacks = [new Stack(this, "StackA"), new Stack(this, "StackB")];
+          stacks.forEach((stack) => {
+            new Bucket(stack, "Bucket");
+          });
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          for (const stage of ["dev", "prod"]) {
+            const stack = new Stack(this, \`\${stage}Stack\`);
+            for (const name of ["a", "b"]) {
+              new Bucket(stack, "Bucket");
+            }
+          }
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
   ],
 });
