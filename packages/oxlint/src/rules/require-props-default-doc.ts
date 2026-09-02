@@ -4,6 +4,7 @@ import {
   findAttachedJSDocComments,
   hasDefaultTag,
 } from "../core/ast-node/finder/attached-jsdoc-comment";
+import { findStaticPropertyName } from "../core/ast-node/finder/static-property-key";
 import { createRule } from "../shared/create-rule";
 
 /**
@@ -27,13 +28,10 @@ export const requirePropsDefaultDoc = createRule({
   create(context) {
     return {
       TSPropertySignature(node) {
-        // NOTE: Only Identifier / Literal (string or numeric) keys are checked.
-        if (
-          node.key.type !== AST_NODE_TYPES.Identifier &&
-          node.key.type !== AST_NODE_TYPES.Literal
-        ) {
-          return;
-        }
+        // NOTE: properties whose name cannot be resolved statically (computed keys, etc.)
+        // are out of scope for this rule
+        const propertyName = findStaticPropertyName(node);
+        if (propertyName === null) return;
 
         // NOTE: Check if the property is optional
         if (!node.optional) return;
@@ -48,8 +46,6 @@ export const requirePropsDefaultDoc = createRule({
         const comments = findAttachedJSDocComments(context.sourceCode, node);
         if (hasDefaultTag(comments)) return;
 
-        const propertyName =
-          node.key.type === AST_NODE_TYPES.Identifier ? node.key.name : String(node.key.value);
         context.report({
           node,
           messageId: "missingDefaultDoc",

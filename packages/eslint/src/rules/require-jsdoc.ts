@@ -1,6 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
 import { findAttachedJSDocComments } from "../core/ast-node/finder/attached-jsdoc-comment";
+import { findStaticPropertyName } from "../core/ast-node/finder/static-property-key";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
@@ -27,12 +28,10 @@ export const requireJSDoc = createRule({
     const parserServices = ESLintUtils.getParserServices(context);
     return {
       TSPropertySignature(node) {
-        if (
-          node.key.type !== AST_NODE_TYPES.Identifier &&
-          node.key.type !== AST_NODE_TYPES.Literal
-        ) {
-          return;
-        }
+        // NOTE: properties whose name cannot be resolved statically (computed keys, etc.)
+        // are out of scope for this rule
+        const propertyName = findStaticPropertyName(node);
+        if (propertyName === null) return;
 
         // NOTE: Check if the parent is an interface
         const parent = node.parent.parent;
@@ -44,8 +43,6 @@ export const requireJSDoc = createRule({
         const comments = findAttachedJSDocComments(context.sourceCode, node);
         if (comments.length > 0) return;
 
-        const propertyName =
-          node.key.type === AST_NODE_TYPES.Identifier ? node.key.name : String(node.key.value);
         context.report({
           node,
           messageId: "missingJSDoc",
@@ -53,13 +50,12 @@ export const requireJSDoc = createRule({
         });
       },
       PropertyDefinition(node) {
-        if (
-          (node.key.type !== AST_NODE_TYPES.Identifier &&
-            node.key.type !== AST_NODE_TYPES.Literal) ||
-          node.parent.type !== AST_NODE_TYPES.ClassBody
-        ) {
-          return;
-        }
+        if (node.parent.type !== AST_NODE_TYPES.ClassBody) return;
+
+        // NOTE: properties whose name cannot be resolved statically (computed keys, etc.)
+        // are out of scope for this rule
+        const propertyName = findStaticPropertyName(node);
+        if (propertyName === null) return;
 
         // NOTE: Check if the class extends Construct
         const classDeclaration = node.parent.parent;
@@ -80,8 +76,6 @@ export const requireJSDoc = createRule({
         const comments = findAttachedJSDocComments(context.sourceCode, node);
         if (comments.length > 0) return;
 
-        const propertyName =
-          node.key.type === AST_NODE_TYPES.Identifier ? node.key.name : String(node.key.value);
         context.report({
           node,
           messageId: "missingJSDoc",

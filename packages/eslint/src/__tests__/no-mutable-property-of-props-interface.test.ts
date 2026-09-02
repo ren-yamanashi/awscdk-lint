@@ -50,6 +50,23 @@ ruleTester.run("no-mutable-property-of-props-interface", noMutablePropertyOfProp
         }
       `,
     },
+    // WHEN: Computed identifier key (the property name is not the key source text)
+    {
+      code: `
+        const nameKey = "name";
+        interface ComputedKeyProps {
+          [nameKey]: string;
+        }
+      `,
+    },
+    // WHEN: Computed string literal key
+    {
+      code: `
+        interface ComputedKeyProps {
+          ["bucket-name"]: string;
+        }
+      `,
+    },
   ],
   invalid: [
     // WHEN: readonly is not set
@@ -123,6 +140,25 @@ ruleTester.run("no-mutable-property-of-props-interface", noMutablePropertyOfProp
       errors: [
         { messageId: "invalidPropertyOfPropsInterface" },
         { messageId: "invalidPropertyOfPropsInterface" },
+      ],
+    },
+    // WHEN: Numeric literal property key does not have readonly
+    {
+      code: `
+        interface NumericKeyProps {
+          1: string;
+        }
+      `,
+      output: `
+        interface NumericKeyProps {
+          readonly 1: string;
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropertyOfPropsInterface",
+          data: { propertyName: "1" },
+        },
       ],
     },
   ],

@@ -209,6 +209,57 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       }
       `,
     },
+    {
+      name: "computed identifier key is skipped even when the property type is a construct class",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      const bucketKey = "bucket";
+      interface MyConstructProps {
+        readonly [bucketKey]: Bucket;
+      }
+      `,
+    },
+    {
+      name: "computed string literal key is skipped even when the property type is a construct class",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        readonly ["quotedBucket"]: Bucket;
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -993,6 +1044,37 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       errors: [
         { messageId: "invalidInterfaceProperty" },
         { messageId: "invalidInterfaceProperty" },
+      ],
+    },
+    {
+      name: "numeric literal key is reported under its stringified value",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        readonly 1: Bucket;
+      }
+      `,
+      errors: [
+        {
+          messageId: "invalidInterfaceProperty",
+          data: { propertyName: "1", typeName: "Bucket" },
+        },
       ],
     },
   ],
