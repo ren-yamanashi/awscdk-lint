@@ -2,9 +2,6 @@ import type { ESTree } from "corsa-oxlint";
 
 import { AST_NODE_TYPES } from "corsa-oxlint";
 
-import { findConstructor } from "./constructor";
-import { findConstructorParamIdentifier } from "./constructor-param-identifier";
-
 type Class = ESTree.ClassDeclaration | ESTree.ClassExpression;
 
 export type PublicProperty = {
@@ -15,7 +12,7 @@ export type PublicProperty = {
   /**
    * AST node representing the public property
    */
-  node: ESTree.TSParameterProperty | ESTree.PropertyDefinition;
+  node: ESTree.PropertyDefinition;
   /**
    * Type annotation attached to the property, if any.
    * Absent when the property has no explicit annotation (e.g. `public foo = 0;`).
@@ -23,44 +20,23 @@ export type PublicProperty = {
   typeAnnotation?: ESTree.TSTypeAnnotation | null;
 };
 
+/**
+ * Collects the public properties declared as class elements.
+ *
+ * NOTE: constructor parameter properties are intentionally out of scope for the public-property
+ * rules, so they are not collected here.
+ */
 export const findPublicPropertiesInClass = (node: Class): PublicProperty[] => {
-  const constructorProperties = findPropertiesInConstructor(node);
-  const classElementProperties = findPropertiesInClassElement(node);
-  return [...constructorProperties, ...classElementProperties];
-};
-
-const findPropertiesInConstructor = (node: Class) => {
-  const constructor = findConstructor(node);
-  if (!constructor) return [];
-  return constructor.value.params.flatMap((property) => findPublicProperty(property) ?? []);
-};
-
-const findPropertiesInClassElement = (node: Class): PublicProperty[] => {
   return node.body.body.flatMap((property) => findPublicProperty(property) ?? []);
 };
 
-const findPublicProperty = (property: ESTree.Node): PublicProperty | undefined => {
-  switch (property.type) {
-    // NOTE: get from constructor
-    case AST_NODE_TYPES.TSParameterProperty: {
-      // NOTE: a default value wraps the binding in an AssignmentPattern, so unwrap it first
-      const identifier = findConstructorParamIdentifier(property);
-      if (!identifier) return;
-      if (["private", "protected"].includes(property.accessibility ?? "")) return;
-      return {
-        name: identifier.name,
-        node: property,
-        typeAnnotation: identifier.typeAnnotation,
-      };
-    }
-    case AST_NODE_TYPES.PropertyDefinition: {
-      if (property.key.type !== AST_NODE_TYPES.Identifier) return;
-      if (["private", "protected"].includes(property.accessibility ?? "")) return;
-      return {
-        name: property.key.name,
-        node: property,
-        typeAnnotation: property.typeAnnotation,
-      };
-    }
-  }
+const findPublicProperty = (property: ESTree.ClassElement): PublicProperty | undefined => {
+  if (property.type !== AST_NODE_TYPES.PropertyDefinition) return;
+  if (property.key.type !== AST_NODE_TYPES.Identifier) return;
+  if (["private", "protected"].includes(property.accessibility ?? "")) return;
+  return {
+    name: property.key.name,
+    node: property,
+    typeAnnotation: property.typeAnnotation,
+  };
 };
