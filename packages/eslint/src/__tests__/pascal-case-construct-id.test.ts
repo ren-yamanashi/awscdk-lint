@@ -349,5 +349,166 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
         }
       }`,
     },
+    // WHEN: a construct created in an arrow callback converts to an id the constructor already uses
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "Logs");
+          ["a"].forEach(() => {
+            new TestClass(props, "logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    // WHEN: an arrow callback holds the id the converted value would take
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "logs");
+          ["a"].forEach(() => {
+            new TestClass(props, "Logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    // WHEN: a construct created in a function-expression callback converts to an id
+    //       the constructor already uses
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "Logs");
+          ["a"].forEach(function () {
+            new TestClass(props, "logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    // WHEN: a function-expression callback holds the id the converted value would take
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "logs");
+          ["a"].forEach(function () {
+            new TestClass(props, "Logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    // WHEN: the converted id is already used by a class property initializer
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        private readonly logs = new TestClass(undefined, "Logs");
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "logs");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    // WHEN: an unrelated class holds the converted id — the sibling scan does not
+    //       resolve callee types, so the fix is withheld on the safe side
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class NotAConstruct {
+        constructor(name: string, label: string) {}
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new NotAConstruct("x", "Logs");
+          new TestClass(props, "logs");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    // WHEN: a construct created in an iteration callback has no id to collide with
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          ["a"].forEach(() => {
+            new TestClass(props, "my-bucket");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          ["a"].forEach(() => {
+            new TestClass(props, "MyBucket");
+          });
+        }
+      }`,
+    },
   ],
 });

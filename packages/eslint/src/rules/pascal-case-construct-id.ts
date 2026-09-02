@@ -77,14 +77,17 @@ const findQuoteType = (node: TSESTree.Node): QuoteType => {
 };
 
 /**
- * Check whether another construct created in the same body already owns the
- * converted ID. `toPascalCase` is lossy ("Logs" and "logs" both become "Logs"),
- * so fixing such an ID would create a duplicate construct ID that throws at
- * synth time.
+ * Check whether another construct created in the same class body or function
+ * body already owns the converted ID. `toPascalCase` is lossy ("Logs" and
+ * "logs" both become "Logs"), so fixing such an ID would create a duplicate
+ * construct ID that throws at synth time.
  */
 const isTakenByAnotherConstruct = (node: TSESTree.NewExpression, pascalCaseValue: string) => {
   // NOTE: Compare against the raw sibling IDs and their converted forms, so that
   // several case variants of one word are not all fixed onto the same ID either.
+  // The sibling scan only approximates the scope, so a `new` expression of an
+  // unrelated class can withhold the fix. Reporting without a fix is the safe
+  // direction, so the approximation is kept on the conservative side.
   return findSiblingConstructIdStrings(node).some(
     (siblingId) => siblingId === pascalCaseValue || toPascalCase(siblingId) === pascalCaseValue,
   );
@@ -106,7 +109,8 @@ const validateConstructId = (node: TSESTree.NewExpression, context: Context) => 
   const pascalCaseValue = toPascalCase(constructId);
   // Skip the fix when the converted value would still fail validation
   // (e.g. leading digits, symbol-only input) so the fix always converges,
-  // or when it would collide with another construct ID in the same body.
+  // or when it would collide with another construct ID in the same class body or
+  // function body.
   if (!isPascalCase(pascalCaseValue) || isTakenByAnotherConstruct(node, pascalCaseValue)) {
     context.report({ node: secondArg, messageId: "invalidConstructId" });
     return;

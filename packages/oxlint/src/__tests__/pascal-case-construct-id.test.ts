@@ -303,5 +303,157 @@ ruleTester.run("pascal-case-construct-id", pascalCaseConstructId, {
         }
       }`,
     },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "Logs");
+          ["a"].forEach(() => {
+            new TestClass(props, "logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "logs");
+          ["a"].forEach(() => {
+            new TestClass(props, "Logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "Logs");
+          ["a"].forEach(function () {
+            new TestClass(props, "logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "logs");
+          ["a"].forEach(function () {
+            new TestClass(props, "Logs");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        private readonly logs = new TestClass(undefined, "Logs");
+        constructor(props: any, id: string) {
+          super(props, id);
+          new TestClass(props, "logs");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class NotAConstruct {
+        constructor(name: string, label: string) {}
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          new NotAConstruct("x", "Logs");
+          new TestClass(props, "logs");
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: null,
+    },
+    {
+      code: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          ["a"].forEach(() => {
+            new TestClass(props, "my-bucket");
+          });
+        }
+      }`,
+      errors: [{ messageId: "invalidConstructId" }],
+      output: `
+      class Construct {}
+      class TestClass extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+        }
+      }
+      class ParentConstruct extends Construct {
+        constructor(props: any, id: string) {
+          super(props, id);
+          ["a"].forEach(() => {
+            new TestClass(props, "MyBucket");
+          });
+        }
+      }`,
+    },
   ],
 });
