@@ -1,6 +1,6 @@
 import type { ParserServices, RuleContext } from "corsa-oxlint";
 
-import { ESLintUtils } from "corsa-oxlint";
+import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import {
   findPublicPropertiesInClass,
@@ -53,7 +53,14 @@ const validatePublicProperty = (
   // Inferring the type from an initializer is out of scope for this rule.
   if (!publicProperty.typeAnnotation) return;
 
-  const type = parserServices.getTypeAtLocation(publicProperty.node);
+  // NOTE: The declared type is read from the declaration's identifier rather than from the
+  // property node, because the identifier resolves consistently for every declaration form
+  // (`!`, `?`, initializer) in both type checkers.
+  const typeNode =
+    publicProperty.node.type === AST_NODE_TYPES.PropertyDefinition
+      ? publicProperty.node.key
+      : publicProperty.node;
+  const type = parserServices.getTypeAtLocation(typeNode);
   const checker = parserServices.program.getTypeChecker();
   const constructType = findTypeOfCdkConstruct(type, checker);
   if (constructType) {
