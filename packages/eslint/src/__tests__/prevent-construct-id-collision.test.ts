@@ -258,6 +258,58 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
       }
       `,
     },
+    // WHEN: Construct scope is created inside a for...of loop
+    {
+      name: "literal ID with a scope created inside for...of is valid",
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          for (const stage of ["dev", "prod"]) {
+            const stack = new Stack(this, \`\${stage}Stack\`);
+            new Bucket(stack, "Bucket");
+          }
+        }
+      }
+      `,
+    },
+    // WHEN: Construct scope is created inside a forEach callback
+    {
+      name: "literal ID with a scope created inside forEach is valid",
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          ["dev", "prod"].forEach((stage) => {
+            const stack = new Stack(this, \`\${stage}Stack\`);
+            new Bucket(stack, "Bucket");
+          });
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     // WHEN: Literal ID inside forEach
@@ -520,6 +572,116 @@ ruleTester.run("prevent-construct-id-collision", preventConstructIdCollision, {
           super(scope, id);
           for (let i = 0; i < 3; i++) {
             [1, 2, 3].forEach(() => new Bucket(this, "Bucket"));
+          }
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
+    // WHEN: Literal ID with a scope declared outside the loop
+    {
+      name: "literal ID with a scope declared outside the loop is invalid",
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const stack = new Stack(this, "Stack");
+          for (const stage of ["dev", "prod"]) {
+            new Bucket(stack, "Bucket");
+          }
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
+    // WHEN: Literal ID with the loop binding as scope
+    {
+      name: "literal ID with the loop binding as scope is invalid",
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const stacks = [new Stack(this, "StackA"), new Stack(this, "StackB")];
+          for (const stack of stacks) {
+            new Bucket(stack, "Bucket");
+          }
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
+    // WHEN: Literal ID with an iteration callback parameter as scope
+    {
+      name: "literal ID with an iteration callback parameter as scope is invalid",
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          const stacks = [new Stack(this, "StackA"), new Stack(this, "StackB")];
+          stacks.forEach((stack) => {
+            new Bucket(stack, "Bucket");
+          });
+        }
+      }
+      `,
+      errors: [{ messageId: "preventConstructIdCollision", data: { constructId: "Bucket" } }],
+    },
+    // WHEN: Literal ID in an inner loop with a scope declared in the outer loop
+    {
+      name: "literal ID with a scope declared in the outer loop is invalid",
+      code: `
+      class Construct {}
+      class Stack extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class Bucket extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+        }
+      }
+      class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string) {
+          super(scope, id);
+          for (const stage of ["dev", "prod"]) {
+            const stack = new Stack(this, \`\${stage}Stack\`);
+            for (const name of ["a", "b"]) {
+              new Bucket(stack, "Bucket");
+            }
           }
         }
       }

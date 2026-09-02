@@ -1,5 +1,7 @@
 import { AST_NODE_TYPES, ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 
+import { isDeclaredInEnclosingBlocks } from "../core/ast-node/finder/declared-in-enclosing-blocks";
+import { findEnclosingLoopBody } from "../core/ast-node/finder/enclosing-loop-body";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findConstructorPropertyNames } from "../core/ts-type/finder/constructor-property-name";
 import { createRule } from "../shared/create-rule";
@@ -49,7 +51,12 @@ const validateConstructIdInLoop = (
   node: TSESTree.NewExpression,
   context: Parameters<typeof preventConstructIdCollision.create>[0],
 ) => {
-  if (!isInsideLoop(node)) return;
+  const loopBody = findEnclosingLoopBody(node);
+  if (!loopBody) return;
+
+  // NOTE: A scope declared inside the loop body is re-created on every iteration,
+  // so a literal ID cannot collide within it
+  if (isScopeDeclaredInLoopBody(node.arguments[0], loopBody)) return;
 
   const secondArg = node.arguments[1];
 
@@ -76,71 +83,14 @@ const validateConstructIdInLoop = (
 };
 
 /**
- * Check whether a node is inside a loop.
- * Detects for, for...in, for...of, while, do...while statements,
- * and callbacks of iteration methods (forEach, map, etc.)
+ * Check whether the scope argument is an identifier declared inside the loop body.
+ * Only a variable declaration is treated as a per-iteration scope: any other form
+ * (`this`, an outer variable, a member expression, ...) may be shared across iterations.
  */
-const isInsideLoop = (node: TSESTree.Node): boolean => {
-  let current = node.parent;
-  while (current) {
-    // NOTE: Detect loop statements
-    if (
-      current.type === AST_NODE_TYPES.ForStatement ||
-      current.type === AST_NODE_TYPES.ForInStatement ||
-      current.type === AST_NODE_TYPES.ForOfStatement ||
-      current.type === AST_NODE_TYPES.WhileStatement ||
-      current.type === AST_NODE_TYPES.DoWhileStatement
-    ) {
-      return true;
-    }
-
-    // NOTE: Detect iteration method callbacks (ArrowFunction/FunctionExpression)
-    if (
-      (current.type === AST_NODE_TYPES.ArrowFunctionExpression ||
-        current.type === AST_NODE_TYPES.FunctionExpression) &&
-      isIterationMethodCallback(current)
-    ) {
-      return true;
-    }
-
-    // NOTE: Stop at non-constructor method definitions
-    if (current.type === AST_NODE_TYPES.MethodDefinition && current.kind !== "constructor") {
-      return false;
-    }
-
-    current = current.parent;
-  }
-  return false;
-};
-
-const ITERATION_METHODS = new Set([
-  "forEach",
-  "map",
-  "flatMap",
-  "filter",
-  "reduce",
-  "reduceRight",
-  "every",
-  "some",
-  "find",
-  "findIndex",
-  "findLast",
-  "findLastIndex",
-]);
-
-/**
- * Check whether an arrow function or function expression is a callback of an iteration method
- */
-const isIterationMethodCallback = (
-  node: TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression,
+const isScopeDeclaredInLoopBody = (
+  scopeArg: TSESTree.NewExpression["arguments"][number],
+  loopBody: TSESTree.Node,
 ): boolean => {
-  const parent = node.parent;
-  if (parent?.type !== AST_NODE_TYPES.CallExpression) return false;
-
-  const callee = parent.callee;
-  if (callee.type !== AST_NODE_TYPES.MemberExpression) return false;
-
-  if (callee.property.type !== AST_NODE_TYPES.Identifier) return false;
-
-  return ITERATION_METHODS.has(callee.property.name);
+  if (scopeArg.type !== AST_NODE_TYPES.Identifier) return false;
+  return isDeclaredInEnclosingBlocks(scopeArg, scopeArg.name, loopBody);
 };
