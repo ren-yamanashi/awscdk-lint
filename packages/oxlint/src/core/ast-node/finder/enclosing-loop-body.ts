@@ -24,6 +24,9 @@ const ITERATION_METHODS = new Set([
  * @param node The node to start searching from
  * @returns The enclosing loop body or null if the node is not inside a loop
  */
+// NOTE: The other node finders return `undefined`, but the remapped node types reject both
+// `ESTree.Node | undefined` (TS2322) and `ESTree.Statement | ESTree.Expression | undefined`
+// (TS2719) for the iteration callback body, so this finder uses `null` in both plugins
 export const findEnclosingLoopBody = (node: ESTree.Node): ESTree.Node | null => {
   const parent = node.parent;
   if (!parent) return null;

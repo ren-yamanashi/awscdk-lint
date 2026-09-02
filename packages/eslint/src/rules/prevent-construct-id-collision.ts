@@ -55,7 +55,7 @@ const validateConstructIdInLoop = (
   if (!loopBody) return;
 
   // NOTE: A scope declared inside the loop body is re-created on every iteration,
-  //       so a literal ID cannot collide within it
+  // so a literal ID cannot collide within it
   if (isScopeDeclaredInLoopBody(node.arguments[0], loopBody)) return;
 
   const secondArg = node.arguments[1];
@@ -92,5 +92,5 @@ const isScopeDeclaredInLoopBody = (
   loopBody: TSESTree.Node,
 ): boolean => {
   if (scopeArg.type !== AST_NODE_TYPES.Identifier) return false;
-  return isDeclaredInEnclosingBlocks(scopeArg.name, scopeArg, loopBody);
+  return isDeclaredInEnclosingBlocks(scopeArg, scopeArg.name, loopBody);
 };
