@@ -11,6 +11,17 @@ const FUNCTION_TYPES = [
   AST_NODE_TYPES.ArrowFunctionExpression,
 ] as const;
 
+/**
+ * Collect the static construct IDs (string literals and expression-less template
+ * literals) of the other constructs created in the same body as a given node.
+ *
+ * NOTE: The enclosing function body approximates the construct scope. The first
+ * argument, which carries the real scope, is not tracked.
+ */
+export const findSiblingConstructIdStrings = (node: ESTree.NewExpression): string[] => {
+  return collectConstructIdStrings(findScopeRoot(node), node);
+};
+
 const isFunctionNode = (node: ESTree.Node): boolean => {
   // NOTE: Corsa's wide node union does not narrow via Array.includes,
   // so use .some with equality to keep type inference happy.
@@ -48,15 +59,4 @@ const collectConstructIdStrings = (node: ESTree.Node, target: ESTree.NewExpressi
   })();
 
   return ownId === null ? descendantIds : [ownId, ...descendantIds];
-};
-
-/**
- * Collect the static construct IDs (string literals and expression-less template
- * literals) of the other constructs created in the same body as a given node.
- *
- * NOTE: The enclosing function body approximates the construct scope. The first
- * argument, which carries the real scope, is not tracked.
- */
-export const findSiblingConstructIdStrings = (node: ESTree.NewExpression): string[] => {
-  return collectConstructIdStrings(findScopeRoot(node), node);
 };
