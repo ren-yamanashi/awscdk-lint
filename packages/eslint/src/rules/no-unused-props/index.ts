@@ -5,11 +5,12 @@ import {
   TSESLint,
   TSESTree,
 } from "@typescript-eslint/utils";
-import { Type } from "typescript";
+import { Type, TypeChecker } from "typescript";
 
 import { findConstructor } from "../../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../../core/ast-node/finder/constructor-param-identifier";
 import { isConstructType } from "../../core/cdk-construct/type-checker/is-construct";
+import { findNonNullableType } from "../../core/ts-type/finder/non-nullable-type";
 import { createRule } from "../../shared/create-rule";
 import { PropsUsageAnalyzer } from "./props-usage-analyzer";
 import { IPropsUsageTracker, PropsUsageTracker } from "./props-usage-tracker";
@@ -44,6 +45,7 @@ export const noUnusedProps = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
 
     return {
       ClassDeclaration(node) {
@@ -55,7 +57,7 @@ export const noUnusedProps = createRule({
         const constructor = findConstructor(node);
         if (!constructor) return;
 
-        const propsParam = getPropsParam(constructor, parserServices);
+        const propsParam = getPropsParam(constructor, parserServices, checker);
         if (!propsParam) return;
         if (isPropsUsedInSuperCall(constructor, propsParam.identifier.name)) return;
 
@@ -74,6 +76,7 @@ export const noUnusedProps = createRule({
 const getPropsParam = (
   constructor: TSESTree.MethodDefinition,
   parserServices: ParserServicesWithTypeInformation,
+  checker: TypeChecker,
 ): PropsParam | null => {
   const params = constructor.value.params;
   if (params.length < 3) return null;
@@ -90,7 +93,10 @@ const getPropsParam = (
   return {
     identifier,
     reportNode: propsParam,
-    type: parserServices.getTypeAtLocation(identifier),
+    // NOTE: An optional parameter (e.g. `props?: MyConstructProps`) is typed as the union
+    // `MyConstructProps | undefined`, which only exposes the properties shared by every union
+    // member (none). Strip the nullish members so the declared properties are tracked.
+    type: findNonNullableType(parserServices.getTypeAtLocation(identifier), checker),
     isParameterProperty,
   };
 };

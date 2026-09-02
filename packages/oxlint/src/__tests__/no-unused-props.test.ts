@@ -173,6 +173,24 @@ ruleTester.run("no-unused-props", noUnusedProps, {
       `,
     },
     {
+      name: "Optional props parameter: all properties are used",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName?: string;
+        enableVersioning?: boolean;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props?: MyConstructProps) {
+          super(scope, id);
+          console.log(props?.bucketName, props?.enableVersioning);
+        }
+      }
+      `,
+    },
+    {
       name: "Some properties are unused but class is abstract",
       code: `
       class Construct {}
@@ -1230,6 +1248,82 @@ ruleTester.run("no-unused-props", noUnusedProps, {
 
       export class MyConstruct extends Construct {
         constructor(scope: Construct, id: string, props: MyConstructProps = {} as MyConstructProps) {
+          super(scope, id);
+          console.log(props.bucketName);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
+    {
+      name: "Required props parameter with optional properties: some properties are unused",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName?: string;
+        unusedProp?: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps) {
+          super(scope, id);
+          console.log(props.bucketName);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
+    {
+      name: "Optional props parameter: some properties are unused",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName?: string;
+        unusedProp?: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props?: MyConstructProps) {
+          super(scope, id);
+          console.log(props?.bucketName);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
+    {
+      name: "Props parameter typed as a union with undefined: some properties are unused",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName?: string;
+        unusedProp?: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps | undefined) {
+          super(scope, id);
+          console.log(props?.bucketName);
+        }
+      }
+      `,
+      errors: [{ messageId: "unusedProp", data: { propName: "unusedProp" } }],
+    },
+    {
+      name: "Props parameter with an empty object default value: some properties are unused",
+      code: `
+      class Construct {}
+
+      interface MyConstructProps {
+        bucketName?: string;
+        unusedProp?: string;
+      }
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct, id: string, props: MyConstructProps = {}) {
           super(scope, id);
           console.log(props.bucketName);
         }
