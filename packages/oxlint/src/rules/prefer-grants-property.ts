@@ -4,7 +4,6 @@ import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { findNonNullableType } from "../core/ts-type/finder/non-nullable-type";
-import { findReceiverType } from "../core/ts-type/finder/receiver-type";
 import { createRule } from "../shared/create-rule";
 
 export const preferGrantsProperty = createRule({
@@ -43,7 +42,7 @@ export const preferGrantsProperty = createRule({
           .replace(/^./, (c) => c.toLowerCase());
 
         const objectNode = node.callee.object;
-        const type = findReceiverType(objectNode, parserServices, checker);
+        const type = parserServices.getTypeAtLocation(objectNode);
         if (!type || !hasGrantsMethod(type, convertedMethodName, checker)) return;
 
         const objectName =
