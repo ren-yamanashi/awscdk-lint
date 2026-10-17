@@ -31,7 +31,9 @@ export const propsNameConvention = createRule({
       ClassDeclaration(node) {
         if (!node.id || !node.superClass) return;
 
-        const type = findTypeAtLocation(node.superClass, parserServices);
+        // NOTE: resolve the class instance type, as the other class-level rules do: its base chain
+        // is what reaches Construct through a project base class
+        const type = findTypeAtLocation(node, parserServices);
         if (!isConstructTypeIgnoringSubclasses(type, checker)) return;
 
         // NOTE: check constructor parameter
