@@ -222,6 +222,25 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       }
       `,
     },
+    {
+      name: "property type is a recursive type alias that never contains a Construct (type Nested = string | Nested[])",
+      code: `
+      type Nested = string | Nested[];
+      interface MyConstructProps {
+        value: Nested;
+      }
+      `,
+    },
+    {
+      name: "property type is one of two mutually recursive type aliases that never contain a Construct",
+      code: `
+      type Left = string | Right[];
+      type Right = number | Left[];
+      interface MyConstructProps {
+        value: Left;
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -1038,6 +1057,33 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
           data: { propertyName: "1", typeName: "Bucket" },
         },
       ],
+    },
+    {
+      name: "property type is a recursive type alias containing class that extends Resource (type Nested = Bucket | Nested[])",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      type Nested = Bucket | Nested[];
+      interface MyConstructProps {
+        value: Nested;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
     },
   ],
 });

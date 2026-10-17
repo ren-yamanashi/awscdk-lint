@@ -9,9 +9,28 @@ export const findTypeOfCdkConstruct = (
   type: CorsaType | undefined,
   checker: CorsaTypeCheckerShape,
 ): CorsaType | undefined => {
-  if (!type) return undefined;
+  return findTypeOfCdkConstructRecursively(type, checker, new Set<string>());
+};
+
+/**
+ * Walk the type and the types it is composed of, visiting each type once.
+ *
+ * NOTE: a recursive type alias (e.g. `type Nested = string | Nested[]`) refers back to itself,
+ * so a type seen before yields nothing. corsa returns a new object per query, so the set holds `id`s.
+ */
+const findTypeOfCdkConstructRecursively = (
+  type: CorsaType | undefined,
+  checker: CorsaTypeCheckerShape,
+  visited: Set<string>,
+): CorsaType | undefined => {
+  if (!type || visited.has(type.id)) return undefined;
+  visited.add(type.id);
+
   if (isResourceWithReadonlyInterface(type, checker)) return type;
-  return findFromUnionOrIntersection(type, checker) ?? findFromTypeArguments(type, checker);
+  return (
+    findFromUnionOrIntersection(type, checker, visited) ??
+    findFromTypeArguments(type, checker, visited)
+  );
 };
 
 /**
@@ -21,11 +40,12 @@ export const findTypeOfCdkConstruct = (
 const findFromUnionOrIntersection = (
   type: CorsaType,
   checker: CorsaTypeCheckerShape,
+  visited: Set<string>,
 ): CorsaType | undefined => {
   if (!checker.isUnionType(type) && !checker.isIntersectionType(type)) return undefined;
 
   for (const member of checker.getTypesOfType(type)) {
-    const foundType = findTypeOfCdkConstruct(member, checker);
+    const foundType = findTypeOfCdkConstructRecursively(member, checker, visited);
     if (foundType) return foundType;
   }
 };
@@ -37,9 +57,10 @@ const findFromUnionOrIntersection = (
 const findFromTypeArguments = (
   type: CorsaType,
   checker: CorsaTypeCheckerShape,
+  visited: Set<string>,
 ): CorsaType | undefined => {
   for (const arg of checker.getTypeArguments(type)) {
-    const foundType = findTypeOfCdkConstruct(arg, checker);
+    const foundType = findTypeOfCdkConstructRecursively(arg, checker, visited);
     if (foundType) return foundType;
   }
 };

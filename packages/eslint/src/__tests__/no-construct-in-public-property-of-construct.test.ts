@@ -351,6 +351,27 @@ ruleTester.run(
           }
         `,
       },
+      {
+        name: "public field type is a recursive type alias that never contains a Construct (type Nested = string | Nested[])",
+        code: `
+          class Construct {}
+          type Nested = string | Nested[];
+          class TestClass extends Construct {
+            public value: Nested;
+          }
+        `,
+      },
+      {
+        name: "public field type is one of two mutually recursive type aliases that never contain a Construct",
+        code: `
+          class Construct {}
+          type Left = string | Right[];
+          type Right = number | Left[];
+          class TestClass extends Construct {
+            public value: Left;
+          }
+        `,
+      },
     ],
     invalid: [
       {
@@ -1048,6 +1069,34 @@ ruleTester.run(
           }
           class TestClass extends Construct {
             public bucket: Wrapper<Bucket>;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is a recursive type alias containing class that extends Resource (type Nested = Bucket | Nested[])",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          type Nested = Bucket | Nested[];
+          class TestClass extends Construct {
+            public value: Nested;
           }
         `,
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
