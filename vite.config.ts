@@ -17,6 +17,8 @@ export default defineConfig({
         "unknown",
       ],
     },
+    // NOTE: keep code blocks in the docs as written; oxfmt 0.72 started sorting their imports
+    overrides: [{ files: ["**/*.md"], options: { embeddedLanguageFormatting: "off" } }],
   },
   lint: {
     env: {

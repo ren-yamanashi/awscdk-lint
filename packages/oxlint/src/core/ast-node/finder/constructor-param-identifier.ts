@@ -7,7 +7,9 @@ import { AST_NODE_TYPES } from "corsa-oxlint";
  * to its inner Identifier binding, or undefined if the binding is not a plain Identifier
  * (e.g. ObjectPattern, ArrayPattern).
  */
-export const findConstructorParamIdentifier = (param: ESTree.Node) => {
+export const findConstructorParamIdentifier = (
+  param: ESTree.Node,
+): ESTree.Identifier | undefined => {
   const withoutParameterProperty =
     param.type === AST_NODE_TYPES.TSParameterProperty ? param.parameter : param;
   const withoutDefaultValue =
