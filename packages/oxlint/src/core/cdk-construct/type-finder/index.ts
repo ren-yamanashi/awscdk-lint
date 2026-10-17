@@ -1,4 +1,6 @@
-import { type CorsaType, type CorsaTypeCheckerShape, SignatureKind } from "corsa-oxlint";
+import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
+
+import { SignatureKind } from "corsa-oxlint";
 
 import { isResourceWithReadonlyInterface } from "../type-checker/is-resource-with-readonly-interface";
 
