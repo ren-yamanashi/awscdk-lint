@@ -22,6 +22,9 @@ const findTypeOfCdkConstructRecursively = (type: Type, visited: Set<Type>): Type
   if (visited.has(type)) return undefined;
   visited.add(type);
 
+  // NOTE: a constructor type (`typeof Bucket`) exposes no instance, so no read-only interface replaces it
+  if (type.getConstructSignatures().length) return undefined;
+
   if (isClassType(type) && isResourceWithReadonlyInterface(type)) {
     return type;
   }

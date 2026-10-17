@@ -1,4 +1,4 @@
-import type { CorsaType, CorsaTypeCheckerShape } from "corsa-oxlint";
+import { type CorsaType, type CorsaTypeCheckerShape, SignatureKind } from "corsa-oxlint";
 
 import { isResourceWithReadonlyInterface } from "../type-checker/is-resource-with-readonly-interface";
 
@@ -25,6 +25,9 @@ const findTypeOfCdkConstructRecursively = (
 ): CorsaType | undefined => {
   if (!type || visited.has(type.id)) return undefined;
   visited.add(type.id);
+
+  // NOTE: a constructor type (`typeof Bucket`) exposes no instance, so no read-only interface replaces it
+  if (checker.getSignaturesOfType(type, SignatureKind.Construct).length) return undefined;
 
   if (isResourceWithReadonlyInterface(type, checker)) return type;
   return (
