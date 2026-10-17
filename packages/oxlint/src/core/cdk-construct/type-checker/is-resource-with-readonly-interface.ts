@@ -29,7 +29,7 @@ const hasMatchingInterfaceInHierarchy = (
 ): boolean => {
   // NOTE: keyed by symbol identity, not by name: a wrapper reusing the CDK class name
   // (`class Bucket extends s3.Bucket`) would otherwise hide the CDK class as already visited.
-  // corsa returns a new object per query, so the set holds `id`s.
+  // corsa does not guarantee object identity across queries, so the set holds `id`s.
   const processedSymbols = new Set<string>();
 
   const checkTypeAndBases = (currentType: CorsaType): boolean => {
