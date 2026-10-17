@@ -465,5 +465,40 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
       `,
       errors: [{ messageId: "useGrantsProperty" }],
     },
+    // WHEN: the receiver indexes an object whose string index signature yields a Construct
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      interface Registry {
+        [key: string]: Topic;
+      }
+      declare const registry: Registry;
+      registry["x"].grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: the receiver is a non-null assertion over an indexed array element
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const topics: Topic[];
+      topics[0]!.grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
   ],
 });
