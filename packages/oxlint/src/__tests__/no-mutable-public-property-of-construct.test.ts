@@ -111,6 +111,14 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    {
+      code: `
+          class Construct {}
+          class Stage extends Construct {
+            public test: string;
+          }
+        `,
+    },
   ],
   invalid: [
     {
@@ -151,8 +159,8 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
     },
     {
       code: `
-          class Stack {}
           class Construct {}
+          class Stack extends Construct {}
           class DependencyClass extends Construct {}
           class TestClass extends Stack {
             public test: DependencyClass;
@@ -160,8 +168,8 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
         `,
       errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       output: `
-          class Stack {}
           class Construct {}
+          class Stack extends Construct {}
           class DependencyClass extends Construct {}
           class TestClass extends Stack {
             public readonly test: DependencyClass;
@@ -225,6 +233,25 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           class Construct {}
           class TestClass extends Construct {
             public readonly inferred = 0;
+          }
+        `,
+    },
+    {
+      code: `
+          class Construct {}
+          class Stage extends Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Stage {
+            public test: DependencyClass;
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class Stage extends Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Stage {
+            public readonly test: DependencyClass;
           }
         `,
     },

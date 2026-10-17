@@ -4,7 +4,7 @@ import {
   findPublicPropertiesInClass,
   PublicProperty,
 } from "../core/ast-node/finder/public-property";
-import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
+import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findTypeOfCdkConstruct } from "../core/cdk-construct/type-finder";
 import { createRule } from "../shared/create-rule";
 
@@ -34,7 +34,7 @@ export const noConstructInPublicPropertyOfConstruct = createRule({
     return {
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type)) return;
+        if (!isConstructType(type)) return;
         const publicProperties = findPublicPropertiesInClass(node);
         for (const publicProperty of publicProperties) {
           validatePublicProperty(publicProperty, context, parserServices);
