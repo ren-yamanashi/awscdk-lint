@@ -27,15 +27,19 @@ const hasMatchingInterfaceInHierarchy = (
   type: CorsaType,
   checker: CorsaTypeCheckerShape,
 ): boolean => {
-  const processedTypes = new Set<string>();
+  // NOTE: keyed by symbol identity, not by name: a wrapper reusing the CDK class name
+  // (`class Bucket extends s3.Bucket`) would otherwise hide the CDK class as already visited.
+  // corsa returns a new object per query, so the set holds `id`s.
+  const processedSymbols = new Set<string>();
 
   const checkTypeAndBases = (currentType: CorsaType): boolean => {
-    const currentClassName = getSimpleTypeName(currentType, checker);
-    if (!currentClassName) return false;
+    const symbol = checker.getSymbolOfType(currentType);
+    if (!symbol?.name) return false;
 
-    if (processedTypes.has(currentClassName)) return false;
-    processedTypes.add(currentClassName);
+    if (processedSymbols.has(symbol.id)) return false;
+    processedSymbols.add(symbol.id);
 
+    const currentClassName = symbol.name;
     if (isIgnoreClass(currentClassName)) return false;
 
     const directInterfaces = getImplementedInterfaceNames(currentType, checker);
