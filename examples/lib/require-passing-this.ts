@@ -14,7 +14,7 @@ export class MyConstruct extends Construct {
 
     const bucket = new SampleClass(this, "Sample");
 
-    // ❌ Should pass `this`
+    // ✅ when allowNonThisAndDisallowScope is true (the default), can specify non-this value
     new Bucket(bucket, "SampleBucket");
   }
 }
