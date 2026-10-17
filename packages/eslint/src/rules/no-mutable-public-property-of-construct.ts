@@ -4,7 +4,7 @@ import {
   findPublicPropertiesInClass,
   PublicProperty,
 } from "../core/ast-node/finder/public-property";
-import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
+import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
 
 type Context = TSESLint.RuleContext<"invalidPublicPropertyOfConstruct", []>;
@@ -35,7 +35,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
     return {
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
-        if (!isConstructOrStackType(type)) return;
+        if (!isConstructType(type)) return;
 
         const publicProperties = findPublicPropertiesInClass(node);
         for (const property of publicProperties) {

@@ -6,7 +6,7 @@ import {
   findPublicPropertiesInClass,
   PublicProperty,
 } from "../core/ast-node/finder/public-property";
-import { isConstructOrStackType } from "../core/cdk-construct/type-checker/is-construct-or-stack";
+import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
 import { findTypeAtLocation } from "../core/ts-type/finder/type-at-location";
 import { createRule } from "../shared/create-rule";
 
@@ -36,7 +36,7 @@ export const noMutablePublicPropertyOfConstruct = createRule({
     return {
       ClassDeclaration(node) {
         const type = findTypeAtLocation(node, parserServices);
-        if (!isConstructOrStackType(type, checker)) return;
+        if (!isConstructType(type, checker)) return;
 
         const publicProperties = findPublicPropertiesInClass(node);
         for (const property of publicProperties) {

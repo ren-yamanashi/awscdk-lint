@@ -372,8 +372,62 @@ ruleTester.run(
           }
         `,
       },
+      {
+        name: "class is the ignored Stage class itself",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          class Stage extends Construct {
+            public bucket: Bucket;
+          }
+        `,
+      },
     ],
     invalid: [
+      {
+        name: "public field of a Stage subclass type is class that extends Resource (Bucket)",
+        code: `
+          class Construct {}
+          class Stage extends Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          class AppStage extends Stage {
+            public bucket: Bucket;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
       {
         name: "public field type is class whose declaration-merged base class implements a matching interface (Topic extends TopicBase)",
         code: `

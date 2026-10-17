@@ -127,6 +127,15 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           }
         `,
     },
+    // WHEN: the class is the ignored Stage class itself
+    {
+      code: `
+          class Construct {}
+          class Stage extends Construct {
+            public test: string;
+          }
+        `,
+    },
   ],
   invalid: [
     // WHEN: public field is mutable, nested superClass is Construct
@@ -170,8 +179,8 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
     // WHEN: public field is mutable, superClass is Stack
     {
       code: `
-          class Stack {}
           class Construct {}
+          class Stack extends Construct {}
           class DependencyClass extends Construct {}
           class TestClass extends Stack {
             public test: DependencyClass;
@@ -179,8 +188,8 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
         `,
       errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       output: `
-          class Stack {}
           class Construct {}
+          class Stack extends Construct {}
           class DependencyClass extends Construct {}
           class TestClass extends Stack {
             public readonly test: DependencyClass;
@@ -248,6 +257,26 @@ ruleTester.run("no-mutable-public-property-of-construct", noMutablePublicPropert
           class Construct {}
           class TestClass extends Construct {
             public readonly inferred = 0;
+          }
+        `,
+    },
+    // WHEN: public field is mutable, superClass is Stage
+    {
+      code: `
+          class Construct {}
+          class Stage extends Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Stage {
+            public test: DependencyClass;
+          }
+        `,
+      errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      output: `
+          class Construct {}
+          class Stage extends Construct {}
+          class DependencyClass extends Construct {}
+          class TestClass extends Stage {
+            public readonly test: DependencyClass;
           }
         `,
     },
