@@ -5,11 +5,13 @@ import {
   TSESLint,
   TSESTree,
 } from "@typescript-eslint/utils";
+import { TypeChecker } from "typescript";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
 import { isAppType } from "../core/cdk-construct/type-checker/is-app";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { findNonNullableType } from "../core/ts-type/finder/non-nullable-type";
 import { createRule } from "../shared/create-rule";
 
 type Context = TSESLint.RuleContext<
@@ -49,6 +51,7 @@ export const constructConstructorProperty = createRule({
   defaultOptions: [],
   create(context) {
     const parserServices = ESLintUtils.getParserServices(context);
+    const checker = parserServices.program.getTypeChecker();
     return {
       ClassDeclaration(node) {
         const type = parserServices.getTypeAtLocation(node);
@@ -61,7 +64,7 @@ export const constructConstructorProperty = createRule({
 
         const params = checkNumOfConstructorProperty(constructor, context);
         if (params) {
-          checkFirstParamIsScope(params[0], context, parserServices);
+          checkFirstParamIsScope(params[0], context, parserServices, checker);
           checkSecondParamIsId(params[1], context);
           checkThirdParamIsProps(params[2], context);
         }
@@ -96,6 +99,7 @@ const checkFirstParamIsScope = (
   firstParam: ConstructorProperties[0],
   context: Context,
   parserServices: ParserServicesWithTypeInformation,
+  checker: TypeChecker,
 ) => {
   const binding = findConstructorParamIdentifier(firstParam);
   if (!binding || binding.name !== "scope") {
@@ -103,7 +107,13 @@ const checkFirstParamIsScope = (
       node: firstParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (!isConstructType(parserServices.getTypeAtLocation(binding), [])) {
+    return;
+  }
+
+  // NOTE: An optional `scope?: Construct` is typed `Construct | undefined` (the signature of
+  // `Stack` itself), so strip the nullish members before the Construct check.
+  const scopeType = findNonNullableType(parserServices.getTypeAtLocation(binding), checker);
+  if (!isConstructType(scopeType, [])) {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorType",
