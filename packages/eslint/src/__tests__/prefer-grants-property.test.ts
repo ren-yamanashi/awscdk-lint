@@ -352,7 +352,6 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
       errors: [{ messageId: "useGrantsProperty" }],
     },
     // WHEN: the receiver indexes a Construct whose index signature yields a Construct
-    // NOTE: the Oxlint plugin skips this receiver, because it cannot resolve a computed member
     {
       code: `
       class Construct {}
@@ -372,7 +371,6 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
       errors: [{ messageId: "useGrantsProperty" }],
     },
     // WHEN: an overloaded callee resolves to a return type with a grants property
-    // NOTE: the Oxlint plugin skips this receiver, because it cannot resolve an overload set
     {
       code: `
       class Construct {}
@@ -442,6 +440,91 @@ ruleTester.run("prefer-grants-property", preferGrantsProperty, {
       async function run() {
         (await p).grantPublish();
       }
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: the receiver is an array element under a non-literal index
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const topics: Topic[];
+      declare const index: number;
+      topics[index].grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: the receiver is a non-null assertion over a call returning a nullable Construct
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      const maybeTopic = (): Topic | undefined => new Topic();
+      maybeTopic()!.grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: the receiver is a generic call whose type argument is a Construct
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      const identity = <T>(value: T): T => value;
+      const topic = new Topic();
+      identity(topic).grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: the receiver indexes an object whose string index signature yields a Construct
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      interface Registry {
+        [key: string]: Topic;
+      }
+      declare const registry: Registry;
+      registry["x"].grantPublish();
+      `,
+      errors: [{ messageId: "useGrantsProperty" }],
+    },
+    // WHEN: the receiver is a non-null assertion over an indexed array element
+    {
+      code: `
+      class Construct {}
+      class TopicGrants {
+        publish() {}
+      }
+      class Topic extends Construct {
+        grants: TopicGrants = new TopicGrants();
+        grantPublish() {}
+      }
+      declare const topics: Topic[];
+      topics[0]!.grantPublish();
       `,
       errors: [{ messageId: "useGrantsProperty" }],
     },
