@@ -241,6 +241,31 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       }
       `,
     },
+    {
+      name: "property type is the class constructor, not an instance (typeof Bucket)",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      export abstract class BucketBase extends Resource implements IBucket {
+        abstract readonly bucketName: string;
+        constructor() {
+          super();
+        }
+      }
+      export class Bucket extends BucketBase {
+        readonly bucketName: string;
+        constructor() {
+          super();
+          this.bucketName = "test-bucket";
+        }
+      }
+      interface MyConstructProps {
+        bucketClass: typeof Bucket;
+      }
+      `,
+    },
   ],
   invalid: [
     {
