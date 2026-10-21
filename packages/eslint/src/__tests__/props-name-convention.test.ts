@@ -138,6 +138,20 @@ ruleTester.run("props-name-convention", propsNameConvention, {
         }
       `,
     },
+    {
+      // WHEN: props type is a user-defined generic type alias applied to arguments
+      code: `
+        class Construct {}
+        type Props<T> = {
+          readonly value: T;
+        };
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, props: Props<string>) {
+            super(scope, id);
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -289,6 +303,29 @@ ruleTester.run("props-name-convention", propsNameConvention, {
         }
         class MyConstruct extends Construct {
           constructor(scope: Construct, id: string, props: Props<string>) {
+            super(scope, id);
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropsName",
+          data: {
+            interfaceName: "Props",
+            expectedName: "MyConstructProps",
+          },
+        },
+      ],
+    },
+    {
+      // WHEN: props type is a type alias without type arguments whose name does not follow the format
+      code: `
+        class Construct {}
+        type Props = {
+          readonly value: string;
+        };
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, props: Props) {
             super(scope, id);
           }
         }

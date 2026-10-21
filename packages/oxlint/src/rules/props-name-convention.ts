@@ -1,3 +1,5 @@
+import type { CorsaTypeCheckerShape, ESTree } from "corsa-oxlint";
+
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
@@ -5,31 +7,6 @@ import { findConstructorParamIdentifier } from "../core/ast-node/finder/construc
 import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { findTypeAtLocation } from "../core/ts-type/finder/type-at-location";
 import { createRule } from "../shared/create-rule";
-
-// NOTE: the utility types declared in TypeScript's lib.es5.d.ts
-const TS_UTILITY_TYPE_NAMES = [
-  "Awaited",
-  "Capitalize",
-  "ConstructorParameters",
-  "Exclude",
-  "Extract",
-  "InstanceType",
-  "Lowercase",
-  "NoInfer",
-  "NonNullable",
-  "Omit",
-  "OmitThisParameter",
-  "Parameters",
-  "Partial",
-  "Pick",
-  "Readonly",
-  "Record",
-  "Required",
-  "ReturnType",
-  "ThisParameterType",
-  "Uncapitalize",
-  "Uppercase",
-] as const;
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes
@@ -80,8 +57,9 @@ export const propsNameConvention = createRule({
         const propsTypeName = typeNode.typeName;
         if (propsTypeName.type !== AST_NODE_TYPES.Identifier) return;
 
-        // NOTE: a utility type such as `Omit<BucketProps, "bucketName">` names no interface to rename
-        if (TS_UTILITY_TYPE_NAMES.some((name) => name === propsTypeName.name)) return;
+        // NOTE: `Omit<BucketProps, "bucketName">` applies a type alias to arguments; the type to rename is
+        // the argument, not the alias
+        if (typeNode.typeArguments && isTypeAliasReference(propsTypeName, checker)) return;
 
         // NOTE: create valid props name
         const constructName = node.id.name;
@@ -102,3 +80,23 @@ export const propsNameConvention = createRule({
     };
   },
 });
+
+/**
+ * Check whether a parameterized type reference names a type alias rather than a class or interface
+ * @param typeName - The identifier of the type reference
+ * @param checker - The corsa-oxlint type checker
+ * @returns True if the identifier resolves to a type alias, otherwise false
+ */
+const isTypeAliasReference = (
+  typeName: ESTree.Identifier,
+  checker: CorsaTypeCheckerShape,
+): boolean => {
+  const symbol = checker.getSymbolAtLocation(typeName);
+  if (!symbol) return false;
+
+  const declaredType = checker.getDeclaredTypeOfSymbol(symbol);
+  if (!declaredType) return false;
+
+  // NOTE: corsa has no isClassOrInterface; only a class or interface type carries type parameters
+  return !checker.getTypeParametersOfType(declaredType).length;
+};

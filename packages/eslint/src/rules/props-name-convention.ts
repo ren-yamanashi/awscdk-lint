@@ -1,34 +1,14 @@
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import {
+  AST_NODE_TYPES,
+  ESLintUtils,
+  ParserServicesWithTypeInformation,
+  TSESTree,
+} from "@typescript-eslint/utils";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
 import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-checker/is-construct";
 import { createRule } from "../shared/create-rule";
-
-// NOTE: the utility types declared in TypeScript's lib.es5.d.ts
-const TS_UTILITY_TYPE_NAMES = [
-  "Awaited",
-  "Capitalize",
-  "ConstructorParameters",
-  "Exclude",
-  "Extract",
-  "InstanceType",
-  "Lowercase",
-  "NoInfer",
-  "NonNullable",
-  "Omit",
-  "OmitThisParameter",
-  "Parameters",
-  "Partial",
-  "Pick",
-  "Readonly",
-  "Record",
-  "Required",
-  "ReturnType",
-  "ThisParameterType",
-  "Uncapitalize",
-  "Uppercase",
-] as const;
 
 /**
  * Enforces a naming convention for props interfaces in Construct classes
@@ -79,8 +59,9 @@ export const propsNameConvention = createRule({
         const propsTypeName = typeNode.typeName;
         if (propsTypeName.type !== AST_NODE_TYPES.Identifier) return;
 
-        // NOTE: a utility type such as `Omit<BucketProps, "bucketName">` names no interface to rename
-        if (TS_UTILITY_TYPE_NAMES.some((name) => name === propsTypeName.name)) return;
+        // NOTE: `Omit<BucketProps, "bucketName">` applies a type alias to arguments; the type to rename is
+        // the argument, not the alias
+        if (typeNode.typeArguments && isTypeAliasReference(propsTypeName, parserServices)) return;
 
         // NOTE: create valid props name
         const constructName = node.id.name;
@@ -101,3 +82,20 @@ export const propsNameConvention = createRule({
     };
   },
 });
+
+/**
+ * Check whether a parameterized type reference names a type alias rather than a class or interface
+ * @param typeName - The identifier of the type reference
+ * @param parserServices - The typescript-eslint parser services
+ * @returns True if the identifier resolves to a type alias, otherwise false
+ */
+const isTypeAliasReference = (
+  typeName: TSESTree.Identifier,
+  parserServices: ParserServicesWithTypeInformation,
+): boolean => {
+  const symbol = parserServices.getSymbolAtLocation(typeName);
+  if (!symbol) return false;
+
+  const declaredType = parserServices.program.getTypeChecker().getDeclaredTypeOfSymbol(symbol);
+  return !declaredType.isClassOrInterface();
+};
