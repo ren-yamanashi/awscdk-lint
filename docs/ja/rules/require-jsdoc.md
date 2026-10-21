@@ -16,6 +16,8 @@ import Playground from '../../components/Playground.vue'
 
 プロパティに JSDoc コメントを追加することで、各プロパティが何を表しているのかが明確になり、コードの保守性と理解のしやすさが向上します。
 
+このルールは、社内の Construct ライブラリのように複数のプロジェクトで共有する Construct を想定しています。Props (interface) と public プロパティは利用者が依存する契約であり、その JSDoc はエディタのホバーや API ドキュメントに表示されるため、利用者は実装を読まずに Construct を使えるようになります。
+
 ---
 
 #### 🔧 使用方法

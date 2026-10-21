@@ -16,6 +16,8 @@ This rule requires JSDoc comments for Construct's Props interface properties and
 
 Adding JSDoc comments to properties clarifies what each property represents, improving code maintainability and understandability.
 
+This rule is intended for Constructs that are shared across projects, such as an in-house construct library. The Props interface and the public properties are the contract that consumers rely on, and their JSDoc is what editors show on hover and what API documentation is generated from, so consumers can use the Construct without reading its implementation.
+
 ---
 
 #### 🔧 How to use
