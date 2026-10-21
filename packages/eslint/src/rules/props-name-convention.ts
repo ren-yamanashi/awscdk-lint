@@ -1,4 +1,9 @@
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import {
+  AST_NODE_TYPES,
+  ESLintUtils,
+  ParserServicesWithTypeInformation,
+  TSESTree,
+} from "@typescript-eslint/utils";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
@@ -54,6 +59,10 @@ export const propsNameConvention = createRule({
         const propsTypeName = typeNode.typeName;
         if (propsTypeName.type !== AST_NODE_TYPES.Identifier) return;
 
+        // NOTE: `Omit<BucketProps, "bucketName">` applies a type alias to arguments; the type to rename is
+        // the argument, not the alias
+        if (typeNode.typeArguments && isTypeAliasReference(propsTypeName, parserServices)) return;
+
         // NOTE: create valid props name
         const constructName = node.id.name;
         const expectedPropsName = `${constructName}Props`;
@@ -73,3 +82,20 @@ export const propsNameConvention = createRule({
     };
   },
 });
+
+/**
+ * Check whether a parameterized type reference names a type alias rather than a class or interface
+ * @param typeName - The identifier of the type reference
+ * @param parserServices - The typescript-eslint parser services
+ * @returns True if the identifier resolves to a type alias, otherwise false
+ */
+const isTypeAliasReference = (
+  typeName: TSESTree.Identifier,
+  parserServices: ParserServicesWithTypeInformation,
+): boolean => {
+  const symbol = parserServices.getSymbolAtLocation(typeName);
+  if (!symbol) return false;
+
+  const declaredType = parserServices.program.getTypeChecker().getDeclaredTypeOfSymbol(symbol);
+  return !declaredType.isClassOrInterface();
+};
