@@ -14,7 +14,7 @@ import Playground from '../components/Playground.vue'
 
 This rule requires JSDoc comments for Construct's Props interface properties and Construct public properties.
 
-Adding JSDoc comments to properties clarifies what each property represents, improving code maintainability and understandability.
+Adding JSDoc comments to properties clarifies what each property represents, improving code maintainability and understandability. This is especially useful when a Construct is shared across projects: consumers can understand its Props and public properties without reading the implementation.
 
 ---
 
