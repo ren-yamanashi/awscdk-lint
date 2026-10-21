@@ -19,10 +19,10 @@
     "@types/node": "^24.10.13",
     "eslint": "^10.12.0",
     "eslint-plugin-awscdk": "workspace:*",
-    "oxlint": "^1.87.0",
+    "oxlint": "^1.88.0",
     "oxlint-plugin-awscdk": "workspace:*",
-    "oxlint-tsgolint": "^7.0.2003",
+    "oxlint-tsgolint": "^7.0.2004",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.71.1"
+    "typescript-eslint": "^8.71.2"
   }
 }
