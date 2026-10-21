@@ -6,6 +6,31 @@ import { isConstructTypeIgnoringSubclasses } from "../core/cdk-construct/type-ch
 import { findTypeAtLocation } from "../core/ts-type/finder/type-at-location";
 import { createRule } from "../shared/create-rule";
 
+// NOTE: the utility types declared in TypeScript's lib.es5.d.ts
+const TS_UTILITY_TYPE_NAMES = [
+  "Awaited",
+  "Capitalize",
+  "ConstructorParameters",
+  "Exclude",
+  "Extract",
+  "InstanceType",
+  "Lowercase",
+  "NoInfer",
+  "NonNullable",
+  "Omit",
+  "OmitThisParameter",
+  "Parameters",
+  "Partial",
+  "Pick",
+  "Readonly",
+  "Record",
+  "Required",
+  "ReturnType",
+  "ThisParameterType",
+  "Uncapitalize",
+  "Uppercase",
+] as const;
+
 /**
  * Enforces a naming convention for props interfaces in Construct classes
  */
@@ -54,6 +79,9 @@ export const propsNameConvention = createRule({
 
         const propsTypeName = typeNode.typeName;
         if (propsTypeName.type !== AST_NODE_TYPES.Identifier) return;
+
+        // NOTE: a utility type such as `Omit<BucketProps, "bucketName">` names no interface to rename
+        if (TS_UTILITY_TYPE_NAMES.some((name) => name === propsTypeName.name)) return;
 
         // NOTE: create valid props name
         const constructName = node.id.name;

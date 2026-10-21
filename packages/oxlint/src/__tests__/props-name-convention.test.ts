@@ -103,6 +103,33 @@ ruleTester.run("props-name-convention", propsNameConvention, {
         }
       `,
     },
+    {
+      code: `
+        class Construct {}
+        interface BucketProps {
+          readonly bucketName?: string;
+          readonly versioned?: boolean;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, props: Omit<BucketProps, "bucketName">) {
+            super(scope, id);
+          }
+        }
+      `,
+    },
+    {
+      code: `
+        class Construct {}
+        interface MyConstructProps {
+          readonly bucket?: string;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, props: Partial<MyConstructProps>) {
+            super(scope, id);
+          }
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -241,6 +268,28 @@ ruleTester.run("props-name-convention", propsNameConvention, {
           data: {
             interfaceName: "Props",
             expectedName: "DerivedProps",
+          },
+        },
+      ],
+    },
+    {
+      code: `
+        class Construct {}
+        interface Props<T> {
+          readonly value: T;
+        }
+        class MyConstruct extends Construct {
+          constructor(scope: Construct, id: string, props: Props<string>) {
+            super(scope, id);
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropsName",
+          data: {
+            interfaceName: "Props",
+            expectedName: "MyConstructProps",
           },
         },
       ],
