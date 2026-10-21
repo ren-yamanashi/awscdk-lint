@@ -388,6 +388,32 @@ ruleTester.run(
           }
         `,
       },
+      {
+        name: "public field type is the class constructor, not an instance (typeof Bucket)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          class TestClass extends Construct {
+            public bucketClass: typeof Bucket;
+          }
+        `,
+      },
     ],
     invalid: [
       {
@@ -628,6 +654,66 @@ ruleTester.run(
           }
           class TestClass extends Construct {
             public test: FargateService;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is a wrapper class that reuses the CDK class name (Bucket extends s3.Bucket)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          namespace s3 {
+            export abstract class BucketBase extends Resource implements IBucket {
+              abstract readonly bucketName: string;
+              constructor() {
+                super();
+              }
+            }
+            export class Bucket extends BucketBase {
+              readonly bucketName: string;
+              constructor() {
+                super();
+                this.bucketName = "test-bucket";
+              }
+            }
+          }
+          export class Bucket extends s3.Bucket {}
+          class TestClass extends Construct {
+            public test: Bucket;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is a wrapper class with a different name (MyBucket extends s3.Bucket)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          namespace s3 {
+            export abstract class BucketBase extends Resource implements IBucket {
+              abstract readonly bucketName: string;
+              constructor() {
+                super();
+              }
+            }
+            export class Bucket extends BucketBase {
+              readonly bucketName: string;
+              constructor() {
+                super();
+                this.bucketName = "test-bucket";
+              }
+            }
+          }
+          export class MyBucket extends s3.Bucket {}
+          class TestClass extends Construct {
+            public test: MyBucket;
           }
         `,
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],

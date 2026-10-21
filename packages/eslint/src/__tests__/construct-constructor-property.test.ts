@@ -182,6 +182,32 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       }
       `,
     },
+    {
+      name: "first parameter is optional, mirroring the Stack constructor signature",
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      interface StackProps {}
+
+      export class MyStack extends Stack {
+        constructor(scope?: Construct, id?: string, props?: StackProps) {
+          super(scope, id, props);
+        }
+      }
+      `,
+    },
+    {
+      name: "first parameter is typed as a union of Construct and undefined",
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct | undefined, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -343,6 +369,45 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
         { messageId: "invalidConstructorProperty" },
         { messageId: "invalidConstructorProperty" },
       ],
+    },
+    {
+      name: 'constructor has an optional first parameter whose type is not "Construct"',
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope?: string, id?: string) {
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorType" }],
+    },
+    {
+      name: "constructor has a first parameter typed as a union of a non-Construct and undefined",
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: string | undefined, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorType" }],
+    },
+    {
+      name: 'constructor has a first parameter typed as a union that is not only "Construct"',
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct | string, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorType" }],
     },
   ],
 });
