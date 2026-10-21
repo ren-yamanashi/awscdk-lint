@@ -19,6 +19,8 @@ import Playground from '../../components/Playground.vue'
 CDK Construct は多くの場合、状態を持つ AWS リソースを表します。  
 これらの `public` プロパティを `readonly` にすることで、Construct のインスタンス化後に意図しない変更が加えられることを防ぎます。
 
+このルールは `Construct` を継承するクラスに適用され、`Stack` のサブクラスも対象です (`public` プロパティは他の Stack に渡す契約になるためです)。`Stage` と `App` のサブクラスは意図的に対象外です。これらは組み立ての根元であり、その `public` プロパティを読むのは他の Construct ではなく app 自身のコードだからです。
+
 ---
 
 #### 🔧 使用方法

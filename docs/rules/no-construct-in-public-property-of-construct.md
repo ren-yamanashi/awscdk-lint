@@ -16,6 +16,8 @@ This rule enforces specifying interfaces for read-only resources (e.g. `IBucket`
 
 When AWS resource Constructs (e.g. `Bucket`) implement interfaces for read-only resources (e.g. `IBucket`), it is recommended to specify the read-only resource interface (e.g. `IBucket`) for Construct `public` properties to help prevent unintended resource modifications.
 
+This rule applies to classes that extend `Construct`, including `Stack` subclasses, whose `public` properties are the contract other stacks receive. Subclasses of `Stage` and `App` are intentionally out of scope: they are composition roots, and their `public` properties are read by the app's own code rather than by other Constructs.
+
 ---
 
 #### 🔧 How to use

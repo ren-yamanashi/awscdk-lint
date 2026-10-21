@@ -17,6 +17,8 @@ import Playground from '../../components/Playground.vue'
 AWS リソースを表す Construct (例: `Bucket`) が、読み取り専用リソースのための interface (例: `IBucket`) を implements している場合、Construct の `public` プロパティには、読み取り専用リソースのための interface (例: `IBucket`) を指定することが推奨されます。  
 これにより、意図しないリソースの変更を防ぐことができます。
 
+このルールは `Construct` を継承するクラスに適用され、`Stack` のサブクラスも対象です (`public` プロパティは他の Stack に渡す契約になるためです)。`Stage` と `App` のサブクラスは意図的に対象外です。これらは組み立ての根元であり、その `public` プロパティを読むのは他の Construct ではなく app 自身のコードだからです。
+
 ---
 
 #### 🔧 使用方法

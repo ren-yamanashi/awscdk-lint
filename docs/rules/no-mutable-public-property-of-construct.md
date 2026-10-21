@@ -21,7 +21,7 @@ Making these `public` properties `readonly` helps prevent unintended modificatio
 
 Therefore, it is recommended to specify the `readonly` modifier for `public` properties.
 
-(This rule applies only to classes that extends from `Construct` or `Stack`.)
+This rule applies to classes that extend `Construct`, including `Stack` subclasses, whose `public` properties are the contract other stacks receive. Subclasses of `Stage` and `App` are intentionally out of scope: they are composition roots, and their `public` properties are read by the app's own code rather than by other Constructs.
 
 ---
 
