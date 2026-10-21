@@ -388,6 +388,32 @@ ruleTester.run(
           }
         `,
       },
+      {
+        name: "public field type is the class constructor, not an instance (typeof Bucket)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          export abstract class BucketBase extends Resource implements IBucket {
+            abstract readonly bucketName: string;
+            constructor() {
+              super();
+            }
+          }
+          export class Bucket extends BucketBase {
+            readonly bucketName: string;
+            constructor() {
+              super();
+              this.bucketName = "test-bucket";
+            }
+          }
+          class TestClass extends Construct {
+            public bucketClass: typeof Bucket;
+          }
+        `,
+      },
     ],
     invalid: [
       {
