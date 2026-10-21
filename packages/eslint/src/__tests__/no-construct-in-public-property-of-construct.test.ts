@@ -643,6 +643,66 @@ ruleTester.run(
         errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
       },
       {
+        name: "public field type is a wrapper class that reuses the CDK class name (Bucket extends s3.Bucket)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          namespace s3 {
+            export abstract class BucketBase extends Resource implements IBucket {
+              abstract readonly bucketName: string;
+              constructor() {
+                super();
+              }
+            }
+            export class Bucket extends BucketBase {
+              readonly bucketName: string;
+              constructor() {
+                super();
+                this.bucketName = "test-bucket";
+              }
+            }
+          }
+          export class Bucket extends s3.Bucket {}
+          class TestClass extends Construct {
+            public test: Bucket;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
+        name: "public field type is a wrapper class with a different name (MyBucket extends s3.Bucket)",
+        code: `
+          class Construct {}
+          class Resource {}
+          interface IBucket {
+            bucketName: string;
+          }
+          namespace s3 {
+            export abstract class BucketBase extends Resource implements IBucket {
+              abstract readonly bucketName: string;
+              constructor() {
+                super();
+              }
+            }
+            export class Bucket extends BucketBase {
+              readonly bucketName: string;
+              constructor() {
+                super();
+                this.bucketName = "test-bucket";
+              }
+            }
+          }
+          export class MyBucket extends s3.Bucket {}
+          class TestClass extends Construct {
+            public test: MyBucket;
+          }
+        `,
+        errors: [{ messageId: "invalidPublicPropertyOfConstruct" }],
+      },
+      {
         name: "public field type is class that extends a base class implementing a matching interface (S3OriginAccessControl)",
         code: `
           class Construct {}

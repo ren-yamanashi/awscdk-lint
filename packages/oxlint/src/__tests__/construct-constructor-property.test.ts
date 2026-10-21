@@ -163,6 +163,30 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
       }
       `,
     },
+    {
+      code: `
+      class Construct {}
+      class Stack extends Construct {}
+      interface StackProps {}
+
+      export class MyStack extends Stack {
+        constructor(scope?: Construct, id?: string, props?: StackProps) {
+          super(scope, id, props);
+        }
+      }
+      `,
+    },
+    {
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct | undefined, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+    },
   ],
   invalid: [
     {
@@ -313,6 +337,42 @@ ruleTester.run("construct-constructor-property", constructConstructorProperty, {
         { messageId: "invalidConstructorProperty" },
         { messageId: "invalidConstructorProperty" },
       ],
+    },
+    {
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope?: string, id?: string) {
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorType" }],
+    },
+    {
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: string | undefined, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorType" }],
+    },
+    {
+      code: `
+      class Construct {}
+
+      export class MyConstruct extends Construct {
+        constructor(scope: Construct | string, id: string) {
+          super(scope, id);
+        }
+      }
+      `,
+      errors: [{ messageId: "invalidConstructorType" }],
     },
   ],
 });
