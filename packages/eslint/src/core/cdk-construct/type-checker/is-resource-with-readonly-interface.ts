@@ -2,6 +2,7 @@ import {
   isClassDeclaration,
   isIdentifier,
   isPropertyAccessExpression,
+  Symbol,
   SyntaxKind,
   Type,
 } from "typescript";
@@ -46,15 +47,17 @@ export const isResourceWithReadonlyInterface = (type: Type): boolean => {
  * @private
  */
 const hasMatchingInterfaceInHierarchy = (type: Type): boolean => {
-  const processedTypes = new Set<string>();
+  // NOTE: keyed by symbol identity, not by name: a wrapper reusing the CDK class name
+  // (`class Bucket extends s3.Bucket`) would otherwise hide the CDK class as already visited.
+  const processedSymbols = new Set<Symbol>();
 
   const checkTypeAndBases = (currentType: Type): boolean => {
     const symbol = currentType.getSymbol?.() ?? currentType.symbol;
     if (!symbol?.name) return false;
 
     // Skip if already processed
-    if (processedTypes.has(symbol.name)) return false;
-    processedTypes.add(symbol.name);
+    if (processedSymbols.has(symbol)) return false;
+    processedSymbols.add(symbol);
 
     const currentClassName = symbol.name;
     if (isIgnoreClass(currentClassName)) return false;
