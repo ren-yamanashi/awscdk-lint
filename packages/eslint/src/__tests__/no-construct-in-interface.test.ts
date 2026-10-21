@@ -426,6 +426,64 @@ ruleTester.run("no-construct-in-interface", noConstructInInterface, {
       errors: [{ messageId: "invalidInterfaceProperty" }],
     },
     {
+      name: "property type is a wrapper class that reuses the CDK class name (Bucket extends s3.Bucket)",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      namespace s3 {
+        export abstract class BucketBase extends Resource implements IBucket {
+          abstract readonly bucketName: string;
+          constructor() {
+            super();
+          }
+        }
+        export class Bucket extends BucketBase {
+          readonly bucketName: string;
+          constructor() {
+            super();
+            this.bucketName = "test-bucket";
+          }
+        }
+      }
+      export class Bucket extends s3.Bucket {}
+      interface MyConstructProps {
+        bucket: Bucket;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
+      name: "property type is a wrapper class with a different name (MyBucket extends s3.Bucket)",
+      code: `
+      class Resource {}
+      interface IBucket {
+        bucketName: string;
+      }
+      namespace s3 {
+        export abstract class BucketBase extends Resource implements IBucket {
+          abstract readonly bucketName: string;
+          constructor() {
+            super();
+          }
+        }
+        export class Bucket extends BucketBase {
+          readonly bucketName: string;
+          constructor() {
+            super();
+            this.bucketName = "test-bucket";
+          }
+        }
+      }
+      export class MyBucket extends s3.Bucket {}
+      interface MyConstructProps {
+        bucket: MyBucket;
+      }
+      `,
+      errors: [{ messageId: "invalidInterfaceProperty" }],
+    },
+    {
       name: `
       property type is class that extends a base class implementing a matching interface
       (S3OriginAccessControl extends OriginAccessControlBase)`,
