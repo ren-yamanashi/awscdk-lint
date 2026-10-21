@@ -6,6 +6,7 @@ import { findConstructor } from "../core/ast-node/finder/constructor";
 import { findConstructorParamIdentifier } from "../core/ast-node/finder/constructor-param-identifier";
 import { isAppType } from "../core/cdk-construct/type-checker/is-app";
 import { isConstructType } from "../core/cdk-construct/type-checker/is-construct";
+import { findNonNullableType } from "../core/ts-type/finder/non-nullable-type";
 import { findTypeAtLocation } from "../core/ts-type/finder/type-at-location";
 import { createRule } from "../shared/create-rule";
 
@@ -100,7 +101,13 @@ const checkFirstParamIsScope = (
       node: firstParam,
       messageId: "invalidConstructorProperty",
     });
-  } else if (!isConstructType(findTypeAtLocation(binding, parserServices), checker, [])) {
+    return;
+  }
+
+  // NOTE: An optional `scope?: Construct` is typed `Construct | undefined` (the signature of
+  // `Stack` itself), so strip the nullish members before the Construct check.
+  const scopeType = findTypeAtLocation(binding, parserServices);
+  if (!scopeType || !isConstructType(findNonNullableType(scopeType, checker), checker, [])) {
     context.report({
       node: firstParam,
       messageId: "invalidConstructorType",
