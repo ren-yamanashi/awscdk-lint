@@ -1,5 +1,6 @@
 import type { ESTree, RuleContext } from "corsa-oxlint";
 
+import * as fs from "fs";
 import * as path from "path";
 
 import { createRule } from "../shared/create-rule";
@@ -67,6 +68,9 @@ const validateModuleSpecifier = (
   const lastPrivateIndex = importSegments.lastIndexOf("private");
   if (lastPrivateIndex === -1) return;
 
+  // NOTE: a trailing `private` can also name a module file (`c/private.ts`); only a directory is a boundary
+  if (lastPrivateIndex === importSegments.length - 1 && isModuleFile(absoluteImportPath)) return;
+
   const importDirSegments = importSegments.slice(0, lastPrivateIndex);
   const currentDirSegments = getDirSegments(absoluteCurrentDirPath);
 
@@ -89,4 +93,19 @@ const validateModuleSpecifier = (
  */
 const getDirSegments = (dirPath: string): string[] => {
   return dirPath.split(path.sep).filter((segment) => segment !== "");
+};
+
+/**
+ * Check whether an extension-less import path addresses a module file rather than a directory.
+ * A path that exists as a directory, or that does not exist at all, is treated as a directory.
+ * @param absoluteImportPath - The resolved import path without an extension
+ * @returns True if a file named like the path (with any extension) exists and no directory does
+ */
+const isModuleFile = (absoluteImportPath: string): boolean => {
+  if (fs.existsSync(absoluteImportPath)) return !fs.statSync(absoluteImportPath).isDirectory();
+
+  const { dir, base } = path.parse(absoluteImportPath);
+  if (!fs.existsSync(dir)) return false;
+
+  return fs.readdirSync(dir).some((entry) => entry.startsWith(`${base}.`));
 };
