@@ -221,5 +221,29 @@ ruleTester.run("props-name-convention", propsNameConvention, {
         },
       ],
     },
+    {
+      // WHEN: Class extends a user-defined base class that extends Construct
+      code: `
+        class Construct {}
+        class BaseConstruct extends Construct {}
+        interface Props {
+          readonly bucket?: string;
+        }
+        class Derived extends BaseConstruct {
+          constructor(scope: Construct, id: string, props: Props) {
+            super(scope, id);
+          }
+        }
+      `,
+      errors: [
+        {
+          messageId: "invalidPropsName",
+          data: {
+            interfaceName: "Props",
+            expectedName: "DerivedProps",
+          },
+        },
+      ],
+    },
   ],
 });
