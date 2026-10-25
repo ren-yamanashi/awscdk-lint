@@ -18,8 +18,8 @@
     "docs": "vp run -F @awscdk-lint/docs"
   },
   "devDependencies": {
-    "@voidzero-dev/vite-plus-core": "^1.2.0",
-    "vite-plus": "^1.2.0"
+    "@voidzero-dev/vite-plus-core": "^1.3.0",
+    "vite-plus": "^1.3.0"
   },
   "packageManager": "pnpm@10.29.3"
 }
