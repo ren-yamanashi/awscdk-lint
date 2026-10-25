@@ -57,7 +57,7 @@
     "@types/node": "^24.10.13",
     "@voidzero-dev/vite-plus-core": "^1.2.0",
     "oxlint": "^1.88.0",
-    "vite-plus": "^1.2.0"
+    "vite-plus": "^1.4.0"
   },
   "peerDependencies": {
     "oxlint": "^1.69.0"
