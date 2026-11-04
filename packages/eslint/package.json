@@ -57,7 +57,7 @@
     "eslint": "^10.12.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.71.2",
-    "vite-plus": "^1.2.0"
+    "vite-plus": "^1.4.0"
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
