@@ -1,3 +1,5 @@
+import type { CorsaTypeCheckerShape, ESTree } from "corsa-oxlint";
+
 import { AST_NODE_TYPES, ESLintUtils } from "corsa-oxlint";
 
 import { findConstructor } from "../core/ast-node/finder/constructor";
@@ -55,6 +57,10 @@ export const propsNameConvention = createRule({
         const propsTypeName = typeNode.typeName;
         if (propsTypeName.type !== AST_NODE_TYPES.Identifier) return;
 
+        // NOTE: `Omit<BucketProps, "bucketName">` applies a type alias to arguments; the type to rename is
+        // the argument, not the alias
+        if (typeNode.typeArguments && isTypeAliasReference(propsTypeName, checker)) return;
+
         // NOTE: create valid props name
         const constructName = node.id.name;
         const expectedPropsName = `${constructName}Props`;
@@ -74,3 +80,23 @@ export const propsNameConvention = createRule({
     };
   },
 });
+
+/**
+ * Check whether a parameterized type reference names a type alias rather than a class or interface
+ * @param typeName - The identifier of the type reference
+ * @param checker - The corsa-oxlint type checker
+ * @returns True if the identifier resolves to a type alias, otherwise false
+ */
+const isTypeAliasReference = (
+  typeName: ESTree.Identifier,
+  checker: CorsaTypeCheckerShape,
+): boolean => {
+  const symbol = checker.getSymbolAtLocation(typeName);
+  if (!symbol) return false;
+
+  const declaredType = checker.getDeclaredTypeOfSymbol(symbol);
+  if (!declaredType) return false;
+
+  // NOTE: corsa has no isClassOrInterface; only a class or interface type carries type parameters
+  return !checker.getTypeParametersOfType(declaredType).length;
+};
