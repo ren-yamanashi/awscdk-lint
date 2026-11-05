@@ -1,6 +1,17 @@
 import { RuleTester } from "corsa-oxlint";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
 import { noImportPrivate } from "../rules/no-import-private";
+
+// NOTE: a `private` module file and a `private` directory exist on disk only inside this fixture root
+const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), "no-import-private-"));
+fs.mkdirSync(path.join(fixtureRoot, "src/c"), { recursive: true });
+fs.writeFileSync(path.join(fixtureRoot, "src/c/private.ts"), "export const helper = 1;\n");
+fs.mkdirSync(path.join(fixtureRoot, "src/e/private"), { recursive: true });
+fs.writeFileSync(path.join(fixtureRoot, "src/e/private/index.ts"), "export const hidden = 1;\n");
+process.on("exit", () => fs.rmSync(fixtureRoot, { recursive: true, force: true }));
 
 const ruleTester = new RuleTester({
   languageOptions: { sourceType: "module" },
@@ -85,6 +96,11 @@ ruleTester.run("no-import-private", noImportPrivate, {
       code: "export const load = (specifier) => import(specifier);",
       filename: "src/sampleA/a.ts",
     },
+    {
+      // WHEN: The specifier addresses a module file named `private`, not a `private` directory
+      code: 'import { helper } from "../c/private";',
+      filename: path.join(fixtureRoot, "src/d/use.ts"),
+    },
   ],
   invalid: [
     // WHEN: Importing modules in a private directory at a different level is not allowed
@@ -108,6 +124,18 @@ ruleTester.run("no-import-private", noImportPrivate, {
     // WHEN: Dynamically importing from a private directory at a different level is not allowed
     {
       code: 'export const load = () => import("../sampleB/private/c.ts");',
+      filename: "src/sampleA/a.ts",
+      errors: [{ messageId: "invalidImportPath" }],
+    },
+    // WHEN: The specifier addresses a `private` directory (resolved to its index module) at a different level
+    {
+      code: 'import { hidden } from "../e/private";',
+      filename: path.join(fixtureRoot, "src/d/use.ts"),
+      errors: [{ messageId: "invalidImportPath" }],
+    },
+    // WHEN: Nothing exists on disk for the specifier, so the trailing `private` segment is still a directory
+    {
+      code: 'import { sample } from "../sampleB/private";',
       filename: "src/sampleA/a.ts",
       errors: [{ messageId: "invalidImportPath" }],
     },
