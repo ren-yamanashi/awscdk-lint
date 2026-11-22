@@ -49,15 +49,15 @@
   },
   "dependencies": {
     "corsa-oxlint": "1.15.0",
-    "oxlint-tsgolint": "^7.0.2006",
+    "oxlint-tsgolint": "^7.0.2007",
     "typescript": "^7.0.2"
   },
   "devDependencies": {
-    "@oxlint/plugins": "^1.93.0",
+    "@oxlint/plugins": "^1.94.0",
     "@types/node": "^24.10.13",
-    "@voidzero-dev/vite-plus-core": "^1.6.0",
-    "oxlint": "^1.93.0",
-    "vite-plus": "^1.6.0"
+    "@voidzero-dev/vite-plus-core": "^8.3.8000",
+    "oxlint": "^1.94.0",
+    "vite-plus": "^1.7.0"
   },
   "peerDependencies": {
     "oxlint": "^1.69.0"
